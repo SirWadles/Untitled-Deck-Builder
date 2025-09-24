@@ -20,4 +20,21 @@ func add_card(card_data: CardData):
 	cards.append(new_card)
 
 func clear_hand():
-	
+	for card in cards:
+		card.queue_free()
+	cards.clear()
+
+func set_cards_selectable(selectable: bool):
+	for card in cards:
+		card.set_selectable(selectable)
+
+func card_selected(card: Card):
+	selected_card = card
+	battle_system.on_card_selected(card)
+
+func play_card(target: Enemy):
+	if selected_card:
+		card_played.emit(selected_card, target)
+		cards.erase(selected_card)
+		selected_card.queue_free()
+		selected_card = null
