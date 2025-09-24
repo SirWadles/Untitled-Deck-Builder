@@ -26,7 +26,7 @@ func clear_hand():
 
 func set_cards_selectable(selectable: bool):
 	for card in cards:
-		card.set_selectable(selectable)
+		card.set_selected(selectable)
 
 func card_selected(card: Card):
 	selected_card = card

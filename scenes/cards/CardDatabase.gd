@@ -7,7 +7,6 @@ func _ready():
 	create_cards()
 
 func create_cards():
-	var CardData = preload("res://scenes/cards/CardData.gd")
 	cards["attack"] = CardData.new(
 		"attack",
 		"Death Grip",
@@ -19,8 +18,8 @@ func create_cards():
 		null #texture
 	)
 	
-	cards["attack"] = CardData.new(
-		"attack",
+	cards["blood_fire"] = CardData.new(
+		"blood_fire",
 		"Blood Fire",
 		"Heal Self for 7 HP",
 		1,

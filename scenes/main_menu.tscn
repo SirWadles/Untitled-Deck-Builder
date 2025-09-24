@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://ddgtnbpobb7o5"]
+[gd_scene load_steps=3 format=3 uid="uid://ddgtnbpobb7o5"]
 
+[ext_resource type="Script" uid="uid://wjiyap1g6tox" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="1_l6cm7"]
 
 [node name="Control" type="Control"]
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_ekxnf")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -29,36 +31,38 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -77.5
+offset_left = -256.0
 offset_top = 10.0
-offset_right = 77.5
+offset_right = -94.0
 offset_bottom = 33.0
 grow_horizontal = 2
+scale = Vector2(3, 3)
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 19
 text = "Untitled Deck Game"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 100.0
-offset_top = 75.0
-offset_right = 100.0
-offset_bottom = -4.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -162.0
+offset_top = -70.0
+offset_right = 138.0
+offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.4, 0.4)
 
-[node name="Button" type="Button" parent="VBoxContainer"]
+[node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Start"
 
-[node name="Button2" type="Button" parent="VBoxContainer"]
+[node name="OptionsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Options"
 
-[node name="Button3" type="Button" parent="VBoxContainer"]
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Quit"

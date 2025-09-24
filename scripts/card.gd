@@ -8,13 +8,13 @@ class_name Card
 @onready var sprite: Sprite2D = $Sprite2D
 
 var card_data: CardData
-var hand: Hand
+var hand: Node
 var is_selectable: bool = false
 
 func _ready():
 	button.pressed.connect(_on_card_clicked)
 
-func setup(data: CardData, hand_reference: Hand):
+func setup(data: CardData, hand_reference: Node):
 	card_data = data
 	hand = hand_reference
 	name_label.text = data.card_name

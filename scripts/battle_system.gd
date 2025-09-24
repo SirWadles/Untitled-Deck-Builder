@@ -1,13 +1,14 @@
 extends Node2D
 class_name BattleSystem
 
-@onready var player: Player = $Player
-@onready var hand: Hand = $Hand
-@onready var enemy_container: Node2D = $EnemyContainer
+@onready var player: Player = $CanvasLayer/Player
+@onready var hand: Hand = $CanvasLayer/Hand
+@onready var enemy_container: Node2D = $CanvasLayer/EnemyContainer
+@onready var card_database = get_node("/root/CardStuff")
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
-var current_state: String = "player_turn"
+var current_state: BattleState = BattleState.PLAYER_TURN
 
 enum BattleState {
 	PLAYER_TURN,
@@ -16,7 +17,8 @@ enum BattleState {
 }
 
 func _ready():
-	hand.card_played.connect(_on_card_played)
+	if hand:
+		hand.card_played.connect(_on_card_played)
 	create_enemies()
 	start_player_turn()
 
@@ -38,11 +40,13 @@ func start_player_turn():
 	hand.set_cards_selectable(true)
 
 func draw_cards(amount: int):
+	if not hand:
+		return
 	hand.clear_hand()
-	var card_ids = ["attack", "defend", "heal"]
+	var card_ids = ["attack", "blood_fire", "heal"]
 	for i in range(amount):
 		var random_card = card_ids[randi() % card_ids.size()]
-		var card_data = CardDatabase.get_card(random_card)
+		var card_data = card_database.get_card(random_card)
 		hand.add_card(card_data)
 
 func on_card_selected(card: Card):
@@ -57,7 +61,7 @@ func start_targeting(card: Card):
 	hand.set_cards_selectable(false)
 	for enemy in enemies:
 		if enemy.current_health > 0:
-			enemt.set_targetable(true)
+			enemy.set_targetable(true)
 
 func _on_enemy_clicked(enemy: Enemy):
 	if current_state == BattleState.TARGETING and current_selected_card:
@@ -75,7 +79,31 @@ func play_card_on_target(target: Enemy):
 		enemy.set_targetable(false)
 	current_selected_card = null
 	current_state = BattleState.PLAYER_TURN
-	hands.set_cards_selectable(true)
+	if hand:
+		hand.set_cards_selectable(true)
 
 func _on_card_played(card: Card, target: Enemy):
-	print("Played " + card.card_data.card_name, " on ", target.enemy_name)
+	print("Played " + card.card_data.card_name + " on " + target.enemy_name)
+	check_battle_end()
+
+func check_battle_end():
+	var all_defeated = true
+	for enemy in enemies:
+		if enemy.current_health > 0:
+			all_defeated = false
+			break
+	if all_defeated:
+		print("Win")
+
+func end_turn():
+	if current_state == BattleState.PLAYER_TURN:
+		current_state = BattleState.ENEMY_TURN
+		hand.set_cards_selectable(false)
+		start_enemy_turn()
+
+func start_enemy_turn():
+	for enemy in enemies:
+		if enemy.current_health > 0:
+			player.take_damage(5)
+	await get_tree().create_timer(1.0).timeout
+	start_player_turn()
