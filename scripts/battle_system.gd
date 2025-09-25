@@ -1,16 +1,17 @@
 extends Node2D
 class_name BattleSystem
 
-@onready var player: Player = $CanvasLayer/Player
-@onready var hand: Hand = $CanvasLayer/Hand
-@onready var enemy_container: Node2D = $CanvasLayer/EnemyContainer
+@onready var player: Player = $Player
+@onready var hand: Hand = $Hand
+@onready var enemy_container: Node2D = $EnemyContainer
 @onready var card_database = get_node("/root/CardStuff")
+@onready var ui: Control = $UI
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
 var current_state: BattleState = BattleState.PLAYER_TURN
 
-enum BattleState {
+enum BattleState {	
 	PLAYER_TURN,
 	ENEMY_TURN,
 	TARGETING
@@ -38,14 +39,16 @@ func start_player_turn():
 	player.start_turn()
 	draw_cards(5)
 	hand.set_cards_selectable(true)
+	if ui:
+		ui.update_status("Player's Turn - Select a Card")
 
 func draw_cards(amount: int):
 	if not hand:
 		return
 	hand.clear_hand()
-	var card_ids = ["attack", "blood_fire", "heal"]
+	var card_pool = ["attack", "blood_fire", "abundance"]
 	for i in range(amount):
-		var random_card = card_ids[randi() % card_ids.size()]
+		var random_card = card_pool[randi() % card_pool.size()]
 		var card_data = card_database.get_card(random_card)
 		hand.add_card(card_data)
 

@@ -1,11 +1,12 @@
 extends Node2D
 class_name Card
 
-@onready var button: Button = $Button
+@onready var button: Button = $CardButton
 @onready var name_label: Label = $NameLabel
 @onready var cost_label: Label = $CostLabel
 @onready var description_label: Label = $DescriptionLabel
-@onready var sprite: Sprite2D = $Sprite2D
+@onready var card_border: Sprite2D = $CardBorder
+@onready var card_art: Sprite2D = $CardArt
 
 var card_data: CardData
 var hand: Node
@@ -21,11 +22,26 @@ func setup(data: CardData, hand_reference: Node):
 	cost_label.text = str(data.cost)
 	description_label.text = data.description
 	if data.texture:
-		sprite.texture = data.texture
+		card_art.texture = data.texture
+	set_card_visuals_based_on_type()
 
-func set_selected(selectable: bool):
+func set_card_visuals_based_on_type():
+	if card_data.damage > 0:
+		card_border.modulate = Color(1, 0.2, 0.2)
+	elif card_data.heal > 0:
+		card_border.modulate = Color(0.2, 1, 0.2)
+	elif card_data.defense > 0:
+		card_border.modulate = Color(0.2, 0.2, 1)
+
+func set_selectable(selectable: bool):
 	is_selectable = selectable
 	button.disabled = !selectable
+	if selectable:
+		modulate = Color.WHITE
+		card_border.modulate.a = 1.0
+	else:
+		modulate = Color.GRAY
+		card_border.modulate.a = 0.7
 
 func _on_card_clicked():
 	if is_selectable:

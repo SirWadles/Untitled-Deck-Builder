@@ -1,40 +1,43 @@
-[gd_scene load_steps=5 format=3 uid="uid://bra78r4eh4jho"]
+[gd_scene load_steps=6 format=3 uid="uid://bra78r4eh4jho"]
 
 [ext_resource type="Script" uid="uid://b2uxirsmtut2q" path="res://scripts/battle_system.gd" id="1_xd4uy"]
 [ext_resource type="PackedScene" uid="uid://mlky7r11sp4p" path="res://scenes/battle/player.tscn" id="2_0yh6x"]
 [ext_resource type="Texture2D" uid="uid://bs25v43ujhr2" path="res://assets/Background.png" id="2_h0kxc"]
 [ext_resource type="PackedScene" uid="uid://dh0qkkui7ay5x" path="res://scenes/battle/hand.tscn" id="3_h0kxc"]
+[ext_resource type="Script" uid="uid://ksqcsk2tffcb" path="res://scripts/battle_ui.gd" id="5_h0kxc"]
 
 [node name="BattleSystem" type="Node2D"]
 script = ExtResource("1_xd4uy")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-anchors_preset = -1
 offset_right = 1024.0
 offset_bottom = 640.0
 texture = ExtResource("2_h0kxc")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
-texture = ExtResource("2_h0kxc")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="Player" parent="CanvasLayer" instance=ExtResource("2_0yh6x")]
-position = Vector2(76, 406)
+[node name="Player" parent="." instance=ExtResource("2_0yh6x")]
+position = Vector2(100, 400)
 scale = Vector2(2.2, 2.2)
 
-[node name="Hand" parent="CanvasLayer" instance=ExtResource("3_h0kxc")]
+[node name="Hand" parent="." instance=ExtResource("3_h0kxc")]
+position = Vector2(200, 550)
 
-[node name="EnemyContainer" type="Node2D" parent="CanvasLayer"]
+[node name="EnemyContainer" type="Node2D" parent="."]
+position = Vector2(300, 100)
 
-[node name="BattleUI" type="Control" parent="."]
+[node name="UI" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+script = ExtResource("5_h0kxc")
 
-[node name="EndTurnButton" type="Button" parent="BattleUI"]
+[node name="EndTurnButton" type="Button" parent="UI"]
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_right = 127.0
+offset_bottom = 50.0
+text = "EndTurnButton"
+
+[node name="StatusLabel" type="Label" parent="UI"]
+layout_mode = 0
+offset_right = 300.0
+offset_bottom = 50.0
