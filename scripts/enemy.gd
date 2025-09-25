@@ -16,11 +16,15 @@ signal enemy_clicked(enemy: Enemy)
 func _ready():
 	button.pressed.connect(_on_enemy_clicked)
 
-func setup(name: String, health: int, battle_ref: BattleSystem):
+func setup(name: String, health: int, battle_ref: BattleSystem, enemy_texture: Texture2D = null):
 	enemy_name = name
 	max_health = health
 	current_health = health
 	battle_system = battle_ref
+	if enemy_texture:
+		sprite.texture = enemy_texture
+	else:
+		sprite.modulate = Color(1, 0, 0)
 	update_display()
 
 func take_damage(damage: int):
