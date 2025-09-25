@@ -12,7 +12,10 @@ texture = ExtResource("2_2pell")
 [node name="HealthLabel" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 23.0
+theme_override_font_sizes/font_size = 14
 
 [node name="EnergyLabel" type="Label" parent="."]
+offset_top = 25.0
 offset_right = 40.0
-offset_bottom = 23.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 14

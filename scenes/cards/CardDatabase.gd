@@ -29,7 +29,7 @@ func create_cards():
 		1,
 		6,
 		0,
-		-2,
+		0,
 		blood_fire_texture
 	)
 	

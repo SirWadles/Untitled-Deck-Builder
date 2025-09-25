@@ -32,15 +32,16 @@ func create_enemies():
 		enemy.setup("Enemy " + str(i + 1), 30, self)
 		enemy.enemy_clicked.connect(_on_enemy_clicked)
 		enemies.append(enemy)
-		enemy.position.x = i * 200
+		enemy.position.x = i * 150
+		enemy.position.y = 0
 
 func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
 	player.start_turn()
-	draw_cards(5)
+	draw_cards(2)
 	hand.set_cards_selectable(true)
-	if ui:
-		ui.update_status("Player's Turn - Select a Card")
+	if ui and ui.has_method("update_status"):
+		ui.update_status("Your Turn - Select a Card")
 
 func draw_cards(amount: int):
 	if not hand:

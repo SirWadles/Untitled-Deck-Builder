@@ -8,3 +8,5 @@ script = ExtResource("1_3ex41")
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 offset_right = 40.0
 offset_bottom = 40.0
+theme_override_constants/separation = 10
+alignment = 1

@@ -27,16 +27,11 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Label" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -256.0
-offset_top = 10.0
-offset_right = -94.0
-offset_bottom = 33.0
-grow_horizontal = 2
-scale = Vector2(3, 3)
+layout_mode = 0
+offset_left = 220.0
+offset_right = 382.0
+offset_bottom = 23.0
+scale = Vector2(3.5, 3.5)
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 19
 text = "Untitled Deck Game"

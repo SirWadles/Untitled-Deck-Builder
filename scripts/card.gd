@@ -21,8 +21,12 @@ func setup(data: CardData, hand_reference: Node):
 	name_label.text = data.card_name
 	cost_label.text = str(data.cost)
 	description_label.text = data.description
+	name_label.add_theme_font_size_override("font_size", 10)
+	cost_label.add_theme_font_size_override("font_size", 10)
+	description_label.add_theme_font_size_override("font_size", 8)
 	if data.texture:
 		card_art.texture = data.texture
+	else: card_art.modulate = Color(0.5, 0.5, 0.5)
 	set_card_visuals_based_on_type()
 
 func set_card_visuals_based_on_type():

@@ -11,6 +11,8 @@ signal card_played(card: Card, target: Enemy)
 
 func _ready():
 	battle_system = get_parent() as BattleSystem
+	if card_container:
+		card_container.alignment = BoxContainer.ALIGNMENT_CENTER
 
 func add_card(card_data: CardData):
 	var card_scene = preload("res://scenes/battle/card.tscn")
@@ -18,6 +20,11 @@ func add_card(card_data: CardData):
 	card_container.add_child(new_card)
 	new_card.setup(card_data, self)
 	cards.append(new_card)
+	update_card_positions()
+
+func update_card_positions():
+	for i in range(cards.size()):
+		var card = cards[i]
 
 func clear_hand():
 	for card in cards:
