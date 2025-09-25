@@ -9,12 +9,12 @@ func _ready():
 func create_cards():
 	var death_grip_texture = preload("res://assets/Death Grip.png")
 	var abundance_texture = preload("res://assets/Abundance.png")
-	var blood_fire_texture = preload("res://assets/Blood Fire.png")
+	var blood_fire_texture = preload("res://assets/Good Blood Fire.png")
 	
 	cards["attack"] = CardData.new(
 		"attack",
 		"Death Grip",
-		"Deal 5 Damage to Selected Enemy",
+		"5 Damage to One Enemy",
 		1, #cost
 		5, #damage
 		0, #defense
@@ -25,7 +25,7 @@ func create_cards():
 	cards["blood_fire"] = CardData.new(
 		"blood_fire",
 		"Blood Fire",
-		"Damage all for 6 Damage",
+		"6 Damage to All",
 		1,
 		6,
 		0,
@@ -36,11 +36,11 @@ func create_cards():
 	cards["abundance"] = CardData.new(
 		"abundance",
 		"Abundance",
-		"Heal Self for 7 HP",
+		"Heal for 7 HP",
 		1,
 		0,
 		0,
-		3,
+		7,
 		abundance_texture
 	)
 

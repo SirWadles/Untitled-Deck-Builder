@@ -74,10 +74,17 @@ func _on_enemy_clicked(enemy: Enemy):
 func play_card_on_target(target: Enemy):
 	var card_data = current_selected_card.card_data
 	player.spend_energy(card_data.cost)
-	if card_data.damage > 0:
-		target.take_damage(card_data.damage)
-	if card_data.heal > 0:
-		player.heal(card_data.heal)
+	match card_data.card_id:
+		"attack", "blood_fire":
+			if card_data.damage > 0:
+				target.take_damage(card_data.damage)
+			elif card_data.heal < 0:
+				target.take_damage(-card_data.heal)
+		"abundance", "heal":
+			if card_data.heal > 0:
+				player.heal(card_data.heal)
+			elif card_data.heal < 0:
+				player.heal(card_data.damage)
 	hand.play_card(target)
 	for enemy in enemies:
 		enemy.set_targetable(false)

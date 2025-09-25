@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 class_name Card
 
 @onready var button: Button = $CardButton
@@ -13,7 +13,9 @@ var hand: Node
 var is_selectable: bool = false
 
 func _ready():
+	scale = Vector2(2, 2)
 	button.pressed.connect(_on_card_clicked)
+	button.size = Vector2(52, 64)
 
 func setup(data: CardData, hand_reference: Node):
 	card_data = data
@@ -21,31 +23,30 @@ func setup(data: CardData, hand_reference: Node):
 	name_label.text = data.card_name
 	cost_label.text = str(data.cost)
 	description_label.text = data.description
-	name_label.add_theme_font_size_override("font_size", 10)
-	cost_label.add_theme_font_size_override("font_size", 10)
-	description_label.add_theme_font_size_override("font_size", 8)
+	name_label.add_theme_font_size_override("font_size", 8)
+	cost_label.add_theme_font_size_override("font_size", 8)
+	description_label.add_theme_font_size_override("font_size", 6)
 	if data.texture:
 		card_art.texture = data.texture
-	else: card_art.modulate = Color(0.5, 0.5, 0.5)
-	set_card_visuals_based_on_type()
+	else: 
+		card_art.modulate = Color(0.5, 0.5, 0.5)
+	#set_card_visuals_based_on_type()
 
-func set_card_visuals_based_on_type():
-	if card_data.damage > 0:
-		card_border.modulate = Color(1, 0.2, 0.2)
-	elif card_data.heal > 0:
-		card_border.modulate = Color(0.2, 1, 0.2)
-	elif card_data.defense > 0:
-		card_border.modulate = Color(0.2, 0.2, 1)
+#func set_card_visuals_based_on_type():
+	#if card_data.damage > 0:
+		#card_border.modulate = Color(1, 0.3, 0.3)
+	#elif card_data.heal > 0:
+		#card_border.modulate = Color(0.3, 1, 0.3)
+	#elif card_data.defense > 0:
+		#card_border.modulate = Color(0.3, 0.3, 1)
 
 func set_selectable(selectable: bool):
 	is_selectable = selectable
 	button.disabled = !selectable
 	if selectable:
 		modulate = Color.WHITE
-		card_border.modulate.a = 1.0
 	else:
 		modulate = Color.GRAY
-		card_border.modulate.a = 0.7
 
 func _on_card_clicked():
 	if is_selectable:

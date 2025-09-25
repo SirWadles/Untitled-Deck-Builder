@@ -15,14 +15,15 @@ offset_bottom = 640.0
 texture = ExtResource("2_h0kxc")
 
 [node name="Player" parent="." instance=ExtResource("2_0yh6x")]
-position = Vector2(50, 400)
+position = Vector2(53, 412)
 scale = Vector2(2.2, 2.2)
 
 [node name="EnemyContainer" type="Node2D" parent="."]
-position = Vector2(300, 100)
+position = Vector2(871, 433)
 
 [node name="Hand" parent="." instance=ExtResource("3_h0kxc")]
-position = Vector2(200, 450)
+position = Vector2(512, 550)
+scale = Vector2(2, 2)
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
