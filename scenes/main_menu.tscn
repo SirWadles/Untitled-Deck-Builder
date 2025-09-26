@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://ddgtnbpobb7o5"]
+[gd_scene load_steps=6 format=3 uid="uid://ddgtnbpobb7o5"]
 
 [ext_resource type="Script" uid="uid://wjiyap1g6tox" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="1_l6cm7"]
+[ext_resource type="AudioStream" uid="uid://hribpwcyk1y4" path="res://sounds/ui/ui_main_button_climb.wav" id="3_8ln24"]
+[ext_resource type="AudioStream" uid="uid://omssi1qfuq8h" path="res://sounds/ui/ui_main_button_invalid.wav" id="4_rtw2f"]
+[ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="5_oa1go"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -61,3 +64,14 @@ text = "Options"
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "Quit"
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="StartSound" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("3_8ln24")
+
+[node name="OptionsSound" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("4_rtw2f")
+
+[node name="QuitSound" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("5_oa1go")

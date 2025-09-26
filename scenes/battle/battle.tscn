@@ -19,8 +19,8 @@ position = Vector2(53, 412)
 scale = Vector2(2.2, 2.2)
 
 [node name="EnemyContainer" type="Node2D" parent="."]
-position = Vector2(727, 435)
-scale = Vector2(2, 2)
+position = Vector2(638, 424)
+scale = Vector2(1.5, 1.5)
 
 [node name="Hand" parent="." instance=ExtResource("3_h0kxc")]
 position = Vector2(512, 550)

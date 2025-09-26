@@ -5,6 +5,7 @@ class_name BattleSystem
 @onready var hand: Hand = $Hand
 @onready var enemy_container: Node2D = $EnemyContainer
 @onready var card_database = get_node("/root/CardStuff")
+@onready var enemy_database = get_node("/root/EnemyDatabase")
 @onready var ui: Control = $UI
 
 var enemies: Array[Enemy] = []
@@ -27,20 +28,27 @@ func _ready():
 
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
-	var enemy_types = ["slime", "boss_1"]
+	var enemy_types = enemy_database.get_enemy_types()
+	if enemy_types.size() < 1:
+		enemy_types = ["slime", "boss_1"]
+		if enemy_types.size() < 2:
+			enemy_types.append("slime")
 	
 	for i in range(2):
 		var enemy = enemy_scene.instantiate() as Enemy
 		enemy_container.add_child(enemy)
 		var enemy_type = enemy_types[randi() % enemy_types.size()]
-		var enemy_data = EnemyDatabase.get_enemy_data(enemy_type)
+		var enemy_data = enemy_database.get_enemy_data(enemy_type)
 		if enemy_data:
-			enemy.setup(enemy_data["name"], enemy_data["health"], self, enemy_data["texture"])
+			enemy.setup(enemy_data["name"], enemy_data["health"], self, enemy_data)
 		else:
 			enemy.setup("Enemy " + str(i + 1), 30, self)
 		enemy.enemy_clicked.connect(_on_enemy_clicked)
 		enemies.append(enemy)
-		enemy.position.x = i * 150
+		var spacing = 200
+		if enemy_data and enemy_data.has("base_size"):
+			spacing = max(200, enemy_data["base_size"].x + 80)
+		enemy.position.x = i * spacing
 		enemy.position.y = 0
 
 func start_player_turn():
@@ -166,7 +174,9 @@ func start_enemy_turn():
 	for enemy in enemies:
 		if enemy.current_health > 0 and enemy_types[0]:
 			player.take_damage(3)
+			print("slime attack")
 		if enemy.current_health > 0 and enemy_types[1]:
 			player.take_damage(5)
+			print("boss attack")
 	await get_tree().create_timer(1.0).timeout
 	start_player_turn()
