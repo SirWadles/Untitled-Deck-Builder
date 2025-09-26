@@ -37,7 +37,7 @@ func create_cards():
 		"abundance",
 		"Abundance",
 		"Heal for 7 HP",
-		1,
+		2,
 		0,
 		0,
 		7,

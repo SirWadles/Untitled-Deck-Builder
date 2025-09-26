@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dh0qkkui7ay5x"]
+[gd_scene load_steps=3 format=3 uid="uid://dh0qkkui7ay5x"]
 
 [ext_resource type="Script" uid="uid://bfljsnysc8ch8" path="res://scripts/hand.gd" id="1_3ex41"]
+[ext_resource type="AudioStream" uid="uid://b8j0k6sl5dcn6" path="res://sounds/cards/card1.ogg" id="2_2jc72"]
 
 [node name="Hand" type="Node2D"]
 script = ExtResource("1_3ex41")
@@ -17,3 +18,6 @@ theme_override_constants/separation = 60
 alignment = 1
 
 [node name="Audio" type="Node2D" parent="."]
+
+[node name="PlaySound" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("2_2jc72")

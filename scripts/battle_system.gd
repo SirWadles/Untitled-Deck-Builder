@@ -7,6 +7,11 @@ class_name BattleSystem
 @onready var card_database = get_node("/root/CardStuff")
 @onready var enemy_database = get_node("/root/EnemyDatabase")
 @onready var ui: Control = $UI
+@onready var win_label = $WinLabel
+@onready var win_song = $WinSong
+@onready var lose_label = $LoseLabel
+@onready var lose_song = $LoseSong
+@onready var music_player = $MusicPlayer
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
@@ -25,6 +30,9 @@ func _ready():
 		hand.card_played.connect(_on_card_played)
 	create_enemies()
 	start_player_turn()
+	win_label.visible = false
+	lose_label.visible = false
+	music_player.play()
 
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -80,11 +88,15 @@ func on_card_selected(card: Card):
 func start_targeting(card: Card):
 	hand.set_cards_selectable(false)
 	var card_id = card.card_data.card_id
-	if card_id in ["attack", "blood_fire"]:
+	if card_id in ["attack"]:
 		for enemy in enemies:
 			if enemy.current_health > 0:
 				enemy.set_targetable(true)
 		is_player_targetable = false
+		if ui and ui.has_method("update_status"):
+			ui.update_status("Select enemy to attack")
+	elif card_id == "blood_fire":
+		play_area_attack(card)
 	elif card_id in ["abundance", "heal"]:
 		set_player_targetable(true)
 		is_player_targetable = true
@@ -160,6 +172,9 @@ func check_battle_end():
 			all_defeated = false
 			break
 	if all_defeated:
+		music_player.stop()
+		win_label.visible = true
+		win_song.play()
 		print("Win")
 
 func end_turn():
@@ -169,14 +184,39 @@ func end_turn():
 		start_enemy_turn()
 
 func start_enemy_turn():
-	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
-	var enemy_types = ["slime", "boss_1"]
+	if ui and ui.has_method("update_status"):
+		ui.update_status("Enemy Turn")
 	for enemy in enemies:
-		if enemy.current_health > 0 and enemy_types[0]:
-			player.take_damage(3)
-			print("slime attack")
-		if enemy.current_health > 0 and enemy_types[1]:
-			player.take_damage(5)
-			print("boss attack")
+		if enemy.current_health > 0:
+			player.take_damage(enemy.damage)
+			print(enemy.enemy_name + "attack for " + str(enemy.damage))
 	await get_tree().create_timer(1.0).timeout
-	start_player_turn()
+	if player.current_health <= 0:
+		music_player.stop()
+		lose_label.visible = true
+		lose_song.play()
+	else:
+		start_player_turn()
+
+func play_area_attack(card: Card):
+	if card and player.can_play_card(card.card_data.cost):
+		var card_data = card.card_data
+		player.spend_energy(card_data.cost)
+		var living_enemies = 0
+		for enemy in enemies:
+			if enemy.current_health > 0:
+				enemy.take_damage(card_data.damage)
+				living_enemies += 1
+		if living_enemies > 0:
+			print("Blood fire hit ", living_enemies)
+		complete_area_play_card(card)
+
+func complete_area_play_card(card: Card):
+	hand.play_card(enemies[0] if enemies.size() > 0 else null)
+	current_selected_card = null
+	current_state = BattleState.PLAYER_TURN
+	if hand:
+		hand.set_cards_selectable(true)
+	if ui and ui.has_method("update_status"):
+		ui.update_status("Your turn - Select a card")
+	check_battle_end()

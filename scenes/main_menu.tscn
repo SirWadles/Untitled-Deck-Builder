@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://ddgtnbpobb7o5"]
+[gd_scene load_steps=7 format=3 uid="uid://ddgtnbpobb7o5"]
 
 [ext_resource type="Script" uid="uid://wjiyap1g6tox" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="1_l6cm7"]
 [ext_resource type="AudioStream" uid="uid://hribpwcyk1y4" path="res://sounds/ui/ui_main_button_climb.wav" id="3_8ln24"]
 [ext_resource type="AudioStream" uid="uid://omssi1qfuq8h" path="res://sounds/ui/ui_main_button_invalid.wav" id="4_rtw2f"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="5_oa1go"]
+[ext_resource type="AudioStream" uid="uid://dg73sjmhhi0fu" path="res://sounds/songs/2. Prelude.mp3" id="6_rtw2f"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -29,7 +30,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Label" type="Label" parent="."]
+[node name="TitleLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 220.0
 offset_right = 382.0
@@ -75,3 +76,19 @@ stream = ExtResource("4_rtw2f")
 
 [node name="QuitSound" type="AudioStreamPlayer2D" parent="Audio"]
 stream = ExtResource("5_oa1go")
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("6_rtw2f")
+
+[node name="InfoLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 510.0
+offset_right = 250.0
+offset_bottom = 637.0
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 23
+text = "Hey there are two enemies but
+there is a solid chance they both
+don't show so reload the game
+if that happens please.
+♡"

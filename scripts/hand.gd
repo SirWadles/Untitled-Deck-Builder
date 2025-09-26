@@ -2,6 +2,7 @@ extends Node2D
 class_name Hand
 
 @onready var card_container: HBoxContainer = $HBoxContainer
+@onready var play_sound = $Audio/PlaySound
 
 var cards: Array[Card] = []
 var selected_card: Card = null
@@ -53,6 +54,8 @@ func play_card(target: Enemy):
 		cards.erase(selected_card)
 		selected_card.queue_free()
 		selected_card = null
+		play_sound.play()
+		
 
 func get_card_count() -> int:
 	return cards.size()

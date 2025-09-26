@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dg73sjmhhi0fu"
+path="res://.godot/imported/2. Prelude.mp3-4f784226cf132fbd86e7e3f04295a5e7.mp3str"
+
+[deps]
+
+source_file="res://sounds/songs/2. Prelude.mp3"
+dest_files=["res://.godot/imported/2. Prelude.mp3-4f784226cf132fbd86e7e3f04295a5e7.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

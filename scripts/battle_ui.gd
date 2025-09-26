@@ -1,6 +1,7 @@
 extends Control
 
 @onready var end_turn_button: Button = $EndTurnButton
+@onready var end_turn_sound = $EndTurnButton/EndTurnSound
 @onready var status_label: Label = $StatusLabel
 
 func _ready():
@@ -19,6 +20,7 @@ func _ready():
 func _on_end_turn_pressed():
 	var battle_system = get_parent()
 	if battle_system and battle_system.has_method("end_turn"):
+		end_turn_sound.play()
 		battle_system.end_turn()
 
 func update_status(text: String):

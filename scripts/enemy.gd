@@ -10,6 +10,8 @@ var max_health: int
 var current_health: int
 var battle_system: BattleSystem
 var is_targetable: bool = false
+var enemy_type: String
+var damage: int
 
 signal enemy_clicked(enemy: Enemy)
 
@@ -21,6 +23,8 @@ func setup(name: String, health: int, battle_ref: BattleSystem, enemy_data: Dict
 	max_health = health
 	current_health = health
 	battle_system = battle_ref
+	enemy_type = enemy_data.get("type", "default")
+	damage = enemy_data.get("damage", 3)
 	if enemy_data.has("texture") and enemy_data["texture"]:
 		sprite.texture = enemy_data["texture"]
 		var target_size = Vector2(80, 80)
@@ -30,8 +34,13 @@ func setup(name: String, health: int, battle_ref: BattleSystem, enemy_data: Dict
 		var scale_x = target_size.x / texture_size.x
 		var scale_y = target_size.y / texture_size.y
 		sprite.scale = Vector2(scale_x, scale_y)
+		if enemy_data.has("sprite_offset"):
+			sprite.position = enemy_data["sprite_offset"]
+		else:
+			sprite.position = Vector2.ZERO
 	else:
 		sprite.modulate = Color(1, 0, 0)
+		sprite.position = Vector2.ZERO
 	update_button_size()
 	update_display()
 
@@ -62,8 +71,8 @@ func heal(amount: int):
 
 func update_display():
 	health_label.text = str(current_health) + "/" + str(max_health)
-	var y_offset = -sprite.texture.get_size().y * sprite.scale.y / 2 - 20
-	health_label.position = Vector2(0, y_offset)
+	var y_offset = (-sprite.texture.get_size().y * sprite.scale.y) 
+	health_label.position = Vector2(-20, y_offset)
 
 func set_targetable(targetable: bool):
 	is_targetable = targetable

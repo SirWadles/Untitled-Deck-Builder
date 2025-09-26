@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://us0h2ojtw6jt"
+path="res://.godot/imported/18. Unbreakable - Terra's Theme.mp3-8f6366bfc7d218651ddb864d4b4d35dd.mp3str"
+
+[deps]
+
+source_file="res://sounds/songs/18. Unbreakable - Terra's Theme.mp3"
+dest_files=["res://.godot/imported/18. Unbreakable - Terra's Theme.mp3-8f6366bfc7d218651ddb864d4b4d35dd.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

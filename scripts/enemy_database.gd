@@ -13,16 +13,22 @@ func create_enemies():
 	
 	enemies["slime"] = {
 		"name": "Slime",
+		"type": "slime",
+		"damage": 3,
 		"health": 15,
 		"texture": blood_slime_texture,
-		"base_size": Vector2(50, 50)
+		"base_size": Vector2(78, 78),
+		"sprite_offset": Vector2(0, 5)
 	}
 	
 	enemies["boss_1"] = {
 		"name": "Holy One",
+		"type": "boss_1",
+		"damage": 5,
 		"health": 35,
 		"texture": holy_one_texture,
-		"base_size": Vector2(60, 60)
+		"base_size": Vector2(128, 128),
+		"sprite_offset": Vector2(0, -35)
 	}
 
 func get_enemy_data(enemy_id: String):
