@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://bo1mdc5psr5v1"]
+
+[ext_resource type="Script" uid="uid://cngyetpg7epr8" path="res://scripts/shop_card.gd" id="1_pce6i"]
+
+[node name="ShopCard" type="Button"]
+offset_right = 8.0
+offset_bottom = 8.0
+script = ExtResource("1_pce6i")
+
+[node name="CardDisplay" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PriceLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

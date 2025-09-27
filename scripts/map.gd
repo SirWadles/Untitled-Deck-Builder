@@ -11,7 +11,7 @@ signal node_selected(node: MapNode)
 
 func _ready():
 	create_map()
-	draw_path()
+	draw_paths()
 
 func create_map():
 	var nodes_data = [
@@ -44,7 +44,7 @@ func draw_paths():
 		for connection_id in node.connections:
 			var target_node = get_node_by_id(connection_id)
 			if target_node:
-				draw_line_between_nodes(mode, target_node)
+				draw_line_between_nodes(node, target_node)
 
 func draw_line_between_nodes(from_node: MapNode, to_node: MapNode):
 	var line = Line2D.new()
