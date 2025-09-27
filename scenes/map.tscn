@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://qqbcfoq0xxy3"]
+
+[ext_resource type="Script" uid="uid://cvk2q8d532wa6" path="res://scripts/map.gd" id="1_4xfga"]
+
+[node name="Map" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_4xfga")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PathLines" type="Node2D" parent="."]
+
+[node name="MapNodes" type="Node2D" parent="."]
