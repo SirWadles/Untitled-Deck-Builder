@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 CardStuff="*res://scenes/cards/CardDatabase.gd"
 EnemyDatabase="*res://scripts/enemy_database.gd"
+GameManager="*res://scripts/game_manager.gd"
 
 [display]
 

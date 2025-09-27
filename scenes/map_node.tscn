@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://byq1e5jppbrtc"]
 
-[ext_resource type="Script" uid="uid://dtcdn5v5n2ifj" path="res://scripts/map_button.gd" id="1_hs614"]
+[ext_resource type="Script" uid="uid://dtcdn5v5n2ifj" path="res://scripts/map_node.gd" id="1_hs614"]
 
 [node name="MapButton" type="Button"]
 offset_right = 8.0

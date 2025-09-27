@@ -176,6 +176,8 @@ func check_battle_end():
 		win_label.visible = true
 		win_song.play()
 		print("Win")
+		await  get_tree().create_timer(10.0).timeout
+		get_tree().change_scene_to_file("res://scenes/map.tscn")
 
 func end_turn():
 	if current_state == BattleState.PLAYER_TURN:

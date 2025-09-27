@@ -3,7 +3,6 @@ class_name ShopCard
 
 @onready var price_label: Label = $PriceLabel
 
-
 var card_data: CardData
 var price: int
 

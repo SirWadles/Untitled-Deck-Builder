@@ -6,13 +6,17 @@ enum NodeType {BATTLE, SHOP, REST, TREASURE, BOSS}
 @export var node_type: NodeType = NodeType.BATTLE
 @export var node_id: String = ""
 @export var scene_path: String = ""
-@export var connections: Array[String] = []
+var connections: Array[String] = []
 
 var visited: bool = false
 
 func _ready():
+	connections = []
 	setup_appearance()
 	pressed.connect(_on_pressed)
+
+func setup_connections(new_connections: Array[String]):
+	connections = new_connections.duplicate()
 
 func setup_appearance():
 	match node_type:
@@ -20,17 +24,17 @@ func setup_appearance():
 			text = "Battle"
 			add_theme_color_override("font_color", Color.RED)
 		NodeType.SHOP:
-			text = "Battle"
-			add_theme_color_override("font_color", Color.RED)
+			text = "Shop"
+			add_theme_color_override("font_color", Color.BLUE)
 		NodeType.REST:
-			text = "Battle"
-			add_theme_color_override("font_color", Color.RED)
+			text = "Rest"
+			add_theme_color_override("font_color", Color.PURPLE)
 		NodeType.TREASURE:
-			text = "Battle"
-			add_theme_color_override("font_color", Color.RED)
+			text = "Treasure"
+			add_theme_color_override("font_color", Color.CYAN)
 		NodeType.BOSS:
-			text = "Battle"
-			add_theme_color_override("font_color", Color.RED)
+			text = "Boss"
+			add_theme_color_override("font_color", Color.GREEN)
 
 func set_visited():
 	visited = true

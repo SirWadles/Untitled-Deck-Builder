@@ -21,13 +21,13 @@ func create_map():
 		"connections": ["shop1", "rest1"]},
 		{"id": "battle2", "type": MapNode.NodeType.BATTLE, "pos": Vector2(200, 200), \
 		"connections": ["rest1", "treasure1"]},
-		{"id": "shop1", "type": MapNode.NodeType.SHOP, "pos": Vector2(100, 50), \
+		{"id": "shop1", "type": MapNode.NodeType.SHOP, "pos": Vector2(300, 50), \
 		"connections": ["boss1"]},
-		{"id": "rest1", "type": MapNode.NodeType.REST, "pos": Vector2(100, 50), \
+		{"id": "rest1", "type": MapNode.NodeType.REST, "pos": Vector2(300, 150), \
 		"connections": ["boss1"]},
-		{"id": "treasure1", "type": MapNode.NodeType.TREASURE, "pos": Vector2(100, 50), \
+		{"id": "treasure1", "type": MapNode.NodeType.TREASURE, "pos": Vector2(300, 250), \
 		"connections": ["boss1"]},
-		{"id": "boss1", "type": MapNode.NodeType.BOSS, "pos": Vector2(100, 50), \
+		{"id": "boss1", "type": MapNode.NodeType.BOSS, "pos": Vector2(400, 150), \
 		"connections": []}
 	]
 	for node_data in nodes_data:
@@ -36,7 +36,7 @@ func create_map():
 		node.node_id = node_data["id"]
 		node.node_type = node_data["type"]
 		node.position = node_data["pos"]
-		node.connections = node_data["connections"]
+		node.set_connections(node_data["connections"])
 		node.node_selected.connect(_on_node_selected)
 
 func draw_paths():
