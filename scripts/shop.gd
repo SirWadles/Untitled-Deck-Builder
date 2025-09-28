@@ -9,10 +9,12 @@ class_name Shop
 var player_gold: int = 100
 var available_cards: Array = []
 var available_relics: Array = []
+var player_data: PlayerData
 
 func _ready():
+	player_data = get_node("/root/PlayerDatabase")
 	load_shop_items()
-	update_dislplay()
+	update_display()
 	return_button.pressed.connect(_on_return_button_pressed)
 
 func load_shop_items():
@@ -34,8 +36,8 @@ func calculate_card_price(card_data: CardData) -> int:
 	price += card_data.defense * 10
 	return max(price, 25)
 
-func update_dislplay():
-	gold_label.text = "Gold: " + str(player_gold)
+func update_display():
+	gold_label.text = "Gold: " + str(player_data.gold)
 	for child in card_container.get_children():
 		child.queue_free()
 	for card_item in available_cards:
@@ -45,14 +47,11 @@ func update_dislplay():
 		shop_card.purchased.connect(_on_card_purchased)
 
 func _on_card_purchased(card_data: CardData, price: int):
-	if player_gold >= price:
-		player_gold -= price
-		add_card_to_deck(card_data)
-		update_dislplay()
+	if player_data.gold >= price:
+		player_data.gold -= price
+		player_data.add_card_to_deck(card_data.card_id)
+		update_display()
 		print("Bought " + card_data.card_name)
-
-func add_card_to_deck(card_data: CardData):
-	print("Added to deck: " + card_data.card_name)
 
 func _on_return_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/map.tscn")

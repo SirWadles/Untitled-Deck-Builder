@@ -31,8 +31,8 @@ func take_damage(damage: int):
 
 func heal(amount: int):
 	current_health += amount
-	if current_health > 50:
-		current_health = 50
+	if current_health > max_health:
+		current_health = max_health
 
 func add_gold(amount: int):
 	gold += amount

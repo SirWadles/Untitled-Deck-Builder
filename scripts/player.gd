@@ -12,9 +12,9 @@ var current_energy: int = 3
 var battle_system: BattleSystem = null
 
 func _ready():
-	player_data = get_node("/root/EnemyDatabase")
-	health_label.position = Vector2(0, 500)
-	energy_label.position = Vector2(0, 600)
+	player_data = get_node("/root/PlayerDatabase")
+	health_label.position = Vector2(5, -63)
+	energy_label.position = Vector2(5, -50)
 	target_button.visible = false
 	target_button.pressed.connect(_on_target_button_pressed)
 	update_display()
@@ -56,7 +56,7 @@ func start_turn():
 
 func update_display():
 	health_label.text = "HP: " + str(player_data.current_health) + "/" + str(player_data.max_health)
-	energy_label.text = "Energy: " + str(player_data.current_energy) + "/" + str(player_data.max_energy)
+	energy_label.text = "Energy: " + str(current_energy) + "/" + str(player_data.max_energy)
 
 func full_heal():
 	player_data.current_health = player_data.max_health + 4
