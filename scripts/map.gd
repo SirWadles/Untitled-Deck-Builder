@@ -3,6 +3,7 @@ class_name Map
 
 @onready var map_nodes: Node2D = $MapNodes
 @onready var path_lines: Node2D = $PathLines
+@onready var ui: Control = $UI
 
 var current_node: MapNode = null
 var player_path: Array[String] = []
@@ -80,7 +81,22 @@ func load_node_scene(node: MapNode):
 
 func show_rest_screen():
 	print("Rest")
+	var player_data = get_node("/root/PlayerDatabase")
+	player_data.full_heal()
+	if ui and ui.has_method("show_rest_message"):
+		ui.show_rest_message("Rested and recovered all yout health!")
 	await  get_tree().create_timer(2.0).timeout
+	if get_tree() != null:
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
+
+func show_rest_message(message: String):
+	var label = Label.new()
+	add_child(label)
+	label.text = message
+	label.position = Vector2(400, 300)
+	label.add_theme_font_size_override("font_size", 24)
+	await get_tree().create_timer(5.0).timeout
+	label.queue_free()
 
 func show_treasure_screen():
 	print("treasure")

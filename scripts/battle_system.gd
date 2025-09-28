@@ -172,12 +172,27 @@ func check_battle_end():
 			all_defeated = false
 			break
 	if all_defeated:
+		var player_data = get_node("/root/PlayerDatabase")
+		player_data.add_gold(25)
 		music_player.stop()
 		win_label.visible = true
 		win_song.play()
 		print("Win")
 		await  get_tree().create_timer(5.0).timeout
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
+	else:
+		var player_data = get_node("/root/PlayerDatabase")
+		if player_data.current_health <= 0:
+			music_player.stop()
+			lose_label.visible = true
+			lose_song.play()
+			await get_tree().create_timer(10.0).timeout
+			game_over()
+
+func game_over():
+	var player_data = get_node("/root/PlayerDatabase")
+	player_data.reset_to_default()
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
 
 func end_turn():
 	if current_state == BattleState.PLAYER_TURN:
@@ -193,12 +208,7 @@ func start_enemy_turn():
 			player.take_damage(enemy.damage)
 			print(enemy.enemy_name + "attack for " + str(enemy.damage))
 	await get_tree().create_timer(1.0).timeout
-	if player.current_health <= 0:
-		music_player.stop()
-		lose_label.visible = true
-		lose_song.play()
-	else:
-		start_player_turn()
+	start_player_turn()
 
 func play_area_attack(card: Card):
 	if card and player.can_play_card(card.card_data.cost):

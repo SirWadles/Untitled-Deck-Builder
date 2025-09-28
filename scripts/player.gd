@@ -3,25 +3,44 @@ class_name Player
 
 @onready var health_label: Label = $HealthLabel
 @onready var energy_label: Label = $EnergyLabel
+@onready var target_button: Button = $TargetButton
 
-var max_health: int = 50
-var current_health: int = 50
-var max_energy: int = 3
+signal player_clicked(player: Player)
+
+var player_data: PlayerData
 var current_energy: int = 3
+var battle_system: BattleSystem = null
 
 func _ready():
+	player_data = get_node("/root/EnemyDatabase")
+	health_label.position = Vector2(0, 500)
+	energy_label.position = Vector2(0, 600)
+	target_button.visible = false
+	target_button.pressed.connect(_on_target_button_pressed)
 	update_display()
 
+func set_battle_system(system: BattleSystem):
+	battle_system = system
+
+func set_targetable(targetable: bool):
+	target_button.visible = true
+	if targetable:
+		modulate = Color.YELLOW
+		if battle_system and battle_system.ui and battle_system.ui.has_method("update_status"):
+			battle_system.ui.update_status("Click on yourself to heal")
+	else:
+		modulate = Color.WHITE
+
+func _on_target_button_pressed():
+	if battle_system:
+		player_clicked.emit(self)
+
 func take_damage(damage: int):
-	current_health -= damage
-	if current_health < 0:
-		current_health = 0
+	player_data.take_damage(damage)
 	update_display()
 
 func heal(amount: int):
-	current_health += amount
-	if current_health > max_health:
-		current_health = max_health
+	player_data.heal(amount)
 	update_display()
 
 func can_play_card(cost: int) -> bool:
@@ -32,9 +51,13 @@ func spend_energy(amount: int):
 	update_display()
 
 func start_turn():
-	current_energy = max_energy
+	current_energy = player_data.max_energy
 	update_display()
 
 func update_display():
-	health_label.text = "HP: " + str(current_health) + "/" + str(max_health)
-	energy_label.text = "Energy: " + str(current_energy) + "/" + str(max_energy)
+	health_label.text = "HP: " + str(player_data.current_health) + "/" + str(player_data.max_health)
+	energy_label.text = "Energy: " + str(player_data.current_energy) + "/" + str(player_data.max_energy)
+
+func full_heal():
+	player_data.current_health = player_data.max_health + 4
+	update_display()
