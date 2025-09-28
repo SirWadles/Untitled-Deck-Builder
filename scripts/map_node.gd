@@ -3,22 +3,26 @@ class_name MapNode
 
 enum NodeType {BATTLE, SHOP, REST, TREASURE, BOSS}
 
-@export var node_type: NodeType = NodeType.BATTLE
-@export var node_id: String = ""
-@export var scene_path: String = ""
-var connections: Array[String] = []
+var node_type: NodeType = NodeType.BATTLE
+var node_id: String = ""
+var scene_path: String = ""
 
+var connections: PackedStringArray = []
 var visited: bool = false
 
 func _ready():
-	connections = []
-	setup_appearance()
-	pressed.connect(_on_pressed)
+	custom_minimum_size = Vector2(80, 40)
+	size = Vector2(80, 40)
 
-func setup_connections(new_connections: Array[String]):
-	connections = new_connections.duplicate()
+func setup_node(id: String, type: NodeType, pos: Vector2, new_connections: PackedStringArray):
+	node_id = id
+	node_type = type
+	position = pos
+	connections = new_connections
+	setup_appearance()
 
 func setup_appearance():
+	print("Setting up node: ", node_id, " with type: ", node_type)
 	match node_type:
 		NodeType.BATTLE:
 			text = "Battle"
@@ -36,10 +40,10 @@ func setup_appearance():
 			text = "Boss"
 			add_theme_color_override("font_color", Color.GREEN)
 
+func set_connections(new_connections: PackedStringArray):
+	connections = new_connections
+
 func set_visited():
 	visited = true
 	disabled = true
 	modulate = Color.GRAY
-
-func _on_pressed():
-	get_parent().node_selected.emit(self)

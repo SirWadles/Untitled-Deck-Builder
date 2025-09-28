@@ -7,8 +7,6 @@ class_name Map
 var current_node: MapNode = null
 var player_path: Array[String] = []
 
-signal node_selected(node: MapNode)
-
 func _ready():
 	create_map()
 	draw_paths()
@@ -33,11 +31,11 @@ func create_map():
 	for node_data in nodes_data:
 		var node = preload("res://scenes/map_node.tscn").instantiate()
 		map_nodes.add_child(node)
-		node.node_id = node_data["id"]
-		node.node_type = node_data["type"]
-		node.position = node_data["pos"]
-		node.set_connections(node_data["connections"])
-		node.node_selected.connect(_on_node_selected)
+		var connections_array = PackedStringArray()
+		for connection in node_data["connections"]:
+			connections_array.append(connection)
+		node.setup_node(node_data["id"], node_data["type"],node_data["pos"], connections_array)
+		node.pressed.connect(_on_map_node_pressed.bind(node))
 
 func draw_paths():
 	for node in map_nodes.get_children():
@@ -60,7 +58,7 @@ func get_node_by_id(node_id: String) -> MapNode:
 			return node
 	return null
 
-func _on_node_selected(node: MapNode):
+func _on_map_node_pressed(node: MapNode):
 	if current_node == null or node.node_id in current_node.connections:
 		current_node = node
 		player_path.append(node.node_id)
@@ -72,7 +70,7 @@ func load_node_scene(node: MapNode):
 		MapNode.NodeType.BATTLE:
 			get_tree().change_scene_to_file("res://scenes/battle/battle.tscn")
 		MapNode.NodeType.SHOP:
-			get_tree().change_scene_to_file("res://scenes/shop/shop.tscn")
+			get_tree().change_scene_to_file("res://scenes/shop.tscn")
 		MapNode.NodeType.REST:
 			show_rest_screen()
 		MapNode.NodeType.TREASURE:
