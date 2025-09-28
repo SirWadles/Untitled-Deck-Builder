@@ -8,8 +8,11 @@ var current_energy: int = 3
 var gold: int = 100
 
 var deck: Array[String] = ["attack", "attack", "blood_fire", "attack", "abundance"]
-var relics: Array[String] = []
+var discard_pile: Array[String] = []
+var exhause_pile: Array[String] = []
+var hand: Array[String] = []
 
+var relics: Array[String] = []
 var battle_rewards: Array = []
 
 func _ready():
@@ -21,8 +24,39 @@ func reset_to_default():
 	max_energy = 3
 	gold = 100
 	deck = ["attack", "attack", "blood_fire", "attack", "abundance"]
+	discard_pile = []
+	exhause_pile = []
 	relics = []
 	battle_rewards = []
+
+func reshuffle_discard():
+	deck.append_array(discard_pile)
+	discard_pile.clear()
+
+func draw_cards(amount: int) -> Array[String]:
+	var drawn_cards: Array[String] = []
+	for i in range(amount):
+		if deck.size() == 0:
+			if discard_pile.size() > 0:
+				reshuffle_discard()
+				deck.shuffle()
+			else:
+				break
+		if deck.size() > 0:
+			var card_id = deck[0]
+			deck.remove_at(0)
+			hand.append(card_id)
+			drawn_cards.append(card_id)
+	return drawn_cards
+
+func discard_card(card_id: String):
+	if hand.has(card_id):
+		hand.erase(card_id)
+		discard_pile.append(card_id)
+
+func discard_hand():
+	discard_pile.append_array(hand)
+	hand.clear()
 
 func take_damage(damage: int):
 	current_health -= damage

@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://qqbcfoq0xxy3"]
+[gd_scene load_steps=4 format=3 uid="uid://qqbcfoq0xxy3"]
 
 [ext_resource type="Script" uid="uid://cvk2q8d532wa6" path="res://scripts/map.gd" id="1_4xfga"]
+[ext_resource type="Texture2D" uid="uid://dwyhlpg2jx2ln" path="res://assets/oldpaperertyhuji.png" id="2_paxxb"]
+[ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="3_gldc4"]
 
 [node name="Map" type="Control"]
 layout_mode = 3
@@ -13,7 +15,11 @@ script = ExtResource("1_4xfga")
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+texture = ExtResource("2_paxxb")
 
 [node name="PathLines" type="Node2D" parent="."]
 
 [node name="MapNodes" type="Node2D" parent="."]
+
+[node name="ButtonSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_gldc4")

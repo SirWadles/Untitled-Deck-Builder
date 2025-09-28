@@ -51,6 +51,7 @@ func calculate_card_price(card_data: CardData) -> int:
 	price += card_data.damage * 10
 	price += card_data.heal * 12
 	price += card_data.defense * 10
+	price += randi() % 15
 	return max(price, 30)
 
 func update_display():

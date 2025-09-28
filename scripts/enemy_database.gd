@@ -8,7 +8,7 @@ func _ready():
 
 func create_enemies():
 	var holy_one_texture = preload("res://assets/Holy One.png")
-	
+	var tree_texture = preload("res://assets/Tree.png")
 	var blood_slime_texture = preload("res://assets/Blood Slime(1).png")
 	
 	enemies["slime"] = {
@@ -19,6 +19,15 @@ func create_enemies():
 		"texture": blood_slime_texture,
 		"base_size": Vector2(78, 78),
 		"sprite_offset": Vector2(0, 5)
+	}
+	enemies["tree"] = {
+		"name": "Tree",
+		"type": "tree",
+		"damage": 2,
+		"health": 50,
+		"texture": tree_texture,
+		"base_size": Vector2(128, 128),
+		"sprite_offset": Vector2(-20, -30)
 	}
 	
 	enemies["boss_1"] = {

@@ -57,8 +57,10 @@ layout_mode = 2
 
 [node name="Footer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 500.0
+offset_top = 500.0
+offset_right = 540.0
+offset_bottom = 540.0
 
 [node name="ReturnButton" type="Button" parent="Footer"]
 layout_mode = 2

@@ -14,6 +14,12 @@ signal purchased(card_data: CardData, price: int)
 
 func _ready():
 	custom_minimum_size = Vector2(200, 300)
+	size = Vector2(200, 300)
+	texture_rect.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
+	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	
+	purchase_button.text = "BUY"
+	purchase_button.custom_minimum_size = Vector2(0, 40)
 	purchase_button.pressed.connect(_on_purchase_button_pressed)
 
 func setup(data: CardData, card_price: int):
@@ -24,6 +30,7 @@ func setup(data: CardData, card_price: int):
 	description_label.text = data.description
 	if data.texture:
 		texture_rect.texture = data.texture
+		texture_rect.custom_minimum_size = Vector2(150, 150)
 	style_card_by_type()
 
 func style_card_by_type():

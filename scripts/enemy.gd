@@ -43,6 +43,7 @@ func setup(name: String, health: int, battle_ref: BattleSystem, enemy_data: Dict
 		sprite.position = Vector2.ZERO
 	update_button_size()
 	update_display()
+	update_button_postion()
 
 func update_button_size():
 	if sprite.texture:
@@ -85,3 +86,13 @@ func set_targetable(targetable: bool):
 func _on_enemy_clicked():
 	if is_targetable:
 		enemy_clicked.emit(self)
+
+func update_button_postion():
+	if sprite.texture:
+		var texture_size = sprite.texture.get_size()
+		var scaled_size = texture_size * sprite.scale
+		button.position = sprite.position - scaled_size / 2
+		button.size = scaled_size
+	else:
+		button.position = Vector2(-40, -40)
+		button.size = Vector2(80, 80)

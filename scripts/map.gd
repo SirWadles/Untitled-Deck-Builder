@@ -4,6 +4,7 @@ class_name Map
 @onready var map_nodes: Node2D = $MapNodes
 @onready var path_lines: Node2D = $PathLines
 @onready var ui: Control = $UI
+@onready var button_sound = $ButtonSound
 
 var current_node: MapNode = null
 var player_path: Array[String] = []
@@ -14,19 +15,19 @@ func _ready():
 
 func create_map():
 	var nodes_data = [
-		{"id": "start", "type": MapNode.NodeType.BATTLE, "pos": Vector2(100, 50), \
+		{"id": "start", "type": MapNode.NodeType.BATTLE, "pos": Vector2(100, 300), \
 		"connections": ["battle1", "battle2"]},
-		{"id": "battle1", "type": MapNode.NodeType.BATTLE, "pos": Vector2(200, 100), \
+		{"id": "battle1", "type": MapNode.NodeType.BATTLE, "pos": Vector2(300, 250), \
 		"connections": ["shop1", "rest1"]},
-		{"id": "battle2", "type": MapNode.NodeType.BATTLE, "pos": Vector2(200, 200), \
+		{"id": "battle2", "type": MapNode.NodeType.BATTLE, "pos": Vector2(300, 350), \
 		"connections": ["rest1", "treasure1"]},
-		{"id": "shop1", "type": MapNode.NodeType.SHOP, "pos": Vector2(300, 50), \
-		"connections": ["boss1"]},
-		{"id": "rest1", "type": MapNode.NodeType.REST, "pos": Vector2(300, 150), \
-		"connections": ["boss1"]},
-		{"id": "treasure1", "type": MapNode.NodeType.TREASURE, "pos": Vector2(300, 250), \
-		"connections": ["boss1"]},
-		{"id": "boss1", "type": MapNode.NodeType.BOSS, "pos": Vector2(400, 150), \
+		{"id": "shop1", "type": MapNode.NodeType.SHOP, "pos": Vector2(500, 200), \
+		"connections": ["battle3"]},
+		{"id": "rest1", "type": MapNode.NodeType.REST, "pos": Vector2(500, 300), \
+		"connections": ["battle3"]},
+		{"id": "treasure1", "type": MapNode.NodeType.TREASURE, "pos": Vector2(500, 400), \
+		"connections": ["battle3"]},
+		{"id": "battle3", "type": MapNode.NodeType.BATTLE, "pos": Vector2(700, 300), \
 		"connections": []}
 	]
 	for node_data in nodes_data:
@@ -64,6 +65,8 @@ func _on_map_node_pressed(node: MapNode):
 		current_node = node
 		player_path.append(node.node_id)
 		node.set_visited()
+		button_sound.play()
+		await get_tree().create_timer(1.5).timeout
 		load_node_scene(node)
 
 func load_node_scene(node: MapNode):
@@ -100,4 +103,23 @@ func show_rest_message(message: String):
 
 func show_treasure_screen():
 	print("treasure")
+	var player_data = get_node("/root/PlayerDatabase")
+	var reward_type = 0
+	match reward_type:
+		0:
+			var gold_amount = 40 + randi() % 50
+			player_data.add_gold(gold_amount)
+			show_treasure_message("Found " + str(gold_amount) + " gold!")
 	await  get_tree().create_timer(2.0).timeout
+	if get_tree() != null:
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
+
+func show_treasure_message(message: String):
+	var message_label = Label.new()
+	add_child(message_label)
+	message_label.text = message
+	message_label.position = Vector2(300, 400)
+	message_label.add_theme_font_size_override("font_size", 24)
+	message_label.add_theme_color_override("font_color", Color.GOLD)
+	await get_tree().create_timer(5.0).timeout
+	message_label.queue_free()

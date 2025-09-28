@@ -62,7 +62,7 @@ func create_enemies():
 func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
 	player.start_turn()
-	draw_cards(5)
+	draw_cards(3)
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your Turn - Select a Card")
@@ -71,11 +71,14 @@ func draw_cards(amount: int):
 	if not hand:
 		return
 	hand.clear_hand()
-	var card_pool = ["attack", "blood_fire", "abundance"]
-	for i in range(amount):
-		var random_card = card_pool[randi() % card_pool.size()]
-		var card_data = card_database.get_card(random_card)
-		hand.add_card(card_data)
+	var player_data = get_node("/root/PlayerDatabase")
+	var drawn_cards_ids = player_data.draw_cards(amount)
+	for card_id in drawn_cards_ids:
+		var card_data = card_database.get_card(card_id)
+		if card_data:
+			hand.add_card(card_data)
+		else:
+			print("Damn you fucked up", card_id)
 
 func on_card_selected(card: Card):
 	if current_state != BattleState.PLAYER_TURN:
@@ -163,6 +166,8 @@ func reset_targeting():
 
 func _on_card_played(card: Card, target: Enemy):
 	print("Played " + card.card_data.card_name + " on " + target.enemy_name)
+	var player_data = get_node("/root/PlayerDatabase")
+	player_data.discard_card(card.card_data.card_id)
 	check_battle_end()
 
 func check_battle_end():
@@ -198,6 +203,8 @@ func end_turn():
 	if current_state == BattleState.PLAYER_TURN:
 		current_state = BattleState.ENEMY_TURN
 		hand.set_cards_selectable(false)
+		var player_data = get_node("/root/PlayerDatabase")
+		player_data.discard_hand()
 		start_enemy_turn()
 
 func start_enemy_turn():
