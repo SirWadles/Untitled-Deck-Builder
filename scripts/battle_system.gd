@@ -62,7 +62,7 @@ func create_enemies():
 func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
 	player.start_turn()
-	draw_cards(2)
+	draw_cards(5)
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your Turn - Select a Card")

@@ -2,17 +2,25 @@
 
 [ext_resource type="Script" uid="uid://cngyetpg7epr8" path="res://scripts/shop_card.gd" id="1_pce6i"]
 
-[node name="ShopCard" type="Button"]
+[node name="ShopCard" type="PanelContainer"]
 offset_right = 8.0
-offset_bottom = 8.0
+offset_bottom = 23.0
 script = ExtResource("1_pce6i")
 
-[node name="CardDisplay" type="Control" parent="."]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
 
-[node name="PriceLabel" type="Label" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+[node name="NameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="PriceLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="PurchaseButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2

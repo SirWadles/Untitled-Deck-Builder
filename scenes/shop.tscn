@@ -23,9 +23,11 @@ offset_bottom = 40.0
 
 [node name="TitleLabel" type="Label" parent="Header"]
 layout_mode = 2
+text = "SHOP"
 
 [node name="GoldLabel" type="Label" parent="Header"]
 layout_mode = 2
+text = "Gold: 100"
 
 [node name="Content" type="HBoxContainer" parent="."]
 layout_mode = 2
