@@ -43,5 +43,8 @@ func add_card_to_deck(card_id: String):
 func add_relic(relic_id: String):
 	relics.append(relic_id)
 
+func full_heal():
+	current_health = max_health + 4
+
 func get_health_percentage() -> float:
 	return float(current_health) / float(max_health)

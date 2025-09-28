@@ -1,10 +1,10 @@
 extends Control
 class_name Shop
 
-@onready var gold_label: Label = $GoldLabel
-@onready var card_container: HBoxContainer = $CardContainer
-@onready var relic_container: HBoxContainer = $RelicContainer
-@onready var return_button: Button = $ReturnButton
+@onready var gold_label: Label = $Header/GoldLabel
+@onready var card_container: HBoxContainer = $Content/CardsPanel/CardsContainer
+@onready var relic_container: HBoxContainer = $Content/RelicsPanel/RelicContainer
+@onready var return_button: Button = $Footer/ReturnButton
 
 var player_gold: int = 100
 var available_cards: Array = []
@@ -13,13 +13,20 @@ var player_data: PlayerData
 
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
+	setup_ui_theme()
 	load_shop_items()
 	update_display()
 	return_button.pressed.connect(_on_return_button_pressed)
 
+func  setup_ui_theme():
+	return_button.text = "Return to Map"
+	return_button.custom_minimum_size = Vector2(150, 40)
+
 func load_shop_items():
 	var card_db = get_node("/root/CardStuff")
 	var all_cards = ["attack", "blood_fire", "abundance"]
+	available_cards.clear()
+	available_relics.clear()
 	for i in range(3):
 		var random_card_id = all_cards[randi() % all_cards.size()]
 		var card_data = card_db.get_card(random_card_id)
@@ -28,6 +35,10 @@ func load_shop_items():
 				"data": card_data,
 				"price": calculate_card_price(card_data)
 			})
+	#load_sample_relics()
+#
+#func load_sample_relics():
+	
 
 func calculate_card_price(card_data: CardData) -> int:
 	var price = card_data.cost * 20

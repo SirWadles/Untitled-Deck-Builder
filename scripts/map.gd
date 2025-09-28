@@ -87,7 +87,7 @@ func show_rest_screen():
 		ui.show_rest_message("Rested and recovered all yout health!")
 	await  get_tree().create_timer(2.0).timeout
 	if get_tree() != null:
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
 
 func show_rest_message(message: String):
 	var label = Label.new()
