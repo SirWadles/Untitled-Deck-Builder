@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bko4w2uxm0wmx"
+path="res://.godot/imported/Lakeside battle (Wet melody).mp3-7e0b768aa0faf15c55a016108ea280f4.mp3str"
+
+[deps]
+
+source_file="res://sounds/songs/Lakeside battle (Wet melody).mp3"
+dest_files=["res://.godot/imported/Lakeside battle (Wet melody).mp3-7e0b768aa0faf15c55a016108ea280f4.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

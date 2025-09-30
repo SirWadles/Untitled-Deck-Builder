@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://csu04si0bluyt"
+path="res://.godot/imported/Ossatura - OPENER DRAFT 2(1).mp3-e1baaff3273370bf56b96e2376551be3.mp3str"
+
+[deps]
+
+source_file="res://sounds/songs/Ossatura - OPENER DRAFT 2(1).mp3"
+dest_files=["res://.godot/imported/Ossatura - OPENER DRAFT 2(1).mp3-e1baaff3273370bf56b96e2376551be3.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

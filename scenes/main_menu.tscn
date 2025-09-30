@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://hribpwcyk1y4" path="res://sounds/ui/ui_main_button_climb.wav" id="3_8ln24"]
 [ext_resource type="AudioStream" uid="uid://omssi1qfuq8h" path="res://sounds/ui/ui_main_button_invalid.wav" id="4_rtw2f"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="5_oa1go"]
-[ext_resource type="AudioStream" uid="uid://dg73sjmhhi0fu" path="res://sounds/songs/2. Prelude.mp3" id="6_rtw2f"]
+[ext_resource type="AudioStream" uid="uid://csu04si0bluyt" path="res://sounds/songs/Ossatura - OPENER DRAFT 2(1).mp3" id="6_oa1go"]
 [ext_resource type="FontFile" uid="uid://j3u6vwrixpc0" path="res://fonts/boldpixels/BoldPixels.otf" id="7_oa1go"]
 
 [node name="Control" type="Control"]
@@ -79,7 +79,7 @@ stream = ExtResource("4_rtw2f")
 stream = ExtResource("5_oa1go")
 
 [node name="MusicPlayer" type="AudioStreamPlayer2D" parent="Audio"]
-stream = ExtResource("6_rtw2f")
+stream = ExtResource("6_oa1go")
 
 [node name="InfoLabel" type="Label" parent="."]
 layout_mode = 0
@@ -94,6 +94,7 @@ that occur.
 ♡"
 
 [node name="Label" type="Label" parent="."]
+layout_mode = 0
 offset_left = 393.0
 offset_top = 518.0
 offset_right = 801.0

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://r3pdwvjdjv8o"
+path="res://.godot/imported/Placeholder battle.mp3-71a75513b798f159cc584fd965cad867.mp3str"
+
+[deps]
+
+source_file="res://sounds/songs/Placeholder battle.mp3"
+dest_files=["res://.godot/imported/Placeholder battle.mp3-71a75513b798f159cc584fd965cad867.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -36,7 +36,7 @@ func create_enemies():
 		"damage": 5,
 		"health": 35,
 		"texture": holy_one_texture,
-		"base_size": Vector2(128, 128),
+		"base_size": Vector2(150, 150),
 		"sprite_offset": Vector2(0, -35)
 	}
 

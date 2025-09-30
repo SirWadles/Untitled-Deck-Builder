@@ -8,7 +8,7 @@ class_name Enemy
 var enemy_name: String
 var max_health: int
 var current_health: int
-var battle_system: BattleSystem
+var battle_system: Node
 var is_targetable: bool = false
 var enemy_type: String
 var damage: int
@@ -18,7 +18,7 @@ signal enemy_clicked(enemy: Enemy)
 func _ready():
 	button.pressed.connect(_on_enemy_clicked)
 
-func setup(name: String, health: int, battle_ref: BattleSystem, enemy_data: Dictionary = {}):
+func setup(name: String, health: int, battle_ref: Node, enemy_data: Dictionary = {}):
 	enemy_name = name
 	max_health = health
 	current_health = health

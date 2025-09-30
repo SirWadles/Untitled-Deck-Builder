@@ -4,20 +4,30 @@ class_name Player
 @onready var health_label: Label = $HealthLabel
 @onready var energy_label: Label = $EnergyLabel
 @onready var target_button: Button = $TargetButton
+@onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 signal player_clicked(player: Player)
+signal attack_animation_finished
 
 var player_data: PlayerData
 var current_energy: int = 3
 var battle_system: BattleSystem = null
+var is_attacking: bool = false
 
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
+	setup_animations()
 	health_label.position = Vector2(5, -63)
 	energy_label.position = Vector2(5, -50)
 	target_button.visible = false
 	target_button.pressed.connect(_on_target_button_pressed)
 	update_display()
+
+func setup_animations():
+	var tile_sheet = preload("res://assets/attacks/Witch Attacking.png")
+	var sprite_frames = SpriteFrames.new()
+	sprite_frames.clear_all()
+	sprite_frames.add_animation("attack")
 
 func set_battle_system(system: BattleSystem):
 	battle_system = system
