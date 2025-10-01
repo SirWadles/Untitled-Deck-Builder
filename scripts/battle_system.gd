@@ -133,6 +133,8 @@ func play_card_on_player():
 		current_selected_card = null
 		if card_data.heal > 0:
 			player.heal(card_data.heal)
+			player.play_heal_animation()
+			await player.heal_animation_finished
 			print("Player healed")
 		hand.play_card(card_to_play, enemies[0] if enemies.size() > 0 else null)
 		reset_targeting()
@@ -167,6 +169,10 @@ func play_card_on_target(target: Enemy):
 		await player.attack_animation_finished
 		print("8. Attack animation finished")
 		#await get_tree().create_timer(0.01).timeout
+	elif card_data.card_id in ["abundance"]:
+		print("7. Playing heal animation...")
+		player.play_heal_animation()
+		await player.heal_animation_finished
 	print("9. Applying card effects...")
 	match card_data.card_id:
 		"attack", "blood_fire":

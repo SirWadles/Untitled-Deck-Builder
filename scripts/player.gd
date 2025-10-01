@@ -5,14 +5,17 @@ class_name Player
 @onready var energy_label: Label = $EnergyLabel
 @onready var target_button: Button = $TargetButton
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var healing_effect: AnimatedSprite2D = $HealingEffect
 
 signal player_clicked(player: Player)
 signal attack_animation_finished
+signal heal_animation_finished
 
 var player_data: PlayerData
 var current_energy: int = 3
 var battle_system: BattleSystem = null
 var is_attacking: bool = false
+var is_healing: bool = false
 
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
@@ -22,10 +25,14 @@ func _ready():
 	target_button.visible = false
 	target_button.pressed.connect(_on_target_button_pressed)
 	update_display()
+	if healing_effect:
+		healing_effect.visible = false
+		if not healing_effect.animation_finished.is_connected(_on_heal_effect_finished):
+			healing_effect.animation_finished.connect(_on_heal_effect_finished)
 
 func setup_animations():
 	var tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
-	var tile_sheet_heal = preload("res://assets/tilesheets/Healing Circle(2).png")
+	var tile_sheet_heal = preload("res://assets/tilesheets/Healing Circle(3).png")
 	var sprite_frames = SpriteFrames.new()
 	sprite_frames.clear_all()
 	var tile_width = 64
@@ -53,19 +60,27 @@ func setup_animations():
 		frame.atlas = tile_sheet
 		frame.region = Rect2(i * tile_width, 1 * tile_height, tile_width, tile_height)
 		sprite_frames.add_frame("attack", frame)
-	
-	sprite_frames.add_animation("heal")
-	sprite_frames.set_animation_speed("heal", 10)
-	sprite_frames.set_animation_loop("heal", false)
-	for i in range(8):
-		var frame = AtlasTexture.new()
-		frame.atlas = tile_sheet_heal
-		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
-		sprite_frames.add_frame("heal", frame)
-	
+	if not animated_sprite.animation_finished.is_connected(_on_animated_finished):
+		animated_sprite.animation_finished.connect(_on_animated_finished)
+	if healing_effect:
+		var heal_frames = SpriteFrames.new()
+		heal_frames.clear_all()
+		heal_frames.add_animation("heal")
+		heal_frames.set_animation_speed("heal", 5)
+		heal_frames.set_animation_loop("heal", false)
+		for i in range(8):
+			var frame = AtlasTexture.new()
+			frame.atlas = tile_sheet_heal
+			frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+			heal_frames.add_frame("heal", frame)
+		if healing_effect:
+			healing_effect.sprite_frames = heal_frames
+			healing_effect.position = Vector2(0, -3)
+			#healing_effect.z_index = -0.7
+	#animated_sprite.z_index = 1
 	animated_sprite.sprite_frames = sprite_frames
 	animated_sprite.play("idle")
-	if not animated_sprite.animation_finished.connect(_on_animated_finished):
+	if not animated_sprite.animation_finished.is_connected(_on_animated_finished):
 		animated_sprite.animation_finished.connect(_on_animated_finished)
 	print("Animation signal connected:", animated_sprite.animation_finished.is_connected(_on_animated_finished))
 	print("=== ANIMATION SETUP ===")
@@ -86,6 +101,15 @@ func play_attack_animation():
 func play_idle_animation():
 	animated_sprite.play("idle")
 
+func play_heal_animation():
+	if not is_healing:
+		is_healing = true
+		if healing_effect:
+			healing_effect.visible = true
+			healing_effect.play("heal")
+		else:
+			animated_sprite.play("heal")
+
 func _on_animated_finished():
 	print("   PLAYER: Animation finished -", animated_sprite.animation)
 	if animated_sprite.animation == "attack":
@@ -93,6 +117,14 @@ func _on_animated_finished():
 		attack_animation_finished.emit()
 		print("   PLAYER: Attack animation signal emitted")
 		play_idle_animation()
+
+func _on_heal_effect_finished():
+	if healing_effect:
+		healing_effect.visible = false
+		healing_effect.stop()
+	is_healing = false
+	heal_animation_finished.emit()
+		
 	#elif animated_sprite.animation == "hurt":
 		#play_idle_animation()
 
@@ -138,3 +170,7 @@ func update_display():
 func full_heal():
 	player_data.current_health = player_data.max_health + 4
 	update_display()
+
+func test_heal():
+	print("test heal")
+	play_heal_animation()

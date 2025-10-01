@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgaujfcebkwxn"
-path="res://.godot/imported/Healing Circle(2).png-1c53630e80b00365079a0d0b8db58fcb.ctex"
+uid="uid://dtf3u7uqs8h3e"
+path="res://.godot/imported/Healing Circle(3).png-c6e7890f1bc9fa53107754f3c68369a3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tilesheets/Healing Circle(2).png"
-dest_files=["res://.godot/imported/Healing Circle(2).png-1c53630e80b00365079a0d0b8db58fcb.ctex"]
+source_file="res://assets/tilesheets/Healing Circle(3).png"
+dest_files=["res://.godot/imported/Healing Circle(3).png-c6e7890f1bc9fa53107754f3c68369a3.ctex"]
 
 [params]
 

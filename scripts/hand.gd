@@ -6,12 +6,12 @@ class_name Hand
 
 var cards: Array[Card] = []
 var selected_card: Card = null
-var battle_system: BattleSystem
+var battle_system: Node
 
 signal card_played(card: Card, target: Enemy)
 
 func _ready():
-	battle_system = get_parent() as BattleSystem
+	battle_system = get_parent() as Node
 	_setup_container()
 
 func _setup_container():
