@@ -1,0 +1,79 @@
+[gd_scene load_steps=2 format=3 uid="uid://l73bycey0pa7"]
+
+[ext_resource type="Script" uid="uid://bvbasvhq7rhy2" path="res://scripts/audio_options.gd" id="1_luej2"]
+
+[node name="AudioOptions" type="CanvasLayer"]
+script = ExtResource("1_luej2")
+
+[node name="Master" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Label" type="Label" parent="Master"]
+layout_mode = 0
+offset_left = 350.0
+offset_top = 300.0
+offset_right = 405.0
+offset_bottom = 323.0
+text = "Master"
+
+[node name="MasterSlider" type="HSlider" parent="Master"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 305.0
+offset_right = 408.0
+offset_bottom = 321.0
+max_value = 3.0
+
+[node name="Music" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Label" type="Label" parent="Music"]
+offset_left = 350.0
+offset_top = 350.0
+offset_right = 396.0
+offset_bottom = 373.0
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="Music"]
+offset_left = 400.0
+offset_top = 355.0
+offset_right = 408.0
+offset_bottom = 371.0
+max_value = 3.0
+
+[node name="SFX" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Label" type="Label" parent="SFX"]
+offset_left = 350.0
+offset_top = 400.0
+offset_right = 390.0
+offset_bottom = 423.0
+text = "SFX"
+
+[node name="SFXSlider" type="HSlider" parent="SFX"]
+offset_left = 400.0
+offset_top = 405.0
+offset_right = 408.0
+offset_bottom = 421.0
+max_value = 3.0
+
+[node name="Buttons" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ApplyButton" type="Button" parent="Buttons"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="BackButton" type="Button" parent="Buttons"]
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="ButtonSound" type="AudioStreamPlayer2D" parent="Buttons"]

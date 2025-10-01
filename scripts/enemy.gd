@@ -56,9 +56,11 @@ func update_button_size():
 		button.position = Vector2(-40, -40)
 
 func take_damage(damage: int):
+	print("   ENEMY: Taking", damage, "damage. Current HP:", current_health)
 	current_health -= damage
 	if current_health < 0:
 		current_health = 0
+	print("   ENEMY: HP after damage:", current_health)
 	update_display()
 	var tween = create_tween()
 	tween.tween_property(self, "modulate", Color.RED, 0.1)

@@ -21,6 +21,7 @@ CardStuff="*res://scenes/cards/CardDatabase.gd"
 EnemyDatabase="*res://scripts/enemy_database.gd"
 GameManager="*res://scripts/game_manager.gd"
 PlayerDatabase="*res://scripts/player_database.gd"
+AudioManager="*res://audio_manager.gd"
 
 [display]
 

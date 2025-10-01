@@ -31,7 +31,8 @@ func setup_animations():
 	var tile_height = 64
 	var frames_per_row = 4
 	sprite_frames.add_animation("idle")
-	sprite_frames.set_animation_speed("idle", 1)
+	sprite_frames.set_animation_speed("idle", 5)
+	sprite_frames.set_animation_loop("idle", true)
 	for i in range(2):
 		var frame = AtlasTexture.new()
 		frame.atlas = tile_sheet
@@ -39,6 +40,7 @@ func setup_animations():
 		sprite_frames.add_frame("idle", frame)
 	sprite_frames.add_animation("attack")
 	sprite_frames.set_animation_speed("attack", 10)
+	sprite_frames.set_animation_loop("attack", false)
 	for i in range(2, frames_per_row):
 		var frame = AtlasTexture.new()
 		frame.atlas = tile_sheet
@@ -51,23 +53,36 @@ func setup_animations():
 		sprite_frames.add_frame("attack", frame)
 	animated_sprite.sprite_frames = sprite_frames
 	animated_sprite.play("idle")
-	animated_sprite.animation_finished.connect(_on_animated_finished)
-
+	if not animated_sprite.animation_finished.connect(_on_animated_finished):
+		animated_sprite.animation_finished.connect(_on_animated_finished)
+	print("Animation signal connected:", animated_sprite.animation_finished.is_connected(_on_animated_finished))
+	print("=== ANIMATION SETUP ===")
+	print("Idle frames:", sprite_frames.get_frame_count("idle"))
+	print("Attack frames:", sprite_frames.get_frame_count("attack"))
+	print("Current animation:", animated_sprite.animation)
+	print("Animation speed:", sprite_frames.get_animation_speed("attack"))
+	
 func play_attack_animation():
+	print("   PLAYER: Starting attack animation")
 	if not is_attacking:
 		is_attacking = true
 		animated_sprite.play("attack")
+		print("   PLAYER: Attack animation playing")
+	else:
+		print("   PLAYER: Already attacking, ignoring")
 
 func play_idle_animation():
 	animated_sprite.play("idle")
 
 func _on_animated_finished():
+	print("   PLAYER: Animation finished -", animated_sprite.animation)
 	if animated_sprite.animation == "attack":
 		is_attacking = false
 		attack_animation_finished.emit()
+		print("   PLAYER: Attack animation signal emitted")
 		play_idle_animation()
-	elif animated_sprite.animation == "hurt":
-		play_idle_animation()
+	#elif animated_sprite.animation == "hurt":
+		#play_idle_animation()
 
 func set_battle_system(system: BattleSystem):
 	battle_system = system

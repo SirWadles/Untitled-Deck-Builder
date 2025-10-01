@@ -143,38 +143,56 @@ func _on_enemy_clicked(enemy: Enemy):
 		play_card_on_target(enemy)
 
 func play_card_on_target(target: Enemy):
+	print("=== PLAY CARD ON TARGET START ===")
+	print("1. Current state:", current_state)
+	print("2. Selected card:", current_selected_card.card_data.card_name if current_selected_card else "None")
+	print("3. Target enemy:", target.enemy_name, "HP:", target.current_health)
 	if not player.can_play_card(current_selected_card.card_data.cost):
 		print("nope broke")
 		return
 	var card_data = current_selected_card.card_data
+	print("4. Card data:", card_data.card_name, "Damage:", card_data.damage)
 	player.spend_energy(card_data.cost)
+	print("5. Energy spent")
 	var card_to_play = current_selected_card
 	current_selected_card = null
 	hand.play_card(card_to_play, target)
+	print("6. Card played and consumed")
 	if card_data.card_id in ["attack", "blood_fire"]:
+		print("7. Playing attack animation...")
 		player.play_attack_animation()
 		await player.attack_animation_finished
-		await get_tree().create_timer(0.1).timeout
+		print("8. Attack animation finished")
+		#await get_tree().create_timer(0.01).timeout
+	print("9. Applying card effects...")
 	match card_data.card_id:
 		"attack", "blood_fire":
 			if card_data.damage > 0:
+				print("10. Dealing", card_data.damage, "damage to", target.enemy_name)
 				target.take_damage(card_data.damage)
+				print("11. Enemy HP after damage:", target.current_health)
 			elif card_data.heal < 0:
 				target.take_damage(-card_data.heal)
 		"abundance", "heal":
 			if card_data.heal > 0:
 				player.heal(card_data.heal)
-	print("Resetting targeting...")
+	print("12. Resetting targeting...")
 	reset_targeting()
 	current_state = BattleState.PLAYER_TURN
+	print("13. Current state set to:", current_state)
 	if hand:
 		hand.set_cards_selectable(true)
+		print("14. Cards set to selectable")
+	print("=== PLAY CARD ON TARGET END ===")
 
 func reset_targeting():
+	print("   RESET TARGETING: Starting...")
 	for enemy in enemies:
+		print("   Resetting enemy:", enemy.enemy_name)
 		enemy.set_targetable(false)
 	set_player_targetable(false)
 	is_player_targetable = false
+	print("   RESET TARGETING: Complete. is_player_targetable:", is_player_targetable)
 
 func _on_card_played(card: Card, target: Enemy):
 	print("Played " + card.card_data.card_name + " on " + target.enemy_name)

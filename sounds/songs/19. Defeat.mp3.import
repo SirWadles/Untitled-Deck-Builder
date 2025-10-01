@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/19. Defeat.mp3-e95e1eaab591b7ad58f2b2200926b4
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0

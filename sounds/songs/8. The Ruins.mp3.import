@@ -12,7 +12,7 @@ dest_files=["res://.godot/imported/8. The Ruins.mp3-31dabd8b0b1a1421987e7f445ddd
 
 [params]
 
-loop=false
+loop=true
 loop_offset=0
 bpm=0
 beat_count=0
