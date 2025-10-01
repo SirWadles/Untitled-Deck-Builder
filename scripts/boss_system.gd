@@ -26,6 +26,9 @@ enum BattleState {
 }
 
 func _ready():
+	win_song.bus = "Music"
+	lose_song.bus = "Music"
+	music_player.bus = "Music"
 	if hand:
 		hand.card_played.connect(_on_card_played)
 	create_boss_enemies()

@@ -5,6 +5,7 @@ extends Control
 @onready var status_label: Label = $StatusLabel
 
 func _ready():
+	end_turn_sound.bus = "SFX"
 	if end_turn_button:
 		end_turn_button.pressed.connect(_on_end_turn_pressed)
 		end_turn_button.text = "End Turn"

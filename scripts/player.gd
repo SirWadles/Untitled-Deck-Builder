@@ -25,19 +25,21 @@ func _ready():
 
 func setup_animations():
 	var tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
+	var tile_sheet_heal = preload("res://assets/tilesheets/Healing Circle(2).png")
 	var sprite_frames = SpriteFrames.new()
 	sprite_frames.clear_all()
 	var tile_width = 64
 	var tile_height = 64
 	var frames_per_row = 4
 	sprite_frames.add_animation("idle")
-	sprite_frames.set_animation_speed("idle", 5)
+	sprite_frames.set_animation_speed("idle", 1.5)
 	sprite_frames.set_animation_loop("idle", true)
 	for i in range(2):
 		var frame = AtlasTexture.new()
 		frame.atlas = tile_sheet
 		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
 		sprite_frames.add_frame("idle", frame)
+	
 	sprite_frames.add_animation("attack")
 	sprite_frames.set_animation_speed("attack", 10)
 	sprite_frames.set_animation_loop("attack", false)
@@ -51,6 +53,16 @@ func setup_animations():
 		frame.atlas = tile_sheet
 		frame.region = Rect2(i * tile_width, 1 * tile_height, tile_width, tile_height)
 		sprite_frames.add_frame("attack", frame)
+	
+	sprite_frames.add_animation("heal")
+	sprite_frames.set_animation_speed("heal", 10)
+	sprite_frames.set_animation_loop("heal", false)
+	for i in range(8):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet_heal
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("heal", frame)
+	
 	animated_sprite.sprite_frames = sprite_frames
 	animated_sprite.play("idle")
 	if not animated_sprite.animation_finished.connect(_on_animated_finished):

@@ -30,6 +30,9 @@ func _ready():
 		hand.card_played.connect(_on_card_played)
 	create_enemies()
 	start_player_turn()
+	win_song.bus = "Music"
+	lose_song.bus = "Music"
+	music_player.bus = "Music"
 	win_label.visible = false
 	lose_label.visible = false
 	music_player.play()
