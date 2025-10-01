@@ -48,14 +48,14 @@ func card_selected(card: Card):
 	selected_card = card
 	battle_system.on_card_selected(card)
 
-func play_card(target: Enemy):
-	if selected_card:
-		card_played.emit(selected_card, target)
-		cards.erase(selected_card)
+func play_card(card: Card, target: Enemy):
+	if card:
+		card_played.emit(card, target)
+		cards.erase(card)
 		selected_card.queue_free()
-		selected_card = null
 		play_sound.play()
-		
+		if selected_card == card:
+			selected_card = null
 
 func get_card_count() -> int:
 	return cards.size()

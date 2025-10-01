@@ -121,13 +121,18 @@ func _input(event):
 
 func play_card_on_player():
 	if current_selected_card:
+		if not player.can_play_card(current_selected_card.card_data.cost):
+			print("nope broke")
+			return
 		var card_data = current_selected_card.card_data
 		player.spend_energy(card_data.cost)
+		var card_to_play = current_selected_card
+		current_selected_card = null
 		if card_data.heal > 0:
 			player.heal(card_data.heal)
 			print("Player healed")
+		hand.play_card(card_to_play, enemies[0] if enemies.size() > 0 else null)
 		reset_targeting()
-		hand.play_card(enemies[0] if enemies.size() > 0 else null)
 		current_selected_card = null
 		current_state = BattleState.PLAYER_TURN
 		if hand:
@@ -138,8 +143,18 @@ func _on_enemy_clicked(enemy: Enemy):
 		play_card_on_target(enemy)
 
 func play_card_on_target(target: Enemy):
+	if not player.can_play_card(current_selected_card.card_data.cost):
+		print("nope broke")
+		return
 	var card_data = current_selected_card.card_data
 	player.spend_energy(card_data.cost)
+	var card_to_play = current_selected_card
+	current_selected_card = null
+	hand.play_card(card_to_play, target)
+	if card_data.card_id in ["attack", "blood_fire"]:
+		player.play_attack_animation()
+		await player.attack_animation_finished
+		await get_tree().create_timer(0.1).timeout
 	match card_data.card_id:
 		"attack", "blood_fire":
 			if card_data.damage > 0:
@@ -149,11 +164,8 @@ func play_card_on_target(target: Enemy):
 		"abundance", "heal":
 			if card_data.heal > 0:
 				player.heal(card_data.heal)
+	print("Resetting targeting...")
 	reset_targeting()
-	hand.play_card(target)
-	for enemy in enemies:
-		enemy.set_targetable(false)
-	current_selected_card = null
 	current_state = BattleState.PLAYER_TURN
 	if hand:
 		hand.set_cards_selectable(true)
@@ -212,6 +224,7 @@ func start_enemy_turn():
 		ui.update_status("Enemy Turn")
 	for enemy in enemies:
 		if enemy.current_health > 0:
+			#player.play_hurt_animation()
 			player.take_damage(enemy.damage)
 			print(enemy.enemy_name + "attack for " + str(enemy.damage))
 	await get_tree().create_timer(1.0).timeout
@@ -221,6 +234,7 @@ func play_area_attack(card: Card):
 	if card and player.can_play_card(card.card_data.cost):
 		var card_data = card.card_data
 		player.spend_energy(card_data.cost)
+		hand.play_card(card, enemies[0] if enemies.size() > 0 else null)
 		var living_enemies = 0
 		for enemy in enemies:
 			if enemy.current_health > 0:
@@ -231,7 +245,6 @@ func play_area_attack(card: Card):
 		complete_area_play_card(card)
 
 func complete_area_play_card(card: Card):
-	hand.play_card(enemies[0] if enemies.size() > 0 else null)
 	current_selected_card = null
 	current_state = BattleState.PLAYER_TURN
 	if hand:

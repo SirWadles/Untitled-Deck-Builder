@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dx30iaeld4xxi"
-path="res://.godot/imported/Witch Attacking.png-b14af9c70430aec2f0272a1caca653d9.ctex"
+uid="uid://d4c0krj02ib86"
+path="res://.godot/imported/Witch TileSheet(1).png-2129f32dcce8dbaa591c566f2d8b487e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/attacks/Witch Attacking.png"
-dest_files=["res://.godot/imported/Witch Attacking.png-b14af9c70430aec2f0272a1caca653d9.ctex"]
+source_file="res://assets/tilesheets/Witch TileSheet(1).png"
+dest_files=["res://.godot/imported/Witch TileSheet(1).png-2129f32dcce8dbaa591c566f2d8b487e.ctex"]
 
 [params]
 

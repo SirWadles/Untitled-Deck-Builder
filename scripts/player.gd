@@ -24,10 +24,50 @@ func _ready():
 	update_display()
 
 func setup_animations():
-	var tile_sheet = preload("res://assets/attacks/Witch Attacking.png")
+	var tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
 	var sprite_frames = SpriteFrames.new()
 	sprite_frames.clear_all()
+	var tile_width = 64
+	var tile_height = 64
+	var frames_per_row = 4
+	sprite_frames.add_animation("idle")
+	sprite_frames.set_animation_speed("idle", 1)
+	for i in range(2):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("idle", frame)
 	sprite_frames.add_animation("attack")
+	sprite_frames.set_animation_speed("attack", 10)
+	for i in range(2, frames_per_row):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("attack", frame)
+	for i in range(frames_per_row):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 1 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("attack", frame)
+	animated_sprite.sprite_frames = sprite_frames
+	animated_sprite.play("idle")
+	animated_sprite.animation_finished.connect(_on_animated_finished)
+
+func play_attack_animation():
+	if not is_attacking:
+		is_attacking = true
+		animated_sprite.play("attack")
+
+func play_idle_animation():
+	animated_sprite.play("idle")
+
+func _on_animated_finished():
+	if animated_sprite.animation == "attack":
+		is_attacking = false
+		attack_animation_finished.emit()
+		play_idle_animation()
+	elif animated_sprite.animation == "hurt":
+		play_idle_animation()
 
 func set_battle_system(system: BattleSystem):
 	battle_system = system
