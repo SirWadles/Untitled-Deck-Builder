@@ -12,7 +12,7 @@ var discard_pile: Array[String] = []
 var exhause_pile: Array[String] = []
 var hand: Array[String] = []
 
-var relics: Array[String] = []
+var relics: Array = []
 var battle_rewards: Array = []
 
 func _ready():
@@ -74,7 +74,7 @@ func add_gold(amount: int):
 func add_card_to_deck(card_id: String):
 	deck.append(card_id)
 
-func add_relic(relic_id: String):
+func add_relic(relic_id: Dictionary):
 	relics.append(relic_id)
 
 func full_heal():

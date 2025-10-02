@@ -34,7 +34,7 @@ func create_enemies():
 		"name": "Holy One",
 		"type": "boss_1",
 		"damage": 5,
-		"health": 35,
+		"health": 65,
 		"texture": holy_one_texture,
 		"base_size": Vector2(150, 150),
 		"sprite_offset": Vector2(0, -35)

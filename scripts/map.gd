@@ -11,9 +11,16 @@ var player_path: Array[String] = []
 var available_nodes: Array[String] = []
 
 func _ready():
+	add_to_group("map")
 	create_map()
 	draw_paths()
-	available_nodes.append("start")
+	var map_state = get_node("/root/MapState")
+	if map_state:
+		available_nodes = map_state.get_available_nodes()
+		for visited_id in map_state.get_visited_nodes():
+			var node = get_node_by_id(visited_id)
+			if node:
+				node.set_visited()
 	update_node_states()
 
 func create_map():
@@ -30,7 +37,7 @@ func create_map():
 		"connections": ["battle3"]},
 		{"id": "treasure1", "type": MapNode.NodeType.TREASURE, "pos": Vector2(500, 400), \
 		"connections": ["battle3"]},
-		{"id": "battle3", "type": MapNode.NodeType.BATTLE, "pos": Vector2(700, 300), \
+		{"id": "battle3", "type": MapNode.NodeType.BOSS, "pos": Vector2(700, 300), \
 		"connections": []}
 	]
 	for node_data in nodes_data:
@@ -71,6 +78,9 @@ func _on_map_node_pressed(node: MapNode):
 		node.set_visited()
 		button_sound.play()
 		update_available_nodes(node)
+		var map_state = get_node("/root/MapState")
+		if map_state:
+			map_state.mark_node_visited(node.node_id)
 		await get_tree().create_timer(1.5).timeout
 		load_node_scene(node)
 

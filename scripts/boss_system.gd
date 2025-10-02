@@ -245,7 +245,7 @@ func start_enemy_turn():
 		ui.update_status("BOSS TURN - Survive!")
 	for enemy in enemies:
 		if enemy.current_health > 0:
-			if enemy.enemy_type == "boss_1" and randi() % 3 == 0:
+			if enemy.enemy_type == "boss_1" and randi() % 2 == 0:
 				player.take_damage(enemy.damage + 3)
 				print("special")
 			else:

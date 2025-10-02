@@ -1,10 +1,11 @@
 extends Control
 class_name Shop
 
-@onready var gold_label: Label = $Header/GoldLabel
-@onready var card_container: HBoxContainer = $Content/CardsPanel/CardsContainer
-@onready var relic_container: HBoxContainer = $Content/RelicsPanel/RelicContainer
-@onready var return_button: Button = $Footer/ReturnButton
+@onready var gold_label: Label = $MarginContainer/VBoxContainer/Header/GoldLabel
+@onready var tab_container: TabContainer = $MarginContainer/VBoxContainer/TabContainer
+@onready var cards_grid: GridContainer = $MarginContainer/VBoxContainer/TabContainer/Cards/ScrollContainer/CardsGrid
+@onready var relic_grid: GridContainer = $MarginContainer/VBoxContainer/TabContainer/Relics/ScrollContainer/RelicGrid
+@onready var return_button: Button = $MarginContainer/VBoxContainer/Footer/ReturnButton
 
 var player_gold: int = 100
 var available_cards: Array = []
@@ -21,6 +22,16 @@ func _ready():
 func  setup_ui_theme():
 	return_button.text = "Return to Map"
 	return_button.custom_minimum_size = Vector2(150, 40)
+	
+	if cards_grid is GridContainer:
+		cards_grid.columns = 3
+	if relic_grid is GridContainer:
+		relic_grid.columns = 3
+	
+	cards_grid.add_theme_constant_override("h_separation", 10)
+	cards_grid.add_theme_constant_override("v_separation", 10)
+	relic_grid.add_theme_constant_override("h_separation", 10)
+	relic_grid.add_theme_constant_override("v_separation", 10)
 
 func load_shop_items():
 	var card_db = get_node("/root/CardStuff")
@@ -56,20 +67,20 @@ func calculate_card_price(card_data: CardData) -> int:
 
 func update_display():
 	gold_label.text = "Gold: " + str(player_data.gold) + "g"
-	for child in card_container.get_children():
+	for child in cards_grid.get_children():
 		child.queue_free()
-	for child in relic_container.get_children():
+	for child in relic_grid.get_children():
 		child.queue_free()
 	for card_item in available_cards:
 		var shop_card = preload("res://scenes/shop_card.tscn").instantiate()
-		card_container.add_child(shop_card)
+		cards_grid.add_child(shop_card)
 		shop_card.setup(card_item["data"], card_item["price"])
 		shop_card.purchased.connect(_on_card_purchased)
-	#for relic_item in available_relics:
-		#var shop_relic = preload("res://scenes/shop_relic.tscn").instantiate()
-		#relic_container.add_child(shop_relic)
-		#shop_relic.setup(relic_item)
-		#shop_relic.purchased.connect(_on_relic_purchased)
+	for relic_item in available_relics:
+		var shop_relic = preload("res://scenes/shop_relic.tscn").instantiate()
+		relic_grid.add_child(shop_relic)
+		shop_relic.setup(relic_item)
+		shop_relic.purchased.connect(_on_relic_purchased)
 
 func _on_card_purchased(card_data: CardData, price: int):
 	if player_data.gold >= price:
@@ -81,12 +92,14 @@ func _on_card_purchased(card_data: CardData, price: int):
 	else:
 		show_purchased_message("Not Enough Gold!")
 
-#func _on_relic_purchased(relic_data: Dictionary, price: int):
-	#if player_data.gold >= price:
-		#player_data.gold -= price
-		#show_purchased_message("Purchased " + relic_data["name"])
-	#else:
-		#show_error_message("Not Enough Gold!")
+func _on_relic_purchased(relic_data: Dictionary, price: int):
+	if player_data.gold >= price:
+		player_data.gold -= price
+		player_data.add_relic(relic_data)
+		update_display()
+		show_purchased_message("Purchased " + relic_data["name"])
+	else:
+		show_error_message("Not Enough Gold!")
 
 func show_purchased_message(message: String):
 	var message_label = Label.new()
