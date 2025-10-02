@@ -66,7 +66,7 @@ func setup_animations():
 		var heal_frames = SpriteFrames.new()
 		heal_frames.clear_all()
 		heal_frames.add_animation("heal")
-		heal_frames.set_animation_speed("heal", 5)
+		heal_frames.set_animation_speed("heal", 16)
 		heal_frames.set_animation_loop("heal", false)
 		for i in range(8):
 			var frame = AtlasTexture.new()
@@ -75,7 +75,8 @@ func setup_animations():
 			heal_frames.add_frame("heal", frame)
 		if healing_effect:
 			healing_effect.sprite_frames = heal_frames
-			healing_effect.position = Vector2(0, -3)
+			healing_effect.position = Vector2(0, -7)
+			healing_effect.scale = Vector2(1.2, 1.1)
 			#healing_effect.z_index = -0.7
 	#animated_sprite.z_index = 1
 	animated_sprite.sprite_frames = sprite_frames
@@ -173,4 +174,7 @@ func full_heal():
 
 func test_heal():
 	print("test heal")
+	modulate = Color.GREEN
 	play_heal_animation()
+	await heal_animation_finished
+	modulate = Color.WHITE

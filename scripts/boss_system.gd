@@ -136,6 +136,7 @@ func play_card_on_player():
 		current_state = BattleState.PLAYER_TURN
 		if hand:
 			hand.set_cards_selectable(true)
+		check_battle_end()
 
 func _on_enemy_clicked(enemy: Enemy):
 	if current_state == BattleState.TARGETING and current_selected_card:
@@ -187,6 +188,7 @@ func play_card_on_target(target: Enemy):
 		hand.set_cards_selectable(true)
 		print("14. Cards set to selectable")
 	print("=== PLAY CARD ON TARGET END ===")
+	check_battle_end()
 
 func reset_targeting():
 	for enemy in enemies:

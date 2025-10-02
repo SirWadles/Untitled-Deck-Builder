@@ -40,8 +40,10 @@ func _ready():
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
 	var enemy_types = enemy_database.get_enemy_types()
+	enemy_types = enemy_types.filter(func(enemy_type):
+		return enemy_type != "boss_1")
 	if enemy_types.size() < 1:
-		enemy_types = ["slime", "boss_1"]
+		enemy_types = ["slime", "tree"]
 		if enemy_types.size() < 2:
 			enemy_types.append("slime")
 	
@@ -121,6 +123,8 @@ func _input(event):
 		var player_rect = Rect2(player.global_position - Vector2(50, 50), Vector2(100, 100))
 		if player_rect.has_point(mouse_pos):
 			play_card_on_player()
+	if event.is_action_pressed("ui_accept"):
+		player.test_heal()
 
 func play_card_on_player():
 	if current_selected_card:
@@ -142,6 +146,7 @@ func play_card_on_player():
 		current_state = BattleState.PLAYER_TURN
 		if hand:
 			hand.set_cards_selectable(true)
+		check_battle_end()
 
 func _on_enemy_clicked(enemy: Enemy):
 	if current_state == BattleState.TARGETING and current_selected_card:
@@ -193,6 +198,7 @@ func play_card_on_target(target: Enemy):
 		hand.set_cards_selectable(true)
 		print("14. Cards set to selectable")
 	print("=== PLAY CARD ON TARGET END ===")
+	check_battle_end()
 
 func reset_targeting():
 	print("   RESET TARGETING: Starting...")

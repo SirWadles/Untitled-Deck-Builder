@@ -47,3 +47,11 @@ func set_visited():
 	visited = true
 	disabled = true
 	modulate = Color.GRAY
+
+func set_available():
+	disabled = false
+	modulate = Color.WHITE
+
+func set_unavailable():
+	disabled = true
+	modulate = Color.DIM_GRAY

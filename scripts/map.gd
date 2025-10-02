@@ -8,10 +8,13 @@ class_name Map
 
 var current_node: MapNode = null
 var player_path: Array[String] = []
+var available_nodes: Array[String] = []
 
 func _ready():
 	create_map()
 	draw_paths()
+	available_nodes.append("start")
+	update_node_states()
 
 func create_map():
 	var nodes_data = [
@@ -61,13 +64,38 @@ func get_node_by_id(node_id: String) -> MapNode:
 	return null
 
 func _on_map_node_pressed(node: MapNode):
-	if current_node == null or node.node_id in current_node.connections:
+	if node.node_id in available_nodes and not node.visited:
+		disable_all_nodes()
 		current_node = node
 		player_path.append(node.node_id)
 		node.set_visited()
 		button_sound.play()
+		update_available_nodes(node)
 		await get_tree().create_timer(1.5).timeout
 		load_node_scene(node)
+
+func update_available_nodes(selected_node: MapNode):
+	available_nodes.clear()
+	for connection_id in selected_node.connections:
+		available_nodes.append(connection_id)
+
+func update_node_states():
+	for node in map_nodes.get_children():
+		if node.visited:
+			node.set_visited()
+		elif node.node_id in available_nodes:
+			node.set_available()
+		else:
+			node.set_unavailable()
+
+func disable_all_nodes():
+	for node in map_nodes.get_children():
+		node.disabled = true
+
+func enable_available_nodes():
+	for node in map_nodes.get_children():
+		if node.node_id in available_nodes and not node.visited:
+			node.disabled = false
 
 func load_node_scene(node: MapNode):
 	match node.node_type:
@@ -82,15 +110,18 @@ func load_node_scene(node: MapNode):
 		MapNode.NodeType.BOSS:
 			get_tree().change_scene_to_file("res://scenes/battle/boss_battle.tscn")
 
+func _on_return_to_map():
+	update_node_states()
+	enable_available_nodes()
+
 func show_rest_screen():
 	print("Rest")
 	var player_data = get_node("/root/PlayerDatabase")
 	player_data.full_heal()
 	if ui and ui.has_method("show_rest_message"):
-		ui.show_rest_message("Rested and recovered all yout health!")
+		ui.show_rest_message("Rested and recovered all your health!")
 	await  get_tree().create_timer(2.0).timeout
-	if get_tree() != null:
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
+	_on_return_to_map()
 
 func show_rest_message(message: String):
 	var label = Label.new()
@@ -111,8 +142,7 @@ func show_treasure_screen():
 			player_data.add_gold(gold_amount)
 			show_treasure_message("Found " + str(gold_amount) + " gold!")
 	await  get_tree().create_timer(2.0).timeout
-	if get_tree() != null:
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
+	_on_return_to_map()
 
 func show_treasure_message(message: String):
 	var message_label = Label.new()
