@@ -40,7 +40,7 @@ position = Vector2(849, 413)
 scale = Vector2(1.5, 1.5)
 
 [node name="Hand" parent="." instance=ExtResource("5_muimb")]
-position = Vector2(400, 550)
+position = Vector2(400, 560)
 scale = Vector2(2, 2)
 
 [node name="UI" type="Control" parent="."]

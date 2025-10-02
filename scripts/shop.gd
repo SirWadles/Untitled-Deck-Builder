@@ -14,6 +14,11 @@ var player_data: PlayerData
 
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
+	print("Gold label exists: ", gold_label != null)
+	print("Tab container exists: ", tab_container != null)
+	print("Cards grid exists: ", cards_grid != null)
+	print("Relic grid exists: ", relic_grid != null)
+	print("Return button exists: ", return_button != null)
 	setup_ui_theme()
 	load_shop_items()
 	update_display()
@@ -23,10 +28,27 @@ func  setup_ui_theme():
 	return_button.text = "Return to Map"
 	return_button.custom_minimum_size = Vector2(150, 40)
 	
+	var cards_scroll = cards_grid.get_parent() as ScrollContainer
+	var relics_scroll = relic_grid.get_parent() as ScrollContainer
+	
+	if cards_scroll:
+		cards_scroll.custom_minimum_size = Vector2(800, 400)
+		cards_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cards_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	if relics_scroll:
+		relics_scroll.custom_minimum_size = Vector2(800, 400)
+		relics_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		relics_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if cards_grid is GridContainer:
 		cards_grid.columns = 3
+		cards_grid.custom_minimum_size = Vector2(800, 400)
+		cards_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cards_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if relic_grid is GridContainer:
 		relic_grid.columns = 3
+		relic_grid.custom_minimum_size = Vector2(800, 400)
+		relic_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		relic_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	
 	cards_grid.add_theme_constant_override("h_separation", 10)
 	cards_grid.add_theme_constant_override("v_separation", 10)
@@ -38,7 +60,8 @@ func load_shop_items():
 	var all_cards = ["attack", "blood_fire", "abundance"]
 	available_cards.clear()
 	available_relics.clear()
-	for i in range(3):
+	print("Loading shop items...")
+	for i in range(6):
 		var random_card_id = all_cards[randi() % all_cards.size()]
 		var card_data = card_db.get_card(random_card_id)
 		if card_data:
@@ -46,14 +69,18 @@ func load_shop_items():
 				"data": card_data,
 				"price": calculate_card_price(card_data)
 			})
+			print("Added card: ", card_data.card_name)
 	load_sample_relics()
+	print("Available cards: ", available_cards.size())
+	print("Available relics: ", available_relics.size())
 
 func load_sample_relics():
 	available_relics.append({
 		"name": "Health Band",
-		"description": "Heals 5 HP after combat",
+		"description": "Heals 5 HP after combat ",
 		"price": 75,
-		"icon": null
+		"icon": null,
+		"id": "health_band"
 	})
 	
 
@@ -105,7 +132,7 @@ func show_purchased_message(message: String):
 	var message_label = Label.new()
 	add_child(message_label)
 	message_label.text = message
-	message_label.position = Vector2(size.x / 2 -100, size.y / 2)
+	message_label.position = Vector2(size.x / 2 -100, 550)
 	message_label.add_theme_font_size_override("font_size", 20)
 	await get_tree().create_timer(2.0).timeout
 	message_label.queue_free()

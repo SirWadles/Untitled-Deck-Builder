@@ -14,7 +14,7 @@ func create_cards():
 	cards["attack"] = CardData.new(
 		"attack",
 		"Death Grip",
-		"5 Damage to One Enemy",
+		"5 DMG to One",
 		1, #cost
 		5, #damage
 		0, #defense
@@ -25,7 +25,7 @@ func create_cards():
 	cards["blood_fire"] = CardData.new(
 		"blood_fire",
 		"Blood Fire",
-		"6 Damage to All",
+		"6 DMG to All",
 		1,
 		6,
 		0,

@@ -24,6 +24,7 @@ PlayerDatabase="*res://scripts/player_database.gd"
 AudioManager="*res://audio_manager.gd"
 Settings="*res://settings.gd"
 MapState="*res://scripts/map_state.gd"
+RelicManager="*res://scripts/relic_manager.gd"
 
 [display]
 
