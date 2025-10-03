@@ -110,3 +110,14 @@ CAUSE AN ERROR!!! QUIT DOES QUIT"
 [node name="AudioOptions" parent="." instance=ExtResource("8_tbmy8")]
 offset = Vector2(-50, -70)
 transform = Transform2D(1, 0, 0, 1, -50, -70)
+
+[node name="InfoLabel2" type="Label" parent="."]
+offset_left = 878.0
+offset_top = 187.0
+offset_right = 990.0
+offset_bottom = 230.0
+scale = Vector2(1.3, 1.3)
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 19
+text = "Audio works. 
+Check options"

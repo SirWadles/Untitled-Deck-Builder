@@ -22,7 +22,7 @@ func reset_to_default():
 	max_health = 50
 	current_health = max_health
 	max_energy = 3
-	gold = 10000
+	gold = 150
 	deck = ["attack", "attack", "blood_fire", "attack", "abundance"]
 	discard_pile = []
 	exhause_pile = []

@@ -12,6 +12,8 @@ class_name BossSystem
 @onready var lose_label = $LoseLabel
 @onready var lose_song = $LoseSong
 @onready var music_player = $MusicPlayer
+@onready var play_again_button: Button = $PlayAgainButton
+@onready var quit_button: Button = $QuitButton
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
@@ -36,6 +38,12 @@ func _ready():
 	win_label.visible = false
 	lose_label.visible = false
 	music_player.play()
+	if play_again_button:
+		play_again_button.pressed.connect(_on_play_again)
+		play_again_button.visible = false
+	if quit_button:
+		quit_button.pressed.connect(_on_quit_button)
+		quit_button.visible = false
 
 func create_boss_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -68,7 +76,6 @@ func apply_relic_effects():
 	var start_effects = relic_manager.get_combat_start_effects()
 	if start_effects["max_energy"] > 0:
 		var crystal_count = relic_manager.get_relic_count("energy_crystal")
-		player.player_data.max_energy = player.player_data.get_max_energy()
 		player.current_energy = player.player_data.max_energy
 	player.update_display()
 
@@ -104,7 +111,10 @@ func start_targeting(card: Card):
 		if ui and ui.has_method("update_status"):
 			ui.update_status("Select enemy to attack")
 	elif card_id == "blood_fire":
-		play_area_attack(card)
+		for enemy in enemies:
+			if enemy.current_health > 0:
+				enemy.set_targetable(true)
+		is_player_targetable = false
 	elif card_id in ["abundance", "heal"]:
 		set_player_targetable(true)
 		is_player_targetable = true
@@ -135,11 +145,16 @@ func play_card_on_player():
 		player.spend_energy(card_data.cost)
 		var card_to_play = current_selected_card
 		current_selected_card = null
+		var relic_manager = get_node("/root/RelicManager")
+		var card_modifications = relic_manager.modify_card_play(card_data)
 		if card_data.heal > 0:
-			player.heal(card_data.heal)
-			print("Player healed")
+			var actual_heal = card_data.heal + card_modifications["extra_heal"]
+			player.heal(actual_heal)
 			player.play_heal_animation()
 			await player.heal_animation_finished
+			print("Player healed")
+			if card_modifications["extra_heal"] > 0:
+				print("heal boosted " + str(card_modifications["extra_heal"]))
 		hand.play_card(card_to_play, enemies[0] if enemies.size() > 0 else null)
 		reset_targeting()
 		current_selected_card = null
@@ -180,16 +195,27 @@ func play_card_on_target(target: Enemy):
 		await player.heal_animation_finished
 	print("9. Applying card effects...")
 	match card_data.card_id:
-		"attack", "blood_fire":
+		"attack":
 			if card_data.damage > 0:
 				print("10. Dealing", card_data.damage, "damage to", target.enemy_name)
 				target.take_damage(card_data.damage)
 				print("11. Enemy HP after damage:", target.current_health)
 			elif card_data.heal < 0:
 				target.take_damage(-card_data.heal)
+		"blood_fire":
+			var living_enemies = 0
+			for enemy in enemies:
+				if enemy.current_health > 0:
+					enemy.take_damage(card_data.damage)
+					living_enemies += 1
+			if living_enemies > 0:
+				print("blood fire hit ", living_enemies, " enemies")
 		"abundance", "heal":
 			if card_data.heal > 0:
-				player.heal(card_data.heal)
+				if player.current_health > 50:
+					pass
+				else:
+					player.heal(card_data.heal)
 	print("12. Resetting targeting...")
 	reset_targeting()
 	current_state = BattleState.PLAYER_TURN
@@ -219,24 +245,33 @@ func check_battle_end():
 			all_defeated = false
 			break
 	if all_defeated:
+		show_end_screen(true)
+	else:
+		var player_data = get_node("/root/PlayerDatabase")
+		if player_data.current_health <= 0:
+			show_end_screen(false)
+
+func show_end_screen(victory: bool):
+	music_player.stop()
+	if victory:
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.add_gold(100)
 		player_data.max_health += 10
 		apply_combat_end_relic_effects()
-		music_player.stop()
 		win_label.visible = true
 		win_song.play()
 		print("Win")
-		await  get_tree().create_timer(5.0).timeout
-		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
+	#await  get_tree().create_timer(5.0).timeout
+	#get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
 	else:
 		var player_data = get_node("/root/PlayerDatabase")
-		if player_data.current_health <= 0:
-			music_player.stop()
-			lose_label.visible = true
-			lose_song.play()
-			await get_tree().create_timer(10.0).timeout
-			game_over()
+		player_data.reset_to_default()
+		lose_label.visible = true
+		lose_song.play()
+	if play_again_button:
+		play_again_button.visible = true
+	if quit_button:
+		quit_button.visible = true
 
 func apply_combat_end_relic_effects():
 	var relic_manager = get_node("/root/RelicManager")
@@ -270,7 +305,8 @@ func start_enemy_turn():
 				print("special")
 			else:
 				player.take_damage(enemy.damage)
-	await get_tree().create_timer(3.0).timeout
+	check_battle_end()
+	await get_tree().create_timer(1.0).timeout
 	start_player_turn()
 
 func play_area_attack(card: Card):
@@ -295,3 +331,12 @@ func complete_area_play_card(card: Card):
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your turn - Select a card")
 	check_battle_end()
+
+func _on_play_again():
+	if win_label.visible:
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
+	else:
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
+
+func _on_quit_button():
+	get_tree().quit()

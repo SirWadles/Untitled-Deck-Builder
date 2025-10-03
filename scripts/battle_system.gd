@@ -12,6 +12,8 @@ class_name BattleSystem
 @onready var lose_label = $LoseLabel
 @onready var lose_song = $LoseSong
 @onready var music_player = $MusicPlayer
+@onready var play_again_button: Button = $PlayAgainButton
+@onready var quit_button: Button = $QuitButton
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
@@ -36,6 +38,12 @@ func _ready():
 	win_label.visible = false
 	lose_label.visible = false
 	music_player.play()
+	if play_again_button:
+		play_again_button.pressed.connect(_on_play_again)
+		play_again_button.visible = false
+	if quit_button:
+		quit_button.pressed.connect(_on_quit_button)
+		quit_button.visible = false
 
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -68,7 +76,7 @@ func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
 	apply_relic_effects()
 	player.start_turn()
-	draw_cards(5)
+	draw_cards(3)
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your Turn - Select a Card")
@@ -78,7 +86,6 @@ func apply_relic_effects():
 	var start_effects = relic_manager.get_combat_start_effects()
 	if start_effects["max_energy"] > 0:
 		var crystal_count = relic_manager.get_relic_count("energy_crystal")
-		player.player_data.max_energy = player.player_data.get_max_energy()
 		player.current_energy = player.player_data.max_energy
 	player.update_display()
 
@@ -114,7 +121,10 @@ func start_targeting(card: Card):
 		if ui and ui.has_method("update_status"):
 			ui.update_status("Select enemy to attack")
 	elif card_id == "blood_fire":
-		play_area_attack(card)
+		for enemy in enemies:
+			if enemy.current_health > 0:
+				enemy.set_targetable(true)
+		is_player_targetable = false
 	elif card_id in ["abundance", "heal"]:
 		set_player_targetable(true)
 		is_player_targetable = true
@@ -190,13 +200,21 @@ func play_card_on_target(target: Enemy):
 		await player.heal_animation_finished
 	print("9. Applying card effects...")
 	match card_data.card_id:
-		"attack", "blood_fire":
+		"attack":
 			if card_data.damage > 0:
 				print("10. Dealing", card_data.damage, "damage to", target.enemy_name)
 				target.take_damage(card_data.damage)
 				print("11. Enemy HP after damage:", target.current_health)
 			elif card_data.heal < 0:
 				target.take_damage(-card_data.heal)
+		"blood_fire":
+			var living_enemies = 0
+			for enemy in enemies:
+				if enemy.current_health > 0:
+					enemy.take_damage(card_data.damage)
+					living_enemies += 1
+			if living_enemies > 0:
+				print("blood fire hit ", living_enemies, " enemies")
 		"abundance", "heal":
 			if card_data.heal > 0:
 				if player.current_health > 50:
@@ -249,8 +267,10 @@ func check_battle_end():
 			music_player.stop()
 			lose_label.visible = true
 			lose_song.play()
-			await get_tree().create_timer(10.0).timeout
-			game_over()
+			if play_again_button:
+				play_again_button.visible = true
+			if quit_button:
+				quit_button.visible = true
 
 func game_over():
 	var player_data = get_node("/root/PlayerDatabase")
@@ -273,28 +293,37 @@ func start_enemy_turn():
 			#player.play_hurt_animation()
 			player.take_damage(enemy.damage)
 			print(enemy.enemy_name + "attack for " + str(enemy.damage))
+	check_battle_end()
 	await get_tree().create_timer(1.0).timeout
 	start_player_turn()
 
-func play_area_attack(card: Card):
-	if card and player.can_play_card(card.card_data.cost):
-		var card_data = card.card_data
-		player.spend_energy(card_data.cost)
-		hand.play_card(card, enemies[0] if enemies.size() > 0 else null)
-		var living_enemies = 0
-		for enemy in enemies:
-			if enemy.current_health > 0:
-				enemy.take_damage(card_data.damage)
-				living_enemies += 1
-		if living_enemies > 0:
-			print("Blood fire hit ", living_enemies)
-		complete_area_play_card(card)
+#func play_area_attack(card: Card):
+	#if card and player.can_play_card(card.card_data.cost):
+		#var card_data = card.card_data
+		#player.spend_energy(card_data.cost)
+		#hand.play_card(card, enemies[0] if enemies.size() > 0 else null)
+		#var living_enemies = 0
+		#for enemy in enemies:
+			#if enemy.current_health > 0:
+				#enemy.take_damage(card_data.damage)
+				#living_enemies += 1
+		#if living_enemies > 0:
+			#print("Blood fire hit ", living_enemies)
+		#complete_area_play_card(card)
+#
+#func complete_area_play_card(card: Card):
+	#current_selected_card = null
+	#current_state = BattleState.PLAYER_TURN
+	#if hand:
+		#hand.set_cards_selectable(true)
+	#if ui and ui.has_method("update_status"):
+		#ui.update_status("Your turn - Select a card")
+	#check_battle_end()
 
-func complete_area_play_card(card: Card):
-	current_selected_card = null
-	current_state = BattleState.PLAYER_TURN
-	if hand:
-		hand.set_cards_selectable(true)
-	if ui and ui.has_method("update_status"):
-		ui.update_status("Your turn - Select a card")
-	check_battle_end()
+func _on_play_again():
+	var player_data = get_node("/root/PlayerDatabase")
+	player_data.reset_to_default()
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
+
+func _on_quit_button():
+	get_tree().quit()

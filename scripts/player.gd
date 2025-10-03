@@ -105,6 +105,9 @@ func play_idle_animation():
 func play_heal_animation():
 	if not is_healing:
 		is_healing = true
+		var tween = create_tween()
+		tween.tween_property(self, "modulate", Color.GREEN, 0.2)
+		tween.tween_property(self, "modulate", Color.WHITE, 0.3)
 		if healing_effect:
 			healing_effect.visible = true
 			healing_effect.play("heal")

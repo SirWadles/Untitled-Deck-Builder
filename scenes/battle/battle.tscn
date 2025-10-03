@@ -57,9 +57,9 @@ offset_bottom = 50.0
 metadata/_edit_use_anchors_ = true
 
 [node name="WinLabel" type="Label" parent="."]
-offset_left = 430.0
+offset_left = 360.0
 offset_top = 42.0
-offset_right = 668.0
+offset_right = 598.0
 offset_bottom = 107.0
 theme_override_fonts/font = ExtResource("8_py4tk")
 theme_override_font_sizes/font_size = 64
@@ -84,3 +84,17 @@ stream = ExtResource("10_fisqk")
 
 [node name="MusicPlayer" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("11_fisqk")
+
+[node name="PlayAgainButton" type="Button" parent="."]
+offset_left = 450.0
+offset_top = 361.0
+offset_right = 545.0
+offset_bottom = 392.0
+text = "Play Again?"
+
+[node name="QuitButton" type="Button" parent="."]
+offset_left = 478.0
+offset_top = 395.0
+offset_right = 520.0
+offset_bottom = 426.0
+text = "Quit"
