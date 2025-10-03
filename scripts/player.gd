@@ -161,12 +161,13 @@ func spend_energy(amount: int):
 	update_display()
 
 func start_turn():
-	current_energy = player_data.max_energy
+	current_energy = player_data.get_max_energy()
 	update_display()
 
 func update_display():
 	health_label.text = "HP: " + str(player_data.current_health) + "/" + str(player_data.max_health)
-	energy_label.text = "Energy: " + str(current_energy) + "/" + str(player_data.max_energy)
+	var current_max_energy = player_data.get_max_energy()
+	energy_label.text = "Energy: " + str(current_energy) + "/" + str(current_max_energy)
 
 func full_heal():
 	player_data.current_health = player_data.max_health + 4

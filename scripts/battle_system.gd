@@ -66,11 +66,21 @@ func create_enemies():
 
 func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
+	apply_relic_effects()
 	player.start_turn()
-	draw_cards(3)
+	draw_cards(5)
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your Turn - Select a Card")
+
+func apply_relic_effects():
+	var relic_manager = get_node("/root/RelicManager")
+	var start_effects = relic_manager.get_combat_start_effects()
+	if start_effects["max_energy"] > 0:
+		var crystal_count = relic_manager.get_relic_count("energy_crystal")
+		player.player_data.max_energy = player.player_data.get_max_energy()
+		player.current_energy = player.player_data.max_energy
+	player.update_display()
 
 func draw_cards(amount: int):
 	if not hand:
@@ -189,7 +199,10 @@ func play_card_on_target(target: Enemy):
 				target.take_damage(-card_data.heal)
 		"abundance", "heal":
 			if card_data.heal > 0:
-				player.heal(card_data.heal)
+				if player.current_health > 50:
+					pass
+				else:
+					player.heal(card_data.heal)
 	print("12. Resetting targeting...")
 	reset_targeting()
 	current_state = BattleState.PLAYER_TURN

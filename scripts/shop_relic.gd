@@ -35,7 +35,7 @@ func setup(data: Dictionary):
 	relic_data = data
 	name_label.text = data["name"]
 	description_label.text = data["description"]
-	price_label.text = str(data["price"]) + "Gold"
+	price_label.text = str(data["price"]) + " Gold"
 	if data.has("icon") and data["icon"]:
 		texture_rect.texture = data["icon"]
 		texture_rect.custom_minimum_size = Vector2(100, 100)

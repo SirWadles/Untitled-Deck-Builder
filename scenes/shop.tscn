@@ -44,6 +44,7 @@ layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="CardsLabel" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Cards"]
+visible = false
 layout_mode = 2
 text = "CARDS"
 
@@ -59,6 +60,7 @@ layout_mode = 2
 metadata/_tab_index = 1
 
 [node name="RelicsLabel" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Relics"]
+visible = false
 layout_mode = 2
 text = "RELICS"
 

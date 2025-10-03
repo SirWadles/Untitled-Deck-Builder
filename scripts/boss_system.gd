@@ -56,11 +56,21 @@ func create_boss_enemies():
 
 func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
+	apply_relic_effects()
 	player.start_turn()
 	draw_cards(3)
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):
 		ui.update_status("BOSS BATTLE - Select a Card!")
+
+func apply_relic_effects():
+	var relic_manager = get_node("/root/RelicManager")
+	var start_effects = relic_manager.get_combat_start_effects()
+	if start_effects["max_energy"] > 0:
+		var crystal_count = relic_manager.get_relic_count("energy_crystal")
+		player.player_data.max_energy = player.player_data.get_max_energy()
+		player.current_energy = player.player_data.max_energy
+	player.update_display()
 
 func draw_cards(amount: int):
 	if not hand:
@@ -212,6 +222,7 @@ func check_battle_end():
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.add_gold(100)
 		player_data.max_health += 10
+		apply_combat_end_relic_effects()
 		music_player.stop()
 		win_label.visible = true
 		win_song.play()
@@ -226,6 +237,15 @@ func check_battle_end():
 			lose_song.play()
 			await get_tree().create_timer(10.0).timeout
 			game_over()
+
+func apply_combat_end_relic_effects():
+	var relic_manager = get_node("/root/RelicManager")
+	var end_effects = relic_manager.get_combat_end_effects()
+	if end_effects["heal"] > 0:
+		var band_count = relic_manager.get_relic_count("health_band")
+		player.player_data.heal(end_effects["heal"])
+		player.update_display()
+		
 
 func game_over():
 	var player_data = get_node("/root/PlayerDatabase")

@@ -82,6 +82,13 @@ func load_sample_relics():
 		"icon": null,
 		"id": "health_band"
 	})
+	available_relics.append({
+		"name": "Energy Crystal",
+		"description": "+1 Max Energy",
+		"price": 150,
+		"icon": null,
+		"id": "energy_crystal"
+	})
 	
 
 func calculate_card_price(card_data: CardData) -> int:
@@ -123,6 +130,9 @@ func _on_relic_purchased(relic_data: Dictionary, price: int):
 	if player_data.gold >= price:
 		player_data.gold -= price
 		player_data.add_relic(relic_data)
+		var relic_manager = get_node("/root/RelicManager")
+		print("relic bought", relic_data["name"])
+		print("relic in manager", relic_manager.active_relics.size())
 		update_display()
 		show_purchased_message("Purchased " + relic_data["name"])
 	else:

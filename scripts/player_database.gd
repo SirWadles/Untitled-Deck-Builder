@@ -22,7 +22,7 @@ func reset_to_default():
 	max_health = 50
 	current_health = max_health
 	max_energy = 3
-	gold = 100
+	gold = 10000
 	deck = ["attack", "attack", "blood_fire", "attack", "abundance"]
 	discard_pile = []
 	exhause_pile = []
@@ -74,11 +74,19 @@ func add_gold(amount: int):
 func add_card_to_deck(card_id: String):
 	deck.append(card_id)
 
-func add_relic(relic_id: Dictionary):
-	relics.append(relic_id)
+func add_relic(relic_data: Dictionary):
+	relics.append(relic_data)
+	var relic_manager = get_node("/root/RelicManager")
+	relic_manager.add_relic(relic_data)
 
 func full_heal():
 	current_health = max_health + 4
 
 func get_health_percentage() -> float:
 	return float(current_health) / float(max_health)
+
+
+func get_max_energy() -> int:
+	var relic_manager = get_node("/root/RelicManager")
+	var energy_crystal_count = relic_manager.get_relic_count("energy_crystal")
+	return max_energy + energy_crystal_count
