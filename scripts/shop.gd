@@ -40,7 +40,7 @@ func  setup_ui_theme():
 		relics_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		relics_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if cards_grid is GridContainer:
-		cards_grid.columns = 3
+		cards_grid.columns = 4
 		cards_grid.custom_minimum_size = Vector2(800, 400)
 		cards_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		cards_grid.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -75,18 +75,20 @@ func load_shop_items():
 	print("Available relics: ", available_relics.size())
 
 func load_sample_relics():
+	var health_band_texture = preload("res://assets/relics/Band_of_Regeneration.png")
+	var energy_cystal_texture = preload("res://assets/relics/Eternia_Crystal.png")
 	available_relics.append({
 		"name": "Health Band",
 		"description": "Heals 5 HP after combat ",
 		"price": 75,
-		"icon": null,
+		"icon": health_band_texture,
 		"id": "health_band"
 	})
 	available_relics.append({
 		"name": "Energy Crystal",
 		"description": "+1 Max Energy",
 		"price": 150,
-		"icon": null,
+		"icon": energy_cystal_texture,
 		"id": "energy_crystal"
 	})
 	

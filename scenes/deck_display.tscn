@@ -1,0 +1,66 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccvuoq1dl3d32"]
+
+[ext_resource type="Script" uid="uid://ikhhkrwsg1jw" path="res://scripts/deck_display.gd" id="1_3kh8g"]
+
+[node name="DeckDisplay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3kh8g")
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Deck:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="DeckSection" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="DeckCountLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer/DeckSection"]
+layout_mode = 2
+
+[node name="DeckScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/HBoxContainer/DeckSection"]
+layout_mode = 2
+
+[node name="DeckCardsContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/DeckSection/DeckScrollContainer"]
+layout_mode = 2
+
+[node name="DiscardSection" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="DiscardCountLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer/DiscardSection"]
+layout_mode = 2
+
+[node name="DiscardScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/HBoxContainer/DiscardSection"]
+layout_mode = 2
+
+[node name="DiscardCardsContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/DiscardSection/DiscardScrollContainer"]
+layout_mode = 2
+
+[node name="ExhaustSection" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ExhaustCountLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer/ExhaustSection"]
+layout_mode = 2
+
+[node name="ExhaustScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer/HBoxContainer/ExhaustSection"]
+layout_mode = 2
+
+[node name="ExhaustCardsContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer/ExhaustSection/ExhaustScrollContainer"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2

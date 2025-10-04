@@ -21,6 +21,8 @@ layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
 layout_mode = 2
+expand_mode = 3
+stretch_mode = 5
 
 [node name="PurchaseButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2

@@ -112,6 +112,7 @@ offset = Vector2(-50, -70)
 transform = Transform2D(1, 0, 0, 1, -50, -70)
 
 [node name="InfoLabel2" type="Label" parent="."]
+layout_mode = 0
 offset_left = 878.0
 offset_top = 187.0
 offset_right = 990.0

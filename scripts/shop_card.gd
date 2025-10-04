@@ -13,8 +13,8 @@ var price: int
 signal purchased(card_data: CardData, price: int)
 
 func _ready():
-	custom_minimum_size = Vector2(200, 300)
-	size = Vector2(200, 300)
+	custom_minimum_size = Vector2(190, 260)
+	size = Vector2(190, 260)
 	texture_rect.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
 	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	

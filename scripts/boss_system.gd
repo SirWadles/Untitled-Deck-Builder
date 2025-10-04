@@ -253,6 +253,7 @@ func check_battle_end():
 
 func show_end_screen(victory: bool):
 	music_player.stop()
+	hand.set_cards_selectable(false)
 	if victory:
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.add_gold(100)
@@ -333,9 +334,16 @@ func complete_area_play_card(card: Card):
 	check_battle_end()
 
 func _on_play_again():
+	var player_data = get_node("/root/PlayerDatabase")
 	if win_label.visible:
+		player_data.current_health = player_data.max_health
+		var map_data = get_node("/root/MapState")
+		map_data.reset()
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
 	else:
+		player_data.reset_to_default()
+		var map_state = get_node("/root/MapState")
+		map_state.reset()
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
 
 func _on_quit_button():

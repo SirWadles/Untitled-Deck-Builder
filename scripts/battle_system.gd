@@ -15,6 +15,9 @@ class_name BattleSystem
 @onready var play_again_button: Button = $PlayAgainButton
 @onready var quit_button: Button = $QuitButton
 
+@onready var deck_display: DeckDisplay = $DeckDisplay
+@onready var view_deck_button: Button = $UI/ViewDeckButton
+
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
 var current_state: BattleState = BattleState.PLAYER_TURN
@@ -44,6 +47,10 @@ func _ready():
 	if quit_button:
 		quit_button.pressed.connect(_on_quit_button)
 		quit_button.visible = false
+	if deck_display:
+		deck_display.visible = false
+	if view_deck_button:
+		view_deck_button.pressed.connect(_on_view_deck_button_pressed)
 
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -253,6 +260,7 @@ func check_battle_end():
 			all_defeated = false
 			break
 	if all_defeated:
+		hand.set_cards_selectable(false)
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.add_gold(25)
 		music_player.stop()
@@ -264,6 +272,7 @@ func check_battle_end():
 	else:
 		var player_data = get_node("/root/PlayerDatabase")
 		if player_data.current_health <= 0:
+			hand.set_cards_selectable(false)
 			music_player.stop()
 			lose_label.visible = true
 			lose_song.play()
@@ -323,7 +332,13 @@ func start_enemy_turn():
 func _on_play_again():
 	var player_data = get_node("/root/PlayerDatabase")
 	player_data.reset_to_default()
+	var map_state = get_node("/root/MapState")
+	map_state.reset()
 	get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
 
 func _on_quit_button():
 	get_tree().quit()
+
+func _on_view_deck_button_pressed():
+	if deck_display:
+		deck_display.show_deck()

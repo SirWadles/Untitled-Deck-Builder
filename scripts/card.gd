@@ -13,7 +13,7 @@ var hand: Node
 var is_selectable: bool = false
 
 func _ready():
-	scale = Vector2(2, 2)
+	scale = Vector2(1.5, 1.5)
 	button.pressed.connect(_on_card_clicked)
 	button.size = Vector2(52, 64)
 

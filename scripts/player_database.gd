@@ -7,7 +7,7 @@ var max_energy: int = 3
 var current_energy: int = 3
 var gold: int = 100
 
-var deck: Array[String] = ["attack", "attack", "blood_fire", "attack", "abundance"]
+var deck: Array[String] = ["attack", "attack", "blood_fire", "attack", "abundance", "abundance"]
 var discard_pile: Array[String] = []
 var exhause_pile: Array[String] = []
 var hand: Array[String] = []
