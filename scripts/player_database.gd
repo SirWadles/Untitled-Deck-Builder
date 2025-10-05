@@ -90,3 +90,11 @@ func get_max_energy() -> int:
 	var relic_manager = get_node("/root/RelicManager")
 	var energy_crystal_count = relic_manager.get_relic_count("energy_crystal")
 	return max_energy + energy_crystal_count
+
+func exhaust_card(card_id: String):
+	if hand.has(card_id):
+		hand. erase(card_id)
+		exhaust_pile.append(card_id)
+
+func get_exhaust_pile() -> Array[String]:
+	return exhaust_pile.duplicate()

@@ -15,8 +15,8 @@ class_name BattleSystem
 @onready var play_again_button: Button = $PlayAgainButton
 @onready var quit_button: Button = $QuitButton
 
-@onready var deck_display: DeckDisplay = $DeckDisplay
-@onready var view_deck_button: Button = $UI/ViewDeckButton
+@onready var deck_viewer: Control = $DeckViewer
+@onready var deck_view_button: Button = $UI/DeckViewButton
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
@@ -47,10 +47,8 @@ func _ready():
 	if quit_button:
 		quit_button.pressed.connect(_on_quit_button)
 		quit_button.visible = false
-	if deck_display:
-		deck_display.visible = false
-	if view_deck_button:
-		view_deck_button.pressed.connect(_on_view_deck_button_pressed)
+	if  deck_view_button:
+		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
 
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -152,13 +150,6 @@ func _input(event):
 			play_card_on_player()
 	if event.is_action_pressed("ui_accept"):
 		player.test_heal()
-	if event.is_action_pressed("ui_up"):
-		var player_data = get_node("/root/PlayerDatabase")
-		print("=== DECK STATE TEST ===")
-		print("Deck: ", player_data.deck)
-		print("Discard: ", player_data.discard_pile)
-		print("Exhaust: ", player_data.exhaust_pile)
-		print("Hand: ", player_data.hand)
 
 func play_card_on_player():
 	if current_selected_card:
@@ -175,6 +166,13 @@ func play_card_on_player():
 			await player.heal_animation_finished
 			print("Player healed")
 		hand.play_card(card_to_play, enemies[0] if enemies.size() > 0 else null)
+		var player_data = get_node("/root/PlayerDatabase")
+		if should_exhaust_card(card_data.card_id):
+			print("7. Playing attack animation...")
+			player_data.exhaust_card(card_data.card_id)
+		else:
+			print("7. Playing attack animation...")
+			player_data.discard_card(card_data.card_id)
 		reset_targeting()
 		current_selected_card = null
 		current_state = BattleState.PLAYER_TURN
@@ -202,6 +200,15 @@ func play_card_on_target(target: Enemy):
 	current_selected_card = null
 	hand.play_card(card_to_play, target)
 	print("6. Card played and consumed")
+	
+	var player_data = get_node("/root/PlayerDatabase")
+	if should_exhaust_card(card_data.card_id):
+		print("7. Playing attack animation...")
+		player_data.exhaust_card(card_data.card_id)
+	else:
+		print("7. Playing attack animation...")
+		player_data.discard_card(card_data.card_id)
+	
 	if card_data.card_id in ["attack", "blood_fire"]:
 		print("7. Playing attack animation...")
 		player.play_attack_animation()
@@ -258,10 +265,6 @@ func _on_card_played(card: Card, target: Enemy):
 	print("Played " + card.card_data.card_name + " on " + target.enemy_name)
 	var player_data = get_node("/root/PlayerDatabase")
 	player_data.discard_card(card.card_data.card_id)
-	print("=== AFTER CARD PLAY ===")
-	print("Deck: ", player_data.deck.size(), " cards")
-	print("Discard: ", player_data.discard_pile.size(), " cards") 
-	print("Hand: ", player_data.hand.size(), " cards")
 	check_battle_end()
 
 func check_battle_end():
@@ -350,7 +353,12 @@ func _on_play_again():
 func _on_quit_button():
 	get_tree().quit()
 
-func _on_view_deck_button_pressed():
-	if deck_display:
-		deck_display.update_display()
-		deck_display.show_deck()
+func _on_deck_view_button_pressed():
+	if deck_viewer:
+		deck_viewer.show_viewer()
+
+func should_exhaust_card(card_id: String) -> bool:
+	var exhaust_cards = [
+		"blood_fire"
+	]
+	return card_id in exhaust_cards

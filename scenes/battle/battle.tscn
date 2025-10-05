@@ -10,7 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://duvil8dbrvwfm" path="res://sounds/songs/11. Victory.mp3" id="9_oiw7q"]
 [ext_resource type="AudioStream" uid="uid://lxs73pyltqjl" path="res://sounds/songs/19. Defeat.mp3" id="10_fisqk"]
 [ext_resource type="AudioStream" uid="uid://c2j3xpeucqamx" path="res://sounds/songs/8. The Ruins.mp3" id="11_fisqk"]
-[ext_resource type="PackedScene" uid="uid://ccvuoq1dl3d32" path="res://scenes/deck_display.tscn" id="11_mxe8n"]
+[ext_resource type="PackedScene" uid="uid://i1sovnluuj0s" path="res://scenes/deck_viewer.tscn" id="11_mxe8n"]
 
 [node name="BattleSystem" type="Node2D"]
 script = ExtResource("1_xd4uy")
@@ -57,11 +57,10 @@ offset_right = 300.0
 offset_bottom = 50.0
 metadata/_edit_use_anchors_ = true
 
-[node name="ViewDeckButton" type="Button" parent="UI"]
+[node name="DeckViewButton" type="Button" parent="UI"]
 layout_mode = 0
-offset_left = 925.0
-offset_right = 1012.0
-offset_bottom = 31.0
+offset_right = 8.0
+offset_bottom = 8.0
 text = "View Deck"
 
 [node name="WinLabel" type="Label" parent="."]
@@ -107,14 +106,6 @@ offset_right = 520.0
 offset_bottom = 426.0
 text = "Quit"
 
-[node name="DeckDisplay" parent="." instance=ExtResource("11_mxe8n")]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 200.0
-offset_right = 200.0
-offset_bottom = 0.0
-grow_horizontal = 0
-grow_vertical = 0
+[node name="DeckViewer" parent="." instance=ExtResource("11_mxe8n")]
+offset_left = 700.0
+offset_right = 700.0
