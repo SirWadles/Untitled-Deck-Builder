@@ -6,10 +6,27 @@ extends Control
 @onready var close_button: Button = $PanelContainer/MarginContainer/VBoxContainer/CloseButton
 
 var card_scene = preload("res://scenes/battle/card.tscn")
+var is_visible: bool = false
 
 func _ready():
-	close_button.pressed.connect(hide)
+	close_button.pressed.connect(_on_close_button_pressed)
 	hide()
+	var battle_system = get_parent()
+	if battle_system and battle_system.has_signal("card_played"):
+		battle_system.card_played.connect(_on_card_played)
+	if battle_system and battle_system.has_signal("turn_ended"):
+		battle_system.turn_ended.connect(_on_turn_ended)
+
+func _on_close_button_pressed():
+	hide_viewer()
+
+func _on_card_played(card: Card, target: Enemy):
+	if is_visible:
+		update_display()
+
+func _on_turn_ended():
+	if is_visible:
+		update_display()
 
 func update_display():
 	clear_containers()
@@ -40,7 +57,7 @@ func create_card_display(card_data: CardData, count: int) -> HBoxContainer:
 	container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
 	var text_label = Label.new()
-	text_label.text = card_data.card_name + " " + str(count)
+	text_label.text = card_data.card_name + " x" + str(count)
 	text_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	text_label.add_theme_font_size_override("font_size", 12)
 	container.add_child(text_label)
@@ -62,3 +79,8 @@ func clear_containers():
 func show_viewer():
 	update_display()
 	show()
+	is_visible = true
+
+func hide_viewer():
+	hide()
+	is_visible = false

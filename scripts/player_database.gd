@@ -93,8 +93,10 @@ func get_max_energy() -> int:
 
 func exhaust_card(card_id: String):
 	if hand.has(card_id):
-		hand. erase(card_id)
-		exhaust_pile.append(card_id)
+		hand.erase(card_id)
+	if deck.has(card_id):
+		deck.erase(card_id)
+	exhaust_pile.append(card_id)
 
 func get_exhaust_pile() -> Array[String]:
 	return exhaust_pile.duplicate()

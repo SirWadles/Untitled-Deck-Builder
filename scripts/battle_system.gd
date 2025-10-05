@@ -24,6 +24,9 @@ var current_state: BattleState = BattleState.PLAYER_TURN
 
 var is_player_targetable: bool = false
 
+signal card_played(card: Card, target: Enemy)
+signal turn_ended()
+
 enum BattleState {	
 	PLAYER_TURN,
 	ENEMY_TURN,
@@ -173,6 +176,7 @@ func play_card_on_player():
 		else:
 			print("7. Playing attack animation...")
 			player_data.discard_card(card_data.card_id)
+		card_played.emit(card_to_play, enemies[0] if enemies.size() > 0 else null)
 		reset_targeting()
 		current_selected_card = null
 		current_state = BattleState.PLAYER_TURN
@@ -208,6 +212,7 @@ func play_card_on_target(target: Enemy):
 	else:
 		print("7. Playing attack animation...")
 		player_data.discard_card(card_data.card_id)
+	card_played.emit(card_to_play, target)
 	
 	if card_data.card_id in ["attack", "blood_fire"]:
 		print("7. Playing attack animation...")
@@ -263,8 +268,8 @@ func reset_targeting():
 
 func _on_card_played(card: Card, target: Enemy):
 	print("Played " + card.card_data.card_name + " on " + target.enemy_name)
-	var player_data = get_node("/root/PlayerDatabase")
-	player_data.discard_card(card.card_data.card_id)
+	#var player_data = get_node("/root/PlayerDatabase")
+	#player_data.discard_card(card.card_data.card_id)
 	check_battle_end()
 
 func check_battle_end():
@@ -306,6 +311,7 @@ func end_turn():
 		hand.set_cards_selectable(false)
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.discard_hand()
+		turn_ended.emit()
 		start_enemy_turn()
 
 func start_enemy_turn():
