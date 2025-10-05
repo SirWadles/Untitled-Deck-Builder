@@ -152,6 +152,13 @@ func _input(event):
 			play_card_on_player()
 	if event.is_action_pressed("ui_accept"):
 		player.test_heal()
+	if event.is_action_pressed("ui_up"):
+		var player_data = get_node("/root/PlayerDatabase")
+		print("=== DECK STATE TEST ===")
+		print("Deck: ", player_data.deck)
+		print("Discard: ", player_data.discard_pile)
+		print("Exhaust: ", player_data.exhaust_pile)
+		print("Hand: ", player_data.hand)
 
 func play_card_on_player():
 	if current_selected_card:
@@ -251,6 +258,10 @@ func _on_card_played(card: Card, target: Enemy):
 	print("Played " + card.card_data.card_name + " on " + target.enemy_name)
 	var player_data = get_node("/root/PlayerDatabase")
 	player_data.discard_card(card.card_data.card_id)
+	print("=== AFTER CARD PLAY ===")
+	print("Deck: ", player_data.deck.size(), " cards")
+	print("Discard: ", player_data.discard_pile.size(), " cards") 
+	print("Hand: ", player_data.hand.size(), " cards")
 	check_battle_end()
 
 func check_battle_end():
@@ -341,4 +352,5 @@ func _on_quit_button():
 
 func _on_view_deck_button_pressed():
 	if deck_display:
+		deck_display.update_display()
 		deck_display.show_deck()

@@ -9,7 +9,7 @@ var gold: int = 100
 
 var deck: Array[String] = ["attack", "attack", "blood_fire", "attack", "abundance", "abundance"]
 var discard_pile: Array[String] = []
-var exhause_pile: Array[String] = []
+var exhaust_pile: Array[String] = []
 var hand: Array[String] = []
 
 var relics: Array = []
@@ -25,7 +25,7 @@ func reset_to_default():
 	gold = 150
 	deck = ["attack", "attack", "blood_fire", "attack", "abundance"]
 	discard_pile = []
-	exhause_pile = []
+	exhaust_pile = []
 	relics = []
 	battle_rewards = []
 

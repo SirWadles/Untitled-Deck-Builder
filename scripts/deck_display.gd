@@ -17,7 +17,7 @@ func _ready():
 	card_database = get_node("/root/CardStuff")
 	close_button.pressed.connect(hide)
 	
-	var panel = Panel.new()
+	var panel = $Panel
 	var style_box = StyleBoxFlat.new()
 	style_box.bg_color = Color(0.1, 0.1, 0.1, 0.95)
 	style_box.border_color = Color.GOLD
@@ -31,8 +31,18 @@ func _ready():
 	style_box.corner_radius_bottom_left = 10
 	panel.add_theme_stylebox_override("panel", style_box)
 	
+	setup_card_containers()
+	
 	close_button.text = "Close"
 	close_button.custom_minimum_size = Vector2(100, 40)
+
+func setup_card_containers():
+	deck_cards_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	deck_cards_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	discard_cards_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	discard_cards_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	exhaust_cards_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	exhaust_cards_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 func show_deck():
 	update_display()
@@ -46,9 +56,16 @@ func update_display():
 	for child in exhaust_cards_container.get_children():
 		child.queue_free()
 	
+	print("=== DECK DISPLAY DEBUG ===")
+	print("Deck: ", player_data.deck)
+	print("Discard: ", player_data.discard_pile)
+	print("Exhaust: ", player_data.exhaust_pile)
+	print("Hand: ", player_data.hand)
+	print("==========================")
+	
 	deck_count_label.text = "Deck (%d)" % player_data.deck.size()
 	discard_count_label.text = "Discard (%d)" % player_data.discard_pile.size()
-	exhaust_count_label.text = "Exhaust (%d)" % player_data.exhause_pile.size()
+	exhaust_count_label.text = "Exhaust (%d)" % player_data.exhaust_pile.size()
 	
 	var deck_card_counts = {}
 	for card_id in player_data.deck:
@@ -58,22 +75,28 @@ func update_display():
 		if card_data:
 			var card_label = create_card_label(card_data, deck_card_counts[card_id])
 			deck_cards_container.add_child(card_label)
+	
 	var discard_card_counts = {}
-	for card_id in player_data.deck:
+	for card_id in player_data.discard_pile:
 		discard_card_counts[card_id] = discard_card_counts.get(card_id, 0) + 1
 	for card_id in discard_card_counts:
 		var card_data = card_database.get_card(card_id)
 		if card_data:
 			var card_label = create_card_label(card_data, discard_card_counts[card_id])
 			discard_cards_container.add_child(card_label)
+	
 	var exhaust_card_counts = {}
-	for card_id in player_data.deck:
+	for card_id in player_data.exhaust_pile:
 		exhaust_card_counts[card_id] = exhaust_card_counts.get(card_id, 0) + 1
 	for card_id in exhaust_card_counts:
 		var card_data = card_database.get_card(card_id)
 		if card_data:
 			var card_label = create_card_label(card_data, exhaust_card_counts[card_id])
 			exhaust_cards_container.add_child(card_label)
+	
+	deck_cards_container.queue_redraw()
+	discard_cards_container.queue_redraw()
+	exhaust_cards_container.queue_redraw()
 
 func create_card_label(card_data: CardData, count: int = 1) -> Label:
 	var label = Label.new()
@@ -89,4 +112,13 @@ func create_card_label(card_data: CardData, count: int = 1) -> Label:
 		_:
 			label.add_theme_color_override("font_color", Color(0.8, 0.8, 1.0))
 	label.add_theme_font_size_override("font_size", 12)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.custom_minimum_size = Vector2(120, 25)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_FILL
 	return label
+
+func _on_visibility_changed():
+	if visible:
+		update_display()
