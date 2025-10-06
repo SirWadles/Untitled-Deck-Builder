@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://dvt5vx1cxba5x"]
+[gd_scene load_steps=3 format=3 uid="uid://dvt5vx1cxba5x"]
 
 [ext_resource type="Script" uid="uid://c77qixq6yio7o" path="res://scripts/map_deck_viewer.gd" id="1_ymh2u"]
+[ext_resource type="PackedScene" uid="uid://bl2dchpgxx6h6" path="res://scenes/card_tool_tip.tscn" id="2_1fecb"]
 
 [node name="MapDeckViewer" type="Control"]
 layout_mode = 3
@@ -25,14 +26,21 @@ layout_mode = 2
 [node name="DeckCountLabel" type="Label" parent="PanelContainer/MarginContainer/Header"]
 layout_mode = 2
 
-[node name="ExhuastCountLabel" type="Label" parent="PanelContainer/MarginContainer/Header"]
+[node name="ExhaustCountLabel" type="Label" parent="PanelContainer/MarginContainer/Header"]
 layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
+vertical_scroll_mode = 2
 
 [node name="CardsContainer" type="GridContainer" parent="PanelContainer/MarginContainer/ScrollContainer"]
 layout_mode = 2
 
-[node name="CloseButton" type="Button" parent="PanelContainer/MarginContainer"]
+[node name="CardToolTip" parent="." instance=ExtResource("2_1fecb")]
+layout_mode = 0
+
+[node name="CloseButton" type="Button" parent="."]
 layout_mode = 2
+offset_top = 116.0
+offset_right = 40.0
+offset_bottom = 156.0

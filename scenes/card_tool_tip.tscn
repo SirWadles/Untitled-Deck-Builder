@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://bl2dchpgxx6h6"]
+
+[ext_resource type="Script" uid="uid://dan85j4ml46u1" path="res://scripts/card_tool_tip.gd" id="1_3y23j"]
+
+[node name="CardToolTip" type="Panel"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_3y23j")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="NameLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="CostLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HSeparator1" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="DescLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="StatsLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2

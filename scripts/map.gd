@@ -5,6 +5,8 @@ class_name Map
 @onready var path_lines: Node2D = $PathLines
 @onready var ui: Control = $UI
 @onready var button_sound = $ButtonSound
+@onready var deck_viewer: Control = $MapDeckViewer
+@onready var deck_view_button: Button = $UI/DeckViewButton
 
 var current_node: MapNode = null
 var player_path: Array[String] = []
@@ -22,6 +24,8 @@ func _ready():
 			if node:
 				node.set_visited()
 	update_node_states()
+	if deck_view_button:
+		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
 
 func create_map():
 	var nodes_data = [
@@ -163,3 +167,7 @@ func show_treasure_message(message: String):
 	message_label.add_theme_color_override("font_color", Color.GOLD)
 	await get_tree().create_timer(5.0).timeout
 	message_label.queue_free()
+
+func _on_deck_view_button_pressed():
+	if deck_viewer:
+		deck_viewer.show_viewer()
