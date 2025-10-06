@@ -26,6 +26,7 @@ var is_player_targetable: bool = false
 
 signal card_played(card: Card, target: Enemy)
 signal turn_ended()
+signal player_turn_started()
 
 enum BattleState {	
 	PLAYER_TURN,
@@ -88,6 +89,7 @@ func start_player_turn():
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your Turn - Select a Card")
+	player_turn_started.emit()
 
 func apply_relic_effects():
 	var relic_manager = get_node("/root/RelicManager")

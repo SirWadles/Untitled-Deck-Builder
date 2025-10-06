@@ -3,6 +3,7 @@ extends Control
 @onready var deck_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/DeckContainer
 @onready var discard_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/DiscardContainer
 @onready var exhaust_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/ExhaustContainer
+@onready var hand_container: VBoxContainer = $PanelContainer/MarginContainer/VBoxContainer/HandContainer
 @onready var close_button: Button = $PanelContainer/MarginContainer/VBoxContainer/CloseButton
 
 var card_scene = preload("res://scenes/battle/card.tscn")
@@ -12,15 +13,23 @@ func _ready():
 	close_button.pressed.connect(_on_close_button_pressed)
 	hide()
 	var battle_system = get_parent()
-	if battle_system and battle_system.has_signal("card_played"):
-		battle_system.card_played.connect(_on_card_played)
-	if battle_system and battle_system.has_signal("turn_ended"):
-		battle_system.turn_ended.connect(_on_turn_ended)
+	if battle_system:
+		if battle_system.has_signal("card_played"):
+			battle_system.card_played.connect(_on_card_played)
+		if battle_system.has_signal("turn_ended"):
+			battle_system.turn_ended.connect(_on_turn_ended)
+		if battle_system.has_signal("player_turn_started"):
+			battle_system.player_turn_started.connect(_on_player_turn_started)
+
 
 func _on_close_button_pressed():
 	hide_viewer()
 
 func _on_card_played(card: Card, target: Enemy):
+	if is_visible:
+		update_display()
+
+func _on_player_turn_started():
 	if is_visible:
 		update_display()
 
@@ -33,6 +42,7 @@ func update_display():
 	var player_data = get_node("/root/PlayerDatabase")
 	var card_database = get_node("/root/CardStuff")
 	
+	display_card_list(hand_container, "Hand: ", player_data.hand, card_database)
 	display_card_list(deck_container, "Deck: ", player_data.deck, card_database)
 	display_card_list(discard_container, "Discard: ", player_data.discard_pile, card_database)
 	display_card_list(exhaust_container, "Exhaust: ", player_data.exhaust_pile, card_database)
@@ -71,7 +81,7 @@ func create_card_display(card_data: CardData, count: int) -> HBoxContainer:
 	return container
 
 func clear_containers():
-	for container in [deck_container, discard_container, exhaust_container]:
+	for container in [hand_container, deck_container, discard_container, exhaust_container]:
 		for child in container.get_children():
 			child.queue_free()
 			

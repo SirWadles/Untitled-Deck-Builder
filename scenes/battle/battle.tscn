@@ -59,8 +59,9 @@ metadata/_edit_use_anchors_ = true
 
 [node name="DeckViewButton" type="Button" parent="UI"]
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_top = 50.0
+offset_right = 87.0
+offset_bottom = 81.0
 text = "View Deck"
 
 [node name="WinLabel" type="Label" parent="."]
