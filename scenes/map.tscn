@@ -27,10 +27,10 @@ stream = ExtResource("3_gldc4")
 
 [node name="MapDeckViewer" parent="." instance=ExtResource("4_0cso3")]
 layout_mode = 1
-offset_left = 600.0
-offset_top = 200.0
-offset_right = 600.0
-offset_bottom = 200.0
+offset_left = 200.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = 100.0
 
 [node name="UI" type="Control" parent="."]
 anchors_preset = 0

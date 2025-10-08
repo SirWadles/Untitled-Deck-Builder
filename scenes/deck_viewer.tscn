@@ -36,3 +36,4 @@ layout_mode = 2
 
 [node name="CloseButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+text = "Close"

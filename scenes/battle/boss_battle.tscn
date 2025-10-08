@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cdvbldfrx615o"]
+[gd_scene load_steps=13 format=3 uid="uid://cdvbldfrx615o"]
 
 [ext_resource type="Script" uid="uid://df3rwsyhq378x" path="res://scripts/boss_system.gd" id="1_fpyhl"]
 [ext_resource type="Texture2D" uid="uid://dw3m1la4v3wj3" path="res://assets/Boss Background.png" id="2_lf6a4"]
@@ -11,6 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://duvil8dbrvwfm" path="res://sounds/songs/11. Victory.mp3" id="9_0eh3x"]
 [ext_resource type="AudioStream" uid="uid://lxs73pyltqjl" path="res://sounds/songs/19. Defeat.mp3" id="10_ayg05"]
 [ext_resource type="AudioStream" uid="uid://8jwmong3ht1" path="res://sounds/songs/boss/1. Hymn of Tabal.mp3" id="11_f24jv"]
+[ext_resource type="PackedScene" uid="uid://i1sovnluuj0s" path="res://scenes/deck_viewer.tscn" id="12_lf6a4"]
 
 [node name="BossSystem" type="Node2D"]
 script = ExtResource("1_fpyhl")
@@ -64,6 +65,13 @@ layout_mode = 0
 offset_right = 300.0
 offset_bottom = 50.0
 
+[node name="DeckViewButton" type="Button" parent="UI"]
+layout_mode = 0
+offset_top = 50.0
+offset_right = 87.0
+offset_bottom = 81.0
+text = "View Deck"
+
 [node name="WinLabel" type="Label" parent="."]
 offset_left = 360.0
 offset_top = 42.0
@@ -104,3 +112,7 @@ offset_top = 395.0
 offset_right = 520.0
 offset_bottom = 426.0
 text = "Quit"
+
+[node name="DeckViewer" parent="." instance=ExtResource("12_lf6a4")]
+offset_left = 700.0
+offset_right = 700.0

@@ -284,6 +284,7 @@ func check_battle_end():
 		hand.set_cards_selectable(false)
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.add_gold(25)
+		player_data.reset_exhaust_pile()
 		music_player.stop()
 		win_label.visible = true
 		win_song.play()

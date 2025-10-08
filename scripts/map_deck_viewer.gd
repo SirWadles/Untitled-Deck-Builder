@@ -14,6 +14,8 @@ func _ready():
 	hide()
 	if card_tooltip:
 		card_tooltip.hide()
+	$PanelContainer.size = Vector2(300, 100)
+	$PanelContainer.custom_minimum_size = Vector2(300, 100)
 	configure_grid_container()
 
 func configure_grid_container():
@@ -118,6 +120,9 @@ func _on_card_display_mouse_exited():
 	hide_card_tooltip()
 
 func show_card_tooltip(card_data: CardData, card: Card):
+	if not card_tooltip:
+		print("mistake for card tool")
+		return
 	card_tooltip.show()
 	var name_label = card_tooltip.get_node("VBoxContainer/NameLabel")
 	var cost_label = card_tooltip.get_node("VBoxContainer/CostLabel")
@@ -141,6 +146,7 @@ func show_card_tooltip(card_data: CardData, card: Card):
 		stats_text = "Utility Card"
 	if stats_label:
 		stats_label.text = stats_text
+	update_tooltip_position()
 
 func hide_card_tooltip():
 	card_tooltip.hide()
@@ -155,6 +161,7 @@ func update_tooltip_position():
 			card_tooltip.position.x = viewport_size.x - card_tooltip.size.x
 		if card_tooltip.position.y + card_tooltip.size.y > viewport_size.y:
 			card_tooltip.position.y = viewport_size.y - card_tooltip.size.y
+		card_tooltip.position = card_tooltip.position.clamp(Vector2.ZERO, viewport_size - card_tooltip.size)
 
 func clear_container():
 	for child in cards_container.get_children():

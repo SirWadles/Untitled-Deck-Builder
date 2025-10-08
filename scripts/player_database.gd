@@ -100,3 +100,7 @@ func exhaust_card(card_id: String):
 
 func get_exhaust_pile() -> Array[String]:
 	return exhaust_pile.duplicate()
+
+func reset_exhaust_pile():
+	deck.append_array(exhaust_pile)
+	exhaust_pile.clear()

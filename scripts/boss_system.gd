@@ -15,6 +15,9 @@ class_name BossSystem
 @onready var play_again_button: Button = $PlayAgainButton
 @onready var quit_button: Button = $QuitButton
 
+@onready var deck_viewer: Control = $DeckViewer
+@onready var deck_view_button: Button = $UI/DeckViewButton
+
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
 var current_state: BattleState = BattleState.PLAYER_TURN
@@ -44,6 +47,8 @@ func _ready():
 	if quit_button:
 		quit_button.pressed.connect(_on_quit_button)
 		quit_button.visible = false
+	if deck_view_button:
+		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
 
 func create_boss_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -348,3 +353,7 @@ func _on_play_again():
 
 func _on_quit_button():
 	get_tree().quit()
+
+func _on_deck_view_button_pressed():
+	if deck_viewer:
+		deck_viewer.show_viewer()
