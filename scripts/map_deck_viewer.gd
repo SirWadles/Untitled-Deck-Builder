@@ -1,10 +1,10 @@
 extends Control
 
-@onready var cards_container: GridContainer = $PanelContainer/MarginContainer/ScrollContainer/CardsContainer
-@onready var close_button: Button = $CloseButton
+@onready var cards_container: GridContainer = $VBoxContainer/ScrollContainer/CardsContainer
+@onready var close_button: Button = $VBoxContainer/CloseButton
 @onready var card_tooltip: Control = $CardToolTip
-@onready var deck_count_label: Label = $PanelContainer/MarginContainer/Header/DeckCountLabel
-@onready var exhaust_count_label: Label = $PanelContainer/MarginContainer/Header/ExhaustCountLabel
+@onready var deck_count_label: Label = $PanelContainer/Header/DeckCountLabel
+@onready var exhaust_count_label: Label = $PanelContainer/Header/ExhaustCountLabel
 
 var card_scene = preload("res://scenes/battle/card.tscn")
 var is_visible: bool = false
