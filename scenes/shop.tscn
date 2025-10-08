@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://ci25fnnm04bjb"]
+[gd_scene load_steps=4 format=3 uid="uid://ci25fnnm04bjb"]
 
 [ext_resource type="Script" uid="uid://c27h7t2ql50gg" path="res://scripts/shop.gd" id="1_lx5au"]
+[ext_resource type="AudioStream" uid="uid://dcyuwhh1e044k" path="res://sounds/songs/Shop.mp3" id="2_xfvoa"]
+[ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="3_1l46r"]
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -75,3 +77,10 @@ layout_mode = 2
 
 [node name="ReturnButton" type="Button" parent="MarginContainer/VBoxContainer/Footer"]
 layout_mode = 2
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("2_xfvoa")
+
+[node name="AudioOptions" parent="Audio" instance=ExtResource("3_1l46r")]

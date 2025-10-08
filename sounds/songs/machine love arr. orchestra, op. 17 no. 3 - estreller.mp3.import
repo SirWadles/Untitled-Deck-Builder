@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cpt52mjkiefbe"
+path="res://.godot/imported/machine love arr. orchestra, op. 17 no. 3 - estreller.mp3-57ebdf51ce60300287c417d04fb9af6a.mp3str"
+
+[deps]
+
+source_file="res://sounds/songs/machine love arr. orchestra, op. 17 no. 3 - estreller.mp3"
+dest_files=["res://.godot/imported/machine love arr. orchestra, op. 17 no. 3 - estreller.mp3-57ebdf51ce60300287c417d04fb9af6a.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://qqbcfoq0xxy3"]
+[gd_scene load_steps=7 format=3 uid="uid://qqbcfoq0xxy3"]
 
 [ext_resource type="Script" uid="uid://cvk2q8d532wa6" path="res://scripts/map.gd" id="1_4xfga"]
 [ext_resource type="Texture2D" uid="uid://dwyhlpg2jx2ln" path="res://assets/oldpaperertyhuji.png" id="2_paxxb"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="3_gldc4"]
 [ext_resource type="PackedScene" uid="uid://dvt5vx1cxba5x" path="res://scenes/map_deck_viewer.tscn" id="4_0cso3"]
+[ext_resource type="AudioStream" uid="uid://cpt52mjkiefbe" path="res://sounds/songs/machine love arr. orchestra, op. 17 no. 3 - estreller.mp3" id="5_2lpho"]
+[ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="6_nakos"]
 
 [node name="Map" type="Control"]
 layout_mode = 3
@@ -42,3 +44,10 @@ layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 text = "View Deck"
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("5_2lpho")
+
+[node name="AudioOptions" parent="Audio" instance=ExtResource("6_nakos")]

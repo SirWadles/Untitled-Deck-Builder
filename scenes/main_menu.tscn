@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://ddgtnbpobb7o5"]
+[gd_scene load_steps=8 format=3 uid="uid://ddgtnbpobb7o5"]
 
 [ext_resource type="Script" uid="uid://wjiyap1g6tox" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="1_l6cm7"]
@@ -6,7 +6,6 @@
 [ext_resource type="AudioStream" uid="uid://omssi1qfuq8h" path="res://sounds/ui/ui_main_button_invalid.wav" id="4_rtw2f"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="5_oa1go"]
 [ext_resource type="AudioStream" uid="uid://csu04si0bluyt" path="res://sounds/songs/Ossatura - OPENER DRAFT 2(1).mp3" id="6_oa1go"]
-[ext_resource type="FontFile" uid="uid://j3u6vwrixpc0" path="res://fonts/boldpixels/BoldPixels.otf" id="7_oa1go"]
 [ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="8_tbmy8"]
 
 [node name="Control" type="Control"]
@@ -94,31 +93,31 @@ text = "Please report any bugs
 that occur.
 ♡"
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = 393.0
-offset_top = 518.0
-offset_right = 801.0
-offset_bottom = 596.0
-scale = Vector2(1.5, 1.5)
-theme_override_fonts/font = ExtResource("7_oa1go")
-theme_override_font_sizes/font_size = 24
-text = "DO NOT DO AN ACTION IF YOU WIN
-OR PRESS A BUTTON THAT WILL
-CAUSE AN ERROR!!! QUIT DOES QUIT"
-
 [node name="AudioOptions" parent="." instance=ExtResource("8_tbmy8")]
-offset = Vector2(-50, -70)
-transform = Transform2D(1, 0, 0, 1, -50, -70)
 
 [node name="InfoLabel2" type="Label" parent="."]
 layout_mode = 0
-offset_left = 878.0
+offset_left = 869.0
 offset_top = 187.0
-offset_right = 990.0
-offset_bottom = 230.0
+offset_right = 984.0
+offset_bottom = 276.0
 scale = Vector2(1.3, 1.3)
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 19
 text = "Audio works. 
-Check options"
+Check options.
+No reason it
+wouldn't"
+
+[node name="InfoLabel3" type="Label" parent="."]
+offset_left = 847.0
+offset_top = 515.0
+offset_right = 992.0
+offset_bottom = 604.0
+scale = Vector2(1.3, 1.3)
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 19
+text = "Made Escape
+create the audio 
+menu in shop
+and map."

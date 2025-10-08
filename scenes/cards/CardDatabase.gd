@@ -25,9 +25,9 @@ func create_cards():
 	cards["blood_fire"] = CardData.new(
 		"blood_fire",
 		"Blood Fire",
-		"6 DMG to All",
+		"10 DMG to All",
 		1,
-		6,
+		10,
 		0,
 		0,
 		blood_fire_texture

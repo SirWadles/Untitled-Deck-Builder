@@ -27,6 +27,8 @@ func get_combat_start_effects() -> Dictionary:
 			"energy_crystal":
 				effects["extra_energy"] += 1
 				effects["max_energy"] += 1
+			"crystal_shard":
+				effects["extra_damage"] += 5
 	return effects
 	
 func get_combat_end_effects() -> Dictionary:

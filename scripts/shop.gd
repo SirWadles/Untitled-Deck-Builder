@@ -7,6 +7,9 @@ class_name Shop
 @onready var relic_grid: GridContainer = $MarginContainer/VBoxContainer/TabContainer/Relics/ScrollContainer/RelicGrid
 @onready var return_button: Button = $MarginContainer/VBoxContainer/Footer/ReturnButton
 
+@onready var music_player = $Audio/MusicPlayer
+@onready var audio_options = $Audio/AudioOptions
+
 var player_gold: int = 100
 var available_cards: Array = []
 var available_relics: Array = []
@@ -23,6 +26,13 @@ func _ready():
 	load_shop_items()
 	update_display()
 	return_button.pressed.connect(_on_return_button_pressed)
+	audio_options.visible = false
+	music_player.bus = "Music"
+	music_player.play()
+
+func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		audio_options.show_options()
 
 func  setup_ui_theme():
 	return_button.text = "Return to Map"
@@ -77,6 +87,8 @@ func load_shop_items():
 func load_sample_relics():
 	var health_band_texture = preload("res://assets/relics/Band_of_Regeneration.png")
 	var energy_cystal_texture = preload("res://assets/relics/Eternia_Crystal.png")
+	var crystal_shard_texture = preload("res://assets/relics/Crystal_Shard.png")
+	
 	available_relics.append({
 		"name": "Health Band",
 		"description": "Heals 5 HP after combat ",
@@ -90,6 +102,13 @@ func load_sample_relics():
 		"price": 150,
 		"icon": energy_cystal_texture,
 		"id": "energy_crystal"
+	})
+	available_relics.append({
+		"name": "Crystal Shard",
+		"description": "+5 Damage",
+		"price": 175,
+		"icon": crystal_shard_texture,
+		"id": "crystal_shard"
 	})
 	
 

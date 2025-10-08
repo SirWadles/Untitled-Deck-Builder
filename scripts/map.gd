@@ -8,9 +8,14 @@ class_name Map
 @onready var deck_viewer: Control = $MapDeckViewer
 @onready var deck_view_button: Button = $UI/DeckViewButton
 
+@onready var music_player = $Audio/MusicPlayer
+@onready var audio_options = $Audio/AudioOptions
+
 var current_node: MapNode = null
 var player_path: Array[String] = []
 var available_nodes: Array[String] = []
+
+var node_spacing = Vector2(100, 60)
 
 func _ready():
 	add_to_group("map")
@@ -26,6 +31,13 @@ func _ready():
 	update_node_states()
 	if deck_view_button:
 		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
+	audio_options.visible = false
+	music_player.bus = "Music"
+	music_player.play()
+
+func _input(event):
+	if event.is_action_pressed("ui_cancel"):
+		audio_options.show_options()
 
 func create_map():
 	var nodes_data = [
@@ -50,7 +62,7 @@ func create_map():
 		var connections_array = PackedStringArray()
 		for connection in node_data["connections"]:
 			connections_array.append(connection)
-		node.setup_node(node_data["id"], node_data["type"],node_data["pos"], connections_array)
+		node.setup_node(node_data["id"], node_data["type"],node_data["pos"], connections_array, node_spacing)
 		node.pressed.connect(_on_map_node_pressed.bind(node))
 
 func draw_paths():
