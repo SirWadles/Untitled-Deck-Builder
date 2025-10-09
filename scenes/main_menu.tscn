@@ -110,6 +110,7 @@ No reason it
 wouldn't"
 
 [node name="InfoLabel3" type="Label" parent="."]
+layout_mode = 0
 offset_left = 847.0
 offset_top = 515.0
 offset_right = 992.0

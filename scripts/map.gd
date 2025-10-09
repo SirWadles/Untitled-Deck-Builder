@@ -15,11 +15,21 @@ var current_node: MapNode = null
 var player_path: Array[String] = []
 var available_nodes: Array[String] = []
 
-var node_spacing = Vector2(100, 60)
+var map_params = {
+	"rows": 4,
+	"nodes_per_row": 3,
+	"min_nodes_per_row": 2,
+	"node_spacing": Vector2(150, 100),
+	"start_pos": Vector2(100, 300),
+	"horizontal_spread": 400,
+	"branching_factor": 0.6,
+}
+var node_spacing: Vector2
 
 func _ready():
 	add_to_group("map")
-	create_map()
+	node_spacing = Vector2(100, 50)
+	create_procedural_map()
 	draw_paths()
 	var map_state = get_node("/root/MapState")
 	if map_state:
@@ -39,31 +49,104 @@ func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
 
-func create_map():
-	var nodes_data = [
-		{"id": "start", "type": MapNode.NodeType.BATTLE, "pos": Vector2(100, 300), \
-		"connections": ["battle1", "battle2"]},
-		{"id": "battle1", "type": MapNode.NodeType.BATTLE, "pos": Vector2(300, 250), \
-		"connections": ["shop1", "rest1"]},
-		{"id": "battle2", "type": MapNode.NodeType.BATTLE, "pos": Vector2(300, 350), \
-		"connections": ["rest1", "treasure1"]},
-		{"id": "shop1", "type": MapNode.NodeType.SHOP, "pos": Vector2(500, 200), \
-		"connections": ["battle3"]},
-		{"id": "rest1", "type": MapNode.NodeType.REST, "pos": Vector2(500, 300), \
-		"connections": ["battle3"]},
-		{"id": "treasure1", "type": MapNode.NodeType.TREASURE, "pos": Vector2(500, 400), \
-		"connections": ["battle3"]},
-		{"id": "battle3", "type": MapNode.NodeType.BOSS, "pos": Vector2(700, 300), \
-		"connections": []}
-	]
-	for node_data in nodes_data:
-		var node = preload("res://scenes/map_node.tscn").instantiate()
-		map_nodes.add_child(node)
-		var connections_array = PackedStringArray()
-		for connection in node_data["connections"]:
-			connections_array.append(connection)
-		node.setup_node(node_data["id"], node_data["type"],node_data["pos"], connections_array, node_spacing)
-		node.pressed.connect(_on_map_node_pressed.bind(node))
+func create_procedural_map():
+	clear_existing_map()
+	var all_nodes = []
+	var rows = []
+	var start_node_data = {
+		"id": "start",
+		"type": MapNode.NodeType.BATTLE,
+		"pos": map_params["start_pos"],
+		"connections": [],
+		"row": 0
+	}
+	all_nodes.append(start_node_data)
+	rows.append([start_node_data])
+	
+	for row_index in range(1, map_params["rows"] + 1):
+		var row_nodes = create_row(row_index, rows[row_index - 1])
+		rows.append(row_nodes)
+		all_nodes.append_array(row_nodes)
+	var last_row = rows[rows.size() - 1]
+	var boss_pos = Vector2(
+		map_params["start_pos"].x + (map_params["rows"] + 1) * map_params["node_spacing"].x,
+		map_params["start_pos"].y
+	)
+	var boss_node_data = {
+		"id": "boss",
+		"type": MapNode.NodeType.BOSS,
+		"pos": boss_pos,
+		"connections": [],
+		"row": map_params["rows"] + 1
+	}
+	var boss_connections = last_row.duplicate()
+	boss_connections.shuffle()
+	var max_boss_connections = min(2, boss_connections.size())
+	for i in range(max_boss_connections):
+		boss_connections[i]["connections"].append("boss")
+	all_nodes.append(boss_node_data)
+	for node_data in all_nodes:
+		create_map_node(node_data)
+
+func create_row(row_index: int, previous_row: Array) -> Array:
+	var row_nodes = []
+	var nodes_in_row = map_params["min_nodes_per_row"] + randi() % (map_params["nodes_per_row"] - map_params["min_nodes_per_row"] + 1) 
+	var base_y = map_params["start_pos"].y
+	var vertical_range = map_params["horizontal_spread"] / 2
+	var y_spacing = vertical_range * 2.0 / max(nodes_in_row, 1)
+	for i in range(nodes_in_row):
+		var node_id = "node_%d_%d" % [row_index, i]
+		
+		var pos_x = map_params["start_pos"].x + row_index * map_params["node_spacing"].x
+		var pos_y = base_y - vertical_range + i * y_spacing + randf() * y_spacing * 0.3
+		var node_type = randi() % 4
+		var node_data = {
+			"id": node_id,
+			"type": node_type,
+			"pos": Vector2(pos_x, pos_y),
+			"connections": [],
+			"row": row_index
+		}
+		row_nodes.append(node_data)
+	connect_rows(previous_row, row_nodes)
+	return row_nodes
+
+func connect_rows(previous_row: Array, current_row: Array):
+	for current_node in current_row:
+		var possible_connections = previous_row.duplicate()
+		possible_connections.shuffle()
+		var num_connections = 1
+		if possible_connections.size() > 1 and randf() < map_params["branching_factor"]:
+			num_connections = 2
+		num_connections = min(num_connections, possible_connections.size())
+		for i in range(num_connections):
+			if i < possible_connections.size():
+				current_node["connections"].append(possible_connections[i]["id"])
+	
+	for previous_node in previous_row:
+		var has_forward_connection = false
+		for current_node in current_row:
+			if previous_node["id"] in current_node["connections"]:
+				has_forward_connection = true
+				break
+		if not has_forward_connection and current_row.size() > 0:
+			var random_current = current_row[randi() % current_row.size()]
+			random_current["connections"].append(previous_node["id"])
+
+func create_map_node(node_data: Dictionary):
+	var node = preload("res://scenes/map_node.tscn").instantiate()
+	map_nodes.add_child(node)
+	var connections_array = PackedStringArray()
+	for connection in node_data["connections"]:
+		connections_array.append(connection)
+	node.setup_node(node_data["id"], node_data["type"], node_data["pos"], connections_array, node_spacing)
+	node.pressed.connect(_on_map_node_pressed.bind(node))
+
+func clear_existing_map():
+	for node in map_nodes.get_children():
+		node.queue_free()
+	for line in path_lines.get_children():
+		line.queue_free()
 
 func draw_paths():
 	for node in map_nodes.get_children():
