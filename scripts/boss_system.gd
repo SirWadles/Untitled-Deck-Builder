@@ -71,6 +71,9 @@ func start_player_turn():
 	current_state = BattleState.PLAYER_TURN
 	apply_relic_effects()
 	player.start_turn()
+	if hand:
+		hand.clear_hand()
+		await get_tree().process_frame
 	draw_cards(3)
 	hand.set_cards_selectable(true)
 	if ui and ui.has_method("update_status"):

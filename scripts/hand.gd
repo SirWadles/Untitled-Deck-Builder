@@ -36,9 +36,11 @@ func _update_layout():
 	card_container.queue_sort()
 
 func clear_hand():
-	for card in cards:
-		card.queue_free()
 	cards.clear()
+	for child in card_container.get_children():
+		if child is Card:
+			child.queue_free()
+	_update_layout()
 
 func set_cards_selectable(selectable: bool):
 	for card in cards:

@@ -171,7 +171,7 @@ func connect_rows(previous_row: Array, current_row: Array):
 				if candidate["connections"].size() < best_candidate["connections"].size():
 					best_candidate = candidate
 			if best_candidate["connections"].size() < 3:
-				best_candidate["connections"].append(previous_node["id"])
+				previous_node["connections"].append(best_candidate["id"])
 
 func create_map_node(node_data: Dictionary):
 	var node = preload("res://scenes/map_node.tscn").instantiate()
@@ -270,7 +270,7 @@ func load_node_scene(node: MapNode):
 		MapNode.NodeType.REST:
 			show_rest_screen()
 		MapNode.NodeType.TREASURE:
-			show_treasure_screen()
+			get_tree().change_scene_to_file("res://scenes/treasure.tscn")
 		MapNode.NodeType.BOSS:
 			get_tree().change_scene_to_file("res://scenes/battle/boss_battle.tscn")
 
@@ -299,17 +299,17 @@ func show_rest_message(message: String):
 	await get_tree().create_timer(5.0).timeout
 	label.queue_free()
 
-func show_treasure_screen():
-	print("treasure")
-	var player_data = get_node("/root/PlayerDatabase")
-	var reward_type = 0
-	match reward_type:
-		0:
-			var gold_amount = 40 + randi() % 50
-			player_data.add_gold(gold_amount)
-			show_treasure_message("Found " + str(gold_amount) + " gold!")
-	await  get_tree().create_timer(2.0).timeout
-	_on_return_to_map()
+#func show_treasure_screen():
+	#print("treasure")
+	#var player_data = get_node("/root/PlayerDatabase")
+	#var reward_type = 0
+	#match reward_type:
+		#0:
+			#var gold_amount = 40 + randi() % 50
+			#player_data.add_gold(gold_amount)
+			#show_treasure_message("Found " + str(gold_amount) + " gold!")
+	#await  get_tree().create_timer(2.0).timeout
+	#_on_return_to_map()
 
 func show_treasure_message(message: String):
 	var message_label = Label.new()

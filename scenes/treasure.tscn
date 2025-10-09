@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3 uid="uid://d1d4olayfn1lu"]
+
+[ext_resource type="Script" uid="uid://c8375kd2cp1dk" path="res://scripts/treasure.gd" id="1_0g4qu"]
+[ext_resource type="AudioStream" uid="uid://dcyuwhh1e044k" path="res://sounds/songs/Shop.mp3" id="1_it12x"]
+[ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="2_0g4qu"]
+
+[node name="Treasure" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0g4qu")
+
+[node name="Audio" type="Node2D" parent="."]
+
+[node name="MusicPlayer" type="AudioStreamPlayer2D" parent="Audio"]
+stream = ExtResource("1_it12x")
+
+[node name="AudioOptions" parent="Audio" instance=ExtResource("2_0g4qu")]
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ChestButton" type="Button" parent="MarginContainer/VBoxContainer/CenterContainer"]
+layout_mode = 2
+
+[node name="ChestSprite" type="Sprite2D" parent="MarginContainer/VBoxContainer/CenterContainer/ChestButton"]
+
+[node name="Footer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ReturnButton" type="Button" parent="MarginContainer/VBoxContainer/Footer"]
+layout_mode = 2
+
+[node name="TreasureMessage" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
