@@ -29,10 +29,22 @@ var node_spacing: Vector2
 func _ready():
 	add_to_group("map")
 	node_spacing = Vector2(100, 50)
-	create_procedural_map()
-	draw_paths()
 	var map_state = get_node("/root/MapState")
 	if map_state:
+		if map_state.saved_map_data.is_empty():
+			create_procedural_map()
+			var map_data = []
+			for node in map_nodes.get_children():
+				map_data.append({
+					"id": node.node_id,
+					"type": node.node_type,
+					"pos": node.position,
+					"connections": node.connections
+				})
+				map_state.save_map_data(map_data)
+		else:
+			recreate_saved_map(map_state.get_map_data())
+		draw_paths()
 		var visited_nodes = map_state.get_visited_nodes()
 		for visited_id in visited_nodes:
 			var node = get_node_by_id(visited_id)
@@ -75,6 +87,8 @@ func create_procedural_map():
 		var row_nodes = create_row(row_index, rows[row_index - 1])
 		rows.append(row_nodes)
 		all_nodes.append_array(row_nodes)
+	for first_row_node in rows[1]:
+		start_node_data["connections"].append(first_row_node["id"])
 	var last_row = rows[rows.size() - 1]
 	var boss_pos = Vector2(
 		map_params["start_pos"].x + (map_params["rows"] + 1) * map_params["node_spacing"].x,
@@ -137,6 +151,8 @@ func create_row(row_index: int, previous_row: Array) -> Array:
 	return row_nodes
 
 func connect_rows(previous_row: Array, current_row: Array):
+	for previous_node in previous_row:
+		previous_node["connections"].clear()
 	for current_node in current_row:
 		var possible_connections = previous_row.duplicate()
 		possible_connections.shuffle()
@@ -146,14 +162,10 @@ func connect_rows(previous_row: Array, current_row: Array):
 		num_connections = min(num_connections, possible_connections.size())
 		for i in range(num_connections):
 			if i < possible_connections.size():
-				current_node["connections"].append(possible_connections[i]["id"])
-	
+				var previous_node = possible_connections[i]
+				previous_node["connections"].append(current_node["id"])
 	for previous_node in previous_row:
-		var forward_connections = 0
-		for current_node in current_row:
-			if previous_node["id"] in current_node["connections"]:
-				forward_connections += 1
-		if forward_connections == 0 and current_row.size() > 0:
+		if previous_node["connections"].is_empty() and current_row.size() > 0:
 			var best_candidate = current_row[0]
 			for candidate in current_row:
 				if candidate["connections"].size() < best_candidate["connections"].size():
@@ -198,7 +210,13 @@ func get_node_by_id(node_id: String) -> MapNode:
 	return null
 
 func _on_map_node_pressed(node: MapNode):
+	print("=== NODE PRESSED ===")
+	print("Node pressed: ", node.node_id)
+	print("Node connections: ", node.connections)
+	print("Available nodes before: ", available_nodes)
+	print("Node visited: ", node.visited)
 	if node.node_id in available_nodes and not node.visited:
+		print("Node is valid - proceeding...")
 		disable_all_nodes()
 		current_node = node
 		player_path.append(node.node_id)
@@ -207,9 +225,18 @@ func _on_map_node_pressed(node: MapNode):
 		update_available_nodes(node)
 		var map_state = get_node("/root/MapState")
 		if map_state:
+			print("Calling mark_node_visited with: ", node.node_id)
 			map_state.mark_node_visited(node.node_id)
 		await get_tree().create_timer(1.5).timeout
 		load_node_scene(node)
+	else:
+		print("Node is NOT valid - skipping")
+		print("Reason: ")
+		if node.visited:
+			print("- Node already visited")
+		if node.node_id not in available_nodes:
+			print("- Node ID not in available_nodes")
+	print("===================")
 
 func update_available_nodes(selected_node: MapNode):
 	available_nodes.clear()
@@ -297,3 +324,11 @@ func show_treasure_message(message: String):
 func _on_deck_view_button_pressed():
 	if deck_viewer:
 		deck_viewer.show_viewer()
+
+func recreate_saved_map(map_data: Array):
+	clear_existing_map()
+	for node_data in map_data:
+		var node = preload("res://scenes/map_node.tscn").instantiate()
+		map_nodes.add_child(node)
+		node.setup_node(node_data["id"], node_data["type"], node_data["pos"], node_data["connections"], node_spacing)
+		node.pressed.connect(_on_map_node_pressed.bind(node))

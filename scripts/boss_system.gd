@@ -342,13 +342,15 @@ func _on_play_again():
 	var player_data = get_node("/root/PlayerDatabase")
 	if win_label.visible:
 		player_data.current_health = player_data.max_health
-		var map_data = get_node("/root/MapState")
-		map_data.reset()
+		var map_state = get_node("/root/MapState")
+		map_state.reset()
+		map_state.saved_map_data.clear()
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/map.tscn")
 	else:
 		player_data.reset_to_default()
 		var map_state = get_node("/root/MapState")
 		map_state.reset()
+		map_state.saved_map_data.clear()
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/main_menu.tscn")
 
 func _on_quit_button():
