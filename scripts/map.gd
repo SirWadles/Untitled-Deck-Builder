@@ -22,7 +22,7 @@ var map_params = {
 	"node_spacing": Vector2(150, 100),
 	"start_pos": Vector2(100, 300),
 	"horizontal_spread": 400,
-	"branching_factor": 0.6,
+	"branching_factor": 0.8,
 }
 var node_spacing: Vector2
 
@@ -33,11 +33,19 @@ func _ready():
 	draw_paths()
 	var map_state = get_node("/root/MapState")
 	if map_state:
-		available_nodes = map_state.get_available_nodes()
-		for visited_id in map_state.get_visited_nodes():
+		var visited_nodes = map_state.get_visited_nodes()
+		for visited_id in visited_nodes:
 			var node = get_node_by_id(visited_id)
 			if node:
 				node.set_visited()
+		available_nodes = map_state.get_available_nodes()
+		if available_nodes.is_empty() and not visited_nodes.is_empty():
+			var last_visited_id = visited_nodes[visited_nodes.size() - 1]
+			var last_node = get_node_by_id(last_visited_id)
+			if last_node:
+				available_nodes.clear()
+				for connection_id in last_node.connections:
+					available_nodes.append(connection_id)
 	update_node_states()
 	if deck_view_button:
 		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
@@ -72,6 +80,9 @@ func create_procedural_map():
 		map_params["start_pos"].x + (map_params["rows"] + 1) * map_params["node_spacing"].x,
 		map_params["start_pos"].y
 	)
+	var boss_connections = []
+	for node in last_row:
+		boss_connections.append(node["id"])
 	var boss_node_data = {
 		"id": "boss",
 		"type": MapNode.NodeType.BOSS,
@@ -79,14 +90,28 @@ func create_procedural_map():
 		"connections": [],
 		"row": map_params["rows"] + 1
 	}
-	var boss_connections = last_row.duplicate()
-	boss_connections.shuffle()
-	var max_boss_connections = min(2, boss_connections.size())
-	for i in range(max_boss_connections):
-		boss_connections[i]["connections"].append("boss")
 	all_nodes.append(boss_node_data)
+	for node_id in boss_connections:
+		var node = find_node_by_id(all_nodes, node_id)
+		if node:
+			node["connections"].append("boss")
 	for node_data in all_nodes:
 		create_map_node(node_data)
+	print("Map generation complete:")
+	print("Total nodes: ", all_nodes.size())
+	print("Last row nodes: ", last_row.size())
+	print("Boss connections: ", boss_connections.size())
+	for node in all_nodes:
+		if node["id"] == "boss":
+			print("Boss node connections: ", node["connections"])
+		elif node["row"] == map_params["rows"]:  # Last row nodes
+			print("Last row node ", node["id"], " connects to: ", node["connections"])
+
+func find_node_by_id(all_nodes: Array, node_id: String) -> Dictionary:
+	for node_data in all_nodes:
+		if node_data["id"] == node_id:
+			return node_data
+	return {}
 
 func create_row(row_index: int, previous_row: Array) -> Array:
 	var row_nodes = []
@@ -124,14 +149,17 @@ func connect_rows(previous_row: Array, current_row: Array):
 				current_node["connections"].append(possible_connections[i]["id"])
 	
 	for previous_node in previous_row:
-		var has_forward_connection = false
+		var forward_connections = 0
 		for current_node in current_row:
 			if previous_node["id"] in current_node["connections"]:
-				has_forward_connection = true
-				break
-		if not has_forward_connection and current_row.size() > 0:
-			var random_current = current_row[randi() % current_row.size()]
-			random_current["connections"].append(previous_node["id"])
+				forward_connections += 1
+		if forward_connections == 0 and current_row.size() > 0:
+			var best_candidate = current_row[0]
+			for candidate in current_row:
+				if candidate["connections"].size() < best_candidate["connections"].size():
+					best_candidate = candidate
+			if best_candidate["connections"].size() < 3:
+				best_candidate["connections"].append(previous_node["id"])
 
 func create_map_node(node_data: Dictionary):
 	var node = preload("res://scenes/map_node.tscn").instantiate()
@@ -220,6 +248,9 @@ func load_node_scene(node: MapNode):
 			get_tree().change_scene_to_file("res://scenes/battle/boss_battle.tscn")
 
 func _on_return_to_map():
+	var map_state = get_node("/root/MapState")
+	if map_state:
+		available_nodes = map_state.get_available_nodes()
 	update_node_states()
 	enable_available_nodes()
 
