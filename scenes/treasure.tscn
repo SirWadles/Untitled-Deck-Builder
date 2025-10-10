@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://d1d4olayfn1lu"]
+[gd_scene load_steps=5 format=3 uid="uid://d1d4olayfn1lu"]
 
 [ext_resource type="Script" uid="uid://c8375kd2cp1dk" path="res://scripts/treasure.gd" id="1_0g4qu"]
 [ext_resource type="AudioStream" uid="uid://dcyuwhh1e044k" path="res://sounds/songs/Shop.mp3" id="1_it12x"]
 [ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="2_0g4qu"]
+[ext_resource type="PackedScene" uid="uid://bl2dchpgxx6h6" path="res://scenes/card_tool_tip.tscn" id="4_wqbho"]
 
 [node name="Treasure" type="Control"]
 layout_mode = 3
@@ -12,6 +13,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0g4qu")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.933519, 0.75566, 0.792927, 1)
 
 [node name="Audio" type="Node2D" parent="."]
 
@@ -32,26 +42,30 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Title" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+visible = false
 layout_mode = 2
 
 [node name="GoldLabel" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ChestButton" type="Button" parent="MarginContainer/VBoxContainer/CenterContainer"]
+[node name="ChestButton" type="Button" parent="MarginContainer/VBoxContainer/Control"]
 layout_mode = 2
+offset_left = 16.0
+offset_right = 24.0
+offset_bottom = 8.0
 
-[node name="ChestSprite" type="Sprite2D" parent="MarginContainer/VBoxContainer/CenterContainer/ChestButton"]
-
-[node name="Footer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="ReturnButton" type="Button" parent="MarginContainer/VBoxContainer/Footer"]
-layout_mode = 2
+[node name="ChestSprite" type="Sprite2D" parent="MarginContainer/VBoxContainer/Control/ChestButton"]
 
 [node name="TreasureMessage" type="Label" parent="."]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
+
+[node name="ReturnButton" type="Button" parent="."]
+layout_mode = 0
+
+[node name="CardToolTip" parent="." instance=ExtResource("4_wqbho")]
+layout_mode = 0

@@ -2,10 +2,11 @@ extends Control
 class_name Treasure
 
 @onready var gold_label: Label = $MarginContainer/VBoxContainer/Header/GoldLabel
-@onready var chest_button: Button = $MarginContainer/VBoxContainer/CenterContainer/ChestButton
-@onready var chest_sprite: Sprite2D = $MarginContainer/VBoxContainer/CenterContainer/ChestButton/ChestSprite
-@onready var return_button: Button = $MarginContainer/VBoxContainer/Footer/ReturnButton
+@onready var chest_button: Button = $MarginContainer/VBoxContainer/Control/ChestButton
+@onready var chest_sprite: Sprite2D = $MarginContainer/VBoxContainer/Control/ChestButton/ChestSprite
+@onready var return_button: Button = $ReturnButton
 @onready var treasure_message: Label = $TreasureMessage
+@onready var card_tooltip: Panel = $CardToolTip
 
 @onready var music_player = $Audio/MusicPlayer
 @onready var audio_options = $Audio/AudioOptions
@@ -13,6 +14,7 @@ class_name Treasure
 var player_data: PlayerData
 var card_database: CardDatabase
 var reward_given: bool = false
+var current_card_reward: CardData = null
 
 var reward_probabilities = {
 	"gold": 0.5,
@@ -33,18 +35,45 @@ func _ready():
 	audio_options.visible = false
 	music_player.bus = "Music"
 	music_player.play()
+	if card_tooltip:
+		card_tooltip.visible = false
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
+	if event is InputEventMouseButton and event.pressed:
+		if card_tooltip and card_tooltip.visible:
+			card_tooltip.visible = false
 
 func setup_ui():
 	return_button.text = "Return to Map"
 	return_button.custom_minimum_size = Vector2(150, 40)
+	return_button.position = Vector2(0, 600)
+	
+	var style_box = StyleBoxEmpty.new()
+	chest_button.add_theme_stylebox_override("normal", style_box)
+	chest_button.add_theme_stylebox_override("hover", style_box)
+	chest_button.add_theme_stylebox_override("pressed", style_box)
+	chest_button.add_theme_stylebox_override("disabled", style_box)
 	chest_button.focus_mode = Control.FOCUS_NONE
-	chest_button.custom_minimum_size = Vector2(64, 64)
+	chest_button.custom_minimum_size = Vector2(128, 128)
+	chest_button.position = Vector2(500, 300)
+	
+	treasure_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	treasure_message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	treasure_message.visible = false
-	treasure_message.add_theme_font_size_override("font_size", 24)
+	treasure_message.add_theme_font_size_override("font_size", 36)
+	add_text_outline()
+	
+	if card_tooltip:
+		card_tooltip.visible = false
+		card_tooltip.position = Vector2(400, 200)
+
+func add_text_outline():
+	var outline_color = Color.BLACK
+	var outline_size = 2
+	treasure_message.add_theme_constant_override("outline_size", outline_size)
+	treasure_message.add_theme_color_override("font_outline_color", outline_color)
 
 func update_display():
 	gold_label.text = "Gold: " + str(player_data.gold) + "g"
@@ -57,7 +86,7 @@ func setup_chest_sprite():
 		atlas.region = Rect2(0, 0, 32, 32)
 		chest_sprite.texture = atlas
 		chest_sprite.position = Vector2(32, 32)
-		chest_sprite.scale = Vector2(2, 2)
+		chest_sprite.scale = Vector2(4, 4)
 
 func _on_chest_pressed():
 	if reward_given:
@@ -104,7 +133,9 @@ func grant_card_reward():
 	var random_card = card_database.get_random_card()
 	if random_card:
 		player_data.add_card_to_deck(random_card.card_id)
+		current_card_reward = random_card
 		show_treasure_message("Found a new card: " + random_card.card_name + "!", Color.SKY_BLUE)
+		show_card_tooltip(random_card)
 	else:
 		grant_gold_reward()
 
@@ -153,10 +184,41 @@ func show_treasure_message(message: String, color: Color = Color.WHITE):
 	treasure_message.text = message
 	treasure_message.add_theme_color_override("font_color", color)
 	treasure_message.visible = true
+	var chest_center_x = chest_button.position.x + chest_button.size.x / 2
+	var message_width = treasure_message.size.x
+	var message_x = chest_center_x - message_width / 2
+	var message_y = chest_button.position.y - 60
+	treasure_message.position = Vector2(message_x, message_y)
 	
 	var tween = create_tween()
 	tween.tween_property(treasure_message, "scale", Vector2(1.2, 1.2), 0.2)
 	tween.tween_property(treasure_message, "scale", Vector2(1.0, 1.0), 0.2)
 	
+	if "card" in message.to_lower():
+		await get_tree().create_timer(3.5).timeout
+	else:
+		await get_tree().create_timer(2.0).timeout
+	treasure_message.visible = false
+
 func _on_return_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/map.tscn")
+
+func show_card_tooltip(card_data: CardData):
+	if not card_tooltip:
+		return
+	card_tooltip.name_label.text = card_data.card_name
+	card_tooltip.cost_label.text = "Cost: " + str(card_data.cost)
+	card_tooltip.desc_label.text = card_data.description
+	
+	var stats_text = ""
+	if card_data.damage > 0:
+		stats_text += "Damage: " + str(card_data.damage) + "\n"
+	if card_data.heal > 0:
+		stats_text += "Defense: " + str(card_data.heal) + "\n"
+	card_tooltip.position = Vector2(
+		chest_button.position.x - card_tooltip.size.x / 2 + chest_button.size.x / 2,
+		chest_button.position.y + chest_button.size.y + 20
+	)
+	card_tooltip.visible = true
+	await get_tree().create_timer(3.0).timeout
+	card_tooltip.visible = false
