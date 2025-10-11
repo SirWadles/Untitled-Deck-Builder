@@ -7,6 +7,7 @@ class_name Treasure
 @onready var return_button: Button = $ReturnButton
 @onready var treasure_message: Label = $TreasureMessage
 @onready var card_tooltip: Panel = $CardToolTip
+@onready var card_display: Control = $CardDisplay
 
 @onready var music_player = $Audio/MusicPlayer
 @onready var audio_options = $Audio/AudioOptions
@@ -15,6 +16,7 @@ var player_data: PlayerData
 var card_database: CardDatabase
 var reward_given: bool = false
 var current_card_reward: CardData = null
+var displayed_card_instance: Card = null
 
 var reward_probabilities = {
 	"gold": 0.5,
@@ -41,9 +43,9 @@ func _ready():
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
-	if event is InputEventMouseButton and event.pressed:
-		if card_tooltip and card_tooltip.visible:
-			card_tooltip.visible = false
+	#if event is InputEventMouseButton and event.pressed:
+		#if card_tooltip and card_tooltip.visible:
+			#card_tooltip.visible = false
 
 func setup_ui():
 	return_button.text = "Return to Map"
@@ -68,6 +70,10 @@ func setup_ui():
 	if card_tooltip:
 		card_tooltip.visible = false
 		card_tooltip.position = Vector2(400, 200)
+	
+	if card_display:
+		card_display.visible = false
+		card_display.position = Vector2(400, 250)
 
 func add_text_outline():
 	var outline_color = Color.BLACK
@@ -135,6 +141,7 @@ func grant_card_reward():
 		player_data.add_card_to_deck(random_card.card_id)
 		current_card_reward = random_card
 		show_treasure_message("Found a new card: " + random_card.card_name + "!", Color.SKY_BLUE)
+		show_card_display(random_card)
 		show_card_tooltip(random_card)
 	else:
 		grant_gold_reward()
@@ -194,31 +201,57 @@ func show_treasure_message(message: String, color: Color = Color.WHITE):
 	tween.tween_property(treasure_message, "scale", Vector2(1.2, 1.2), 0.2)
 	tween.tween_property(treasure_message, "scale", Vector2(1.0, 1.0), 0.2)
 	
-	if "card" in message.to_lower():
-		await get_tree().create_timer(3.5).timeout
-	else:
-		await get_tree().create_timer(2.0).timeout
-	treasure_message.visible = false
+	#if "card" in message.to_lower():
+		#await get_tree().create_timer(3.5).timeout
+	#else:
+		#await get_tree().create_timer(2.0).timeout
+	#treasure_message.visible = false
 
 func _on_return_button_pressed():
+	if displayed_card_instance:
+		displayed_card_instance.queue_free()
 	get_tree().change_scene_to_file("res://scenes/map.tscn")
 
 func show_card_tooltip(card_data: CardData):
 	if not card_tooltip:
 		return
+	card_tooltip.setup_card_tooltip(card_data)
 	card_tooltip.name_label.text = card_data.card_name
 	card_tooltip.cost_label.text = "Cost: " + str(card_data.cost)
 	card_tooltip.desc_label.text = card_data.description
-	
-	var stats_text = ""
-	if card_data.damage > 0:
-		stats_text += "Damage: " + str(card_data.damage) + "\n"
-	if card_data.heal > 0:
-		stats_text += "Defense: " + str(card_data.heal) + "\n"
 	card_tooltip.position = Vector2(
 		chest_button.position.x - card_tooltip.size.x / 2 + chest_button.size.x / 2,
 		chest_button.position.y + chest_button.size.y + 20
 	)
 	card_tooltip.visible = true
-	await get_tree().create_timer(3.0).timeout
-	card_tooltip.visible = false
+	#await get_tree().create_timer(3.0).timeout
+	#card_tooltip.visible = false
+
+func show_card_display(card_data: CardData):
+	if not card_display:
+		return
+	if displayed_card_instance:
+		displayed_card_instance.queue_free()
+	var card_scene = preload("res://scenes/battle/card.tscn")
+	displayed_card_instance = card_scene.instantiate()
+	card_display.add_child(displayed_card_instance)
+	displayed_card_instance.setup(card_data, null)
+	if displayed_card_instance.has_node("CostLabel"):
+		displayed_card_instance.get_node("CostLabel").visible = false
+	if displayed_card_instance.has_node("NameLabel"):
+		displayed_card_instance.get_node("NameLabel").visible = false
+	if displayed_card_instance.has_node("DescriptionLabel"):
+		displayed_card_instance.get_node("DescriptionLabel").visible = false
+	displayed_card_instance.position = Vector2(
+		card_display.size.x / 2 - displayed_card_instance.size.x / 2,
+		card_display.size.y / 2 - displayed_card_instance.size.y / 2 + 250
+	)
+	displayed_card_instance.scale = Vector2(2, 2)
+	displayed_card_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card_display.visible = true
+	
+	var tween = create_tween()
+	card_display.scale = Vector2(0.5, 0.5)
+	card_display.modulate = Color.TRANSPARENT
+	tween.tween_property(card_display, "scale", Vector2(1.0, 1.0), 0.5).set_trans(Tween.TRANS_BACK)
+	tween.parallel().tween_property(card_display, "modulate", Color.WHITE, 0.5)

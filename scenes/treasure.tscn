@@ -69,3 +69,8 @@ layout_mode = 0
 
 [node name="CardToolTip" parent="." instance=ExtResource("4_wqbho")]
 layout_mode = 0
+
+[node name="CardDisplay" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

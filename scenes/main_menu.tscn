@@ -65,7 +65,7 @@ text = "Options"
 
 [node name="QuitButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Quit"
+text = "Credits"
 
 [node name="Audio" type="Node2D" parent="."]
 
@@ -94,6 +94,7 @@ that occur.
 ♡"
 
 [node name="AudioOptions" parent="." instance=ExtResource("8_tbmy8")]
+visible = false
 
 [node name="InfoLabel2" type="Label" parent="."]
 layout_mode = 0
