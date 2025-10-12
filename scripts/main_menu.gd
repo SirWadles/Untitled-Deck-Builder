@@ -10,6 +10,7 @@ extends Control
 @onready var music_player = $Audio/MusicPlayer
 
 @onready var audio_options = $AudioOptions
+@onready var credits_menu = $CreditsMenu
 
 func _ready():
 	start_button.pressed.connect(_on_start_button_pressed)
@@ -18,6 +19,7 @@ func _ready():
 	music_player.bus = "Music"
 	music_player.play()
 	audio_options.visible = false
+	credits_menu.visible = false
 
 func _on_start_button_pressed():
 	print("Start Pressed")
@@ -29,11 +31,22 @@ func _on_start_button_pressed():
 func _on_options_button_pressed():
 	print("Options")
 	options_sound.play()
-	await options_sound.finished
 	audio_options.show_options()
 	
 
 func _on_credit_button_pressed():
+	print("Credits")
 	quit_sound.play()
-	await quit_sound.finished
-	get_tree().quit()
+	show_credits()
+
+func show_credits():
+	credits_menu.visible = true
+	start_button.disabled = true
+	options_button.disabled = true
+	credit_button.disabled = true
+
+func hide_credits():
+	credits_menu.visible = false
+	start_button.disabled = false
+	options_button.disabled = false
+	credit_button.disabled = false

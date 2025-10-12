@@ -1,37 +1,86 @@
-[gd_scene load_steps=2 format=3 uid="uid://nvxf85haenae"]
+[gd_scene load_steps=3 format=3 uid="uid://nvxf85haenae"]
 
 [ext_resource type="Script" uid="uid://dqvlo0686srkr" path="res://scripts/credits_menu.gd" id="1_27l6r"]
+[ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="2_p38dx"]
 
 [node name="CreditsMenu" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_27l6r")
 
 [node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -152.0
+offset_top = -100.0
+offset_right = 148.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.900053, 0.385063, 0.367957, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -138.0
+offset_top = -85.0
+offset_right = 138.0
+offset_bottom = 85.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
 text = "Credits"
 
-[node name="Label2" type="Label" parent="VBoxContainer"]
+[node name="GameDesignLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
 text = "Game Design: Adrian, Aiden, Saman"
 
-[node name="Label3" type="Label" parent="VBoxContainer"]
+[node name="ProgrammingLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-text = "Art Design: Adrian Hernandez"
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
+text = "Programming: Me"
+
+[node name="ArtLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
+text = "Art Design: Myself"
+
+[node name="MusicLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
+text = "Music: ???"
+
+[node name="SpecialLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
+text = "Special Thanks - Random Tutorials"
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_p38dx")
+theme_override_font_sizes/font_size = 18
+text = "Back"

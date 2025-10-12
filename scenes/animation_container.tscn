@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://8jad0bxlx7ec"]
+
+[ext_resource type="Script" uid="uid://cxw183bhgcwu8" path="res://scripts/death_grip_animation.gd" id="1_4hfb5"]
+
+[node name="AnimationContainer" type="Node2D"]
+script = ExtResource("1_4hfb5")
