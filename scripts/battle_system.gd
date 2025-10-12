@@ -17,13 +17,14 @@ class_name BattleSystem
 
 @onready var deck_viewer: Control = $DeckViewer
 @onready var deck_view_button: Button = $UI/DeckViewButton
-@onready var animation_container: Node2D = $AnimationContainer
 
 var enemies: Array[Enemy] = []
 var current_selected_card: Card = null
 var current_state: BattleState = BattleState.PLAYER_TURN
 
 var is_player_targetable: bool = false
+
+var animation_container: Node
 
 signal card_played(card: Card, target: Enemy)
 signal turn_ended()
