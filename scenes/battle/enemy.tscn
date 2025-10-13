@@ -1,13 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://cqveanif5immc"]
+[gd_scene load_steps=2 format=3 uid="uid://cqveanif5immc"]
 
 [ext_resource type="Script" uid="uid://bjco20accqkjn" path="res://scripts/enemy.gd" id="1_oqxvf"]
-[ext_resource type="Texture2D" uid="uid://ca61rnxbwp54y" path="res://assets/Holy One.png" id="2_j6w02"]
 
 [node name="enemy" type="Node2D"]
 script = ExtResource("1_oqxvf")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_j6w02")
 
 [node name="HealthLabel" type="Label" parent="."]
 offset_left = -5.0
@@ -21,3 +19,9 @@ offset_top = -31.0
 offset_right = 23.0
 offset_bottom = 34.0
 flat = true
+
+[node name="IntentIcon" type="AnimatedSprite2D" parent="."]
+
+[node name="IntentValue" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0

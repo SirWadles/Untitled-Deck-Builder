@@ -96,6 +96,9 @@ func start_player_turn():
 		await get_tree().process_frame
 	draw_cards(3)
 	hand.set_cards_selectable(true)
+	for enemy in enemies:
+		if enemy.current_health > 0:
+			enemy.update_intent_display()
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Your Turn - Select a Card")
 	player_turn_started.emit()
@@ -333,9 +336,8 @@ func start_enemy_turn():
 		ui.update_status("Enemy Turn")
 	for enemy in enemies:
 		if enemy.current_health > 0:
-			#player.play_hurt_animation()
-			player.take_damage(enemy.damage)
-			print(enemy.enemy_name + "attack for " + str(enemy.damage))
+			enemy.execute_attack()
+			await get_tree().create_timer(0.8).timeout
 	check_battle_end()
 	await get_tree().create_timer(1.0).timeout
 	start_player_turn()
