@@ -17,8 +17,9 @@ script = ExtResource("1_4xfga")
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 3000.0
+offset_bottom = 2121.0
+scale = Vector2(0.342, 0.3)
 texture = ExtResource("2_paxxb")
 
 [node name="PathLines" type="Node2D" parent="."]
@@ -62,4 +63,5 @@ offset_right = 730.0
 offset_bottom = 32.0
 theme_override_fonts/font = ExtResource("7_nakos")
 theme_override_font_sizes/font_size = 32
-text = "PRESS A BUTTON TO CONTINUE"
+text = "Select a button to proceed"
+horizontal_alignment = 1

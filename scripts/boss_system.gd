@@ -23,6 +23,7 @@ var current_selected_card: Card = null
 var current_state: BattleState = BattleState.PLAYER_TURN
 
 var is_player_targetable: bool = false
+var animation_container: Node
 
 enum BattleState {	
 	PLAYER_TURN,
@@ -49,6 +50,10 @@ func _ready():
 		quit_button.visible = false
 	if deck_view_button:
 		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
+	if not has_node("AnimationContainer"):
+		animation_container = Node2D.new()
+		animation_container.name = "AnimationContainer"
+		add_child(animation_container)
 
 func create_boss_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -184,6 +189,8 @@ func play_card_on_target(target: Enemy):
 		print("nope broke")
 		return
 	var card_data = current_selected_card.card_data
+	if card_data.card_id == "attack":
+		play_death_grip_animation(target)
 	print("4. Card data:", card_data.card_name, "Damage:", card_data.damage)
 	player.spend_energy(card_data.cost)
 	print("5. Energy spent")
@@ -233,6 +240,14 @@ func play_card_on_target(target: Enemy):
 		print("14. Cards set to selectable")
 	print("=== PLAY CARD ON TARGET END ===")
 	check_battle_end()
+
+func play_death_grip_animation(target: Enemy):
+	print("DEATH GRIP ANIMATION: Playing on enemy ", target.enemy_name)
+	var death_grip_scene = preload("res://scenes/animation_container.tscn")
+	var animation_instance = death_grip_scene.instantiate()
+	animation_container.add_child(animation_instance)
+	animation_instance.target_enemy = target
+	animation_instance.target_position = target.global_position
 
 func reset_targeting():
 	for enemy in enemies:

@@ -153,25 +153,48 @@ func create_row(row_index: int, previous_row: Array) -> Array:
 func connect_rows(previous_row: Array, current_row: Array):
 	for previous_node in previous_row:
 		previous_node["connections"].clear()
-	for current_node in current_row:
-		var possible_connections = previous_row.duplicate()
-		possible_connections.shuffle()
-		var num_connections = 1
-		if possible_connections.size() > 1 and randf() < map_params["branching_factor"]:
-			num_connections = 2
-		num_connections = min(num_connections, possible_connections.size())
-		for i in range(num_connections):
-			if i < possible_connections.size():
-				var previous_node = possible_connections[i]
-				previous_node["connections"].append(current_node["id"])
-	for previous_node in previous_row:
-		if previous_node["connections"].is_empty() and current_row.size() > 0:
-			var best_candidate = current_row[0]
-			for candidate in current_row:
-				if candidate["connections"].size() < best_candidate["connections"].size():
-					best_candidate = candidate
-			if best_candidate["connections"].size() < 3:
-				previous_node["connections"].append(best_candidate["id"])
+	previous_row.sort_custom(func(a, b): return a["pos"].y < b["pos"].y)
+	current_row.sort_custom(func(a, b): return a["pos"].y < b["pos"].y)
+	var prev_size = previous_row.size()
+	var curr_size = current_row.size()
+	
+	for i in range(prev_size):
+		var connections_needed = 1
+		if randf() < map_params["branching_factor"]:
+			connections_needed = 2
+			if i > 0 and i < prev_size - 1 and curr_size >= 3:
+				connections_needed = 3
+		var distances = []
+		for j in range(curr_size):
+			var dist = abs(previous_row[i]["pos"].y - current_row[j]["pos"].y)
+			distances.append({"idx": j, "dist": dist})
+		distances.sort_custom(func(a, b): return a["dist"] < b["dist"])
+		
+		for k in range(min(connections_needed, distances.size())):
+			var target_idx = distances[k]["idx"]
+			previous_row[i]["connections"].append(current_row[target_idx]["id"])
+		
+	for j in range(curr_size):
+		var has_incoming = false
+		for prev_node in previous_row:
+			if current_row[j]["id"] in prev_node["connections"]:
+				has_incoming = true
+				break
+		if not has_incoming:
+			var closest_idx = 0
+			var min_dist = INF
+			for i in range(prev_size):
+				var dist = abs(previous_row[i]["pos"].y - current_row[j]["pos"].y)
+				if dist < min_dist:
+					min_dist = dist
+					closest_idx = i
+			previous_row[closest_idx]["connections"].append(current_row[j]["id"])
+	for prev_node in previous_row:
+		var unique_connections = []
+		for conn in prev_node["connections"]:
+			if conn not in unique_connections:
+				unique_connections.append(conn)
+		prev_node["connections"] = unique_connections
 
 func create_map_node(node_data: Dictionary):
 	var node = preload("res://scenes/map_node.tscn").instantiate()
