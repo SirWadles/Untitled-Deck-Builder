@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://qqbcfoq0xxy3"]
+[gd_scene load_steps=8 format=3 uid="uid://qqbcfoq0xxy3"]
 
 [ext_resource type="Script" uid="uid://cvk2q8d532wa6" path="res://scripts/map.gd" id="1_4xfga"]
 [ext_resource type="Texture2D" uid="uid://dwyhlpg2jx2ln" path="res://assets/oldpaperertyhuji.png" id="2_paxxb"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dvt5vx1cxba5x" path="res://scenes/map_deck_viewer.tscn" id="4_0cso3"]
 [ext_resource type="AudioStream" uid="uid://cpt52mjkiefbe" path="res://sounds/songs/machine love arr. orchestra, op. 17 no. 3 - estreller.mp3" id="5_2lpho"]
 [ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="6_nakos"]
+[ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="7_nakos"]
 
 [node name="Map" type="Control"]
 layout_mode = 3
@@ -28,6 +29,7 @@ texture = ExtResource("2_paxxb")
 stream = ExtResource("3_gldc4")
 
 [node name="MapDeckViewer" parent="." instance=ExtResource("4_0cso3")]
+visible = false
 layout_mode = 1
 offset_left = 200.0
 offset_top = 100.0
@@ -35,6 +37,7 @@ offset_right = 200.0
 offset_bottom = 100.0
 
 [node name="UI" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -51,3 +54,12 @@ text = "View Deck"
 stream = ExtResource("5_2lpho")
 
 [node name="AudioOptions" parent="Audio" instance=ExtResource("6_nakos")]
+
+[node name="Info" type="Label" parent="."]
+layout_mode = 0
+offset_left = 270.0
+offset_right = 730.0
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource("7_nakos")
+theme_override_font_sizes/font_size = 32
+text = "PRESS A BUTTON TO CONTINUE"

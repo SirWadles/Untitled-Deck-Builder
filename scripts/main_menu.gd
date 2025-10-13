@@ -26,7 +26,7 @@ func _on_start_button_pressed():
 	start_sound.play()
 	await start_sound.finished
 	music_player.stop()
-	get_tree().change_scene_to_file("res://scenes/map.tscn")
+	get_tree().change_scene_to_file("res://scenes/tutorial_scene.tscn")
 
 func _on_options_button_pressed():
 	print("Options")
