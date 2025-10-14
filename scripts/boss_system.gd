@@ -81,6 +81,9 @@ func start_player_turn():
 		await get_tree().process_frame
 	draw_cards(3)
 	hand.set_cards_selectable(true)
+	for enemy in enemies:
+		if enemy.current_health > 0:
+			enemy.update_intent_display()
 	if ui and ui.has_method("update_status"):
 		ui.update_status("BOSS BATTLE - Select a Card!")
 
@@ -323,12 +326,13 @@ func start_enemy_turn():
 	if ui and ui.has_method("update_status"):
 		ui.update_status("BOSS TURN - Survive!")
 	for enemy in enemies:
+		if enemy.current_health <= 0:
+			enemy.hide_intent()
+	await get_tree().create_timer(0.5).timeout
+	for enemy in enemies:
 		if enemy.current_health > 0:
-			if enemy.enemy_type == "boss_1" and randi() % 2 == 0:
-				player.take_damage(enemy.damage + 3)
-				print("special")
-			else:
-				player.take_damage(enemy.damage)
+			enemy.execute_attack()
+			await get_tree().create_timer(0.8).timeout
 	check_battle_end()
 	await get_tree().create_timer(1.0).timeout
 	start_player_turn()

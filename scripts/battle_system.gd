@@ -335,6 +335,9 @@ func start_enemy_turn():
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Enemy Turn")
 	for enemy in enemies:
+		if enemy.current_health <= 0:
+			enemy.hide_intent()
+	for enemy in enemies:
 		if enemy.current_health > 0:
 			enemy.execute_attack()
 			await get_tree().create_timer(0.8).timeout

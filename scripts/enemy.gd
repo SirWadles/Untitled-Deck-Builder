@@ -56,6 +56,7 @@ func setup(name: String, health: int, battle_ref: Node, enemy_data: Dictionary =
 	update_button_size()
 	update_display()
 	update_button_postion()
+	update_intent_position()
 	choose_next_attack()
 
 func update_button_size():
@@ -75,9 +76,23 @@ func take_damage(damage: int):
 		current_health = 0
 	print("   ENEMY: HP after damage:", current_health)
 	update_display()
+	if current_health <= 0:
+		die()
+	else:
+		var tween = create_tween()
+		tween.tween_property(self, "modulate", Color.RED, 0.1)
+		tween.tween_property(self, "modulate", Color.WHITE, 0.1)
+
+func die():
+	hide_intent()
+	set_targetable(false)
+	button.disabled = true
 	var tween = create_tween()
-	tween.tween_property(self, "modulate", Color.RED, 0.1)
-	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
+	tween.tween_property(self, "modulate", Color(1, 1, 1, 0), 0.5)
+	tween.tween_callback(func():
+		visible = false
+		modulate = Color.WHITE
+	)
 
 func heal(amount: int):
 	current_health += amount
@@ -121,8 +136,8 @@ func setup_attack_pattern(enemy_data: Dictionary):
 			]
 		"tree":
 			attack_patterns = [
-				{"type": "attack", "damage": 2, "weight": 7, "icon": "attack"},
-				{"type": "block", "block": 5, "weight": 3, "icon": "attack"}
+				{"type": "attack", "damage": 2, "weight": 10, "icon": "attack"},
+				#{"type": "block", "block": 5, "weight": 3, "icon": "attack"}
 			]
 		"boss_1":
 			attack_patterns = [
@@ -156,8 +171,10 @@ func setup_intent_animation():
 			atlas_texture.region = Rect2(col * tile_size, row * tile_size, tile_size, tile_size)
 			sprite_frames.add_frame("default", atlas_texture)
 	intent_icon.sprite_frames = sprite_frames
+	sprite_frames.set_animation_loop("default", true)
+	sprite_frames.set_animation_speed("default", 5)
 	intent_icon.play("default")
-	intent_icon.scale = Vector2(2, 2)
+	intent_icon.scale = Vector2(0.8, 0.8)
 
 func choose_next_attack():
 	if attack_patterns.is_empty():
@@ -180,16 +197,18 @@ func update_intent_display():
 	if not intent_icon or not intent_value:
 		return
 	if intent_icon is AnimatedSprite2D:
-		if not intent_icon.playing:
-			intent_icon.play("default")
+		if intent_icon.sprite_frames and intent_icon.sprite_frames.has_animation("default"):
+			if not intent_icon.is_playing():
+				intent_icon.play("default")
 	match next_attack["type"]:
 		"attack", "strong_attack", "debuff":
-			intent_value.text = str(next_attack.get("damage", damage))
+			intent_value.text = str(next_attack.get("damage", damage)) + " DMG"
 		"block":
 			intent_value.text = "Block: " + str(next_attack.get("block", 0))
 		_:
-			intent_value.text = str(next_attack.get("damage", damage))
+			intent_value.text = str(next_attack.get("damage", damage)) + " DMG"
 	intent_icon.visible = true
+	intent_value.add_theme_font_size_override("font_size", 16)
 	intent_value.visible = true
 
 func hide_intent():
@@ -210,3 +229,11 @@ func execute_attack():
 			battle_system.player.take_damage(next_attack.get("damage", damage))
 			print(enemy_name + " debuffs and attacks for " + str(next_attack.get("damage", damage)))
 	choose_next_attack()
+
+func update_intent_position():
+	if not intent_icon or not sprite:
+		return
+	var sprite_height = sprite.texture.get_size().y * sprite.scale.y
+	var intent_offset = sprite_height / 2 + 20
+	intent_icon.position = Vector2(-20, intent_offset)
+	intent_value.position = Vector2(-5, (intent_offset - 10))
