@@ -60,6 +60,7 @@ stream = ExtResource("6_fh7rg")
 layout_mode = 0
 offset_right = 300.0
 offset_bottom = 50.0
+theme_override_fonts/font = ExtResource("11_icoan")
 metadata/_edit_use_anchors_ = true
 
 [node name="DeckViewButton" type="Button" parent="UI"]

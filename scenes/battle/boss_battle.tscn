@@ -77,6 +77,7 @@ offset_left = 920.0
 offset_top = 10.0
 offset_right = 1007.0
 offset_bottom = 41.0
+theme_override_fonts/font = ExtResource("8_dx04e")
 text = "View Deck"
 
 [node name="WinLabel" type="Label" parent="."]

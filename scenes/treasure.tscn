@@ -74,3 +74,8 @@ layout_mode = 0
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="RelicDisplay" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0

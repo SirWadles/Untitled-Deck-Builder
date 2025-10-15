@@ -8,6 +8,7 @@ class_name Treasure
 @onready var treasure_message: Label = $TreasureMessage
 @onready var card_tooltip: Panel = $CardToolTip
 @onready var card_display: Control = $CardDisplay
+@onready var relic_display: Control = $RelicDisplay
 
 @onready var music_player = $Audio/MusicPlayer
 @onready var audio_options = $Audio/AudioOptions
@@ -16,12 +17,14 @@ var player_data: PlayerData
 var card_database: CardDatabase
 var reward_given: bool = false
 var current_card_reward: CardData = null
+var current_relic_reward: Dictionary
 var displayed_card_instance: Card = null
+var displayed_relic_instance: TextureRect = null
 
 var reward_probabilities = {
-	"gold": 0.4,
-	"card": 0.3,
-	"relic": 0.3
+	"gold": 0,
+	"card": 0,
+	"relic": 1
 }
 
 func _ready():
@@ -39,6 +42,9 @@ func _ready():
 	music_player.play()
 	if card_tooltip:
 		card_tooltip.visible = false
+	if relic_display:
+		relic_display.visible = false
+		relic_display.position = Vector2(400, 250)
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
@@ -74,6 +80,10 @@ func setup_ui():
 	if card_display:
 		card_display.visible = false
 		card_display.position = Vector2(400, 250)
+	
+	if relic_display:
+		relic_display.visible = false
+		relic_display.position = Vector2(400, 250)
 
 func add_text_outline():
 	var outline_color = Color.BLACK
@@ -152,6 +162,8 @@ func grant_relic_reward():
 		var random_relic = available_relics[randi() % available_relics.size()]
 		player_data.add_relic(random_relic)
 		show_treasure_message("Found a relic " + random_relic["name"] + "!", Color.PURPLE)
+		show_relic_display(random_relic)
+		show_relic_tooltip(random_relic)
 		var relic_manager = get_node("/root/RelicManager")
 		if relic_manager:
 			relic_manager.add_relic(random_relic)
@@ -210,15 +222,17 @@ func show_treasure_message(message: String, color: Color = Color.WHITE):
 func _on_return_button_pressed():
 	if displayed_card_instance:
 		displayed_card_instance.queue_free()
+	if displayed_relic_instance:
+		displayed_relic_instance.queue_free()
 	get_tree().change_scene_to_file("res://scenes/map.tscn")
 
 func show_card_tooltip(card_data: CardData):
 	if not card_tooltip:
 		return
 	card_tooltip.setup_card_tooltip(card_data)
-	card_tooltip.name_label.text = card_data.card_name
-	card_tooltip.cost_label.text = "Cost: " + str(card_data.cost)
-	card_tooltip.desc_label.text = card_data.description
+	#card_tooltip.name_label.text = card_data.card_name
+	#card_tooltip.cost_label.text = "Cost: " + str(card_data.cost)
+	#card_tooltip.desc_label.text = card_data.description
 	card_tooltip.position = Vector2(
 		chest_button.position.x - card_tooltip.size.x / 2 + chest_button.size.x / 2,
 		chest_button.position.y + chest_button.size.y + 20
@@ -255,3 +269,38 @@ func show_card_display(card_data: CardData):
 	card_display.modulate = Color.TRANSPARENT
 	tween.tween_property(card_display, "scale", Vector2(1.0, 1.0), 0.5).set_trans(Tween.TRANS_BACK)
 	tween.parallel().tween_property(card_display, "modulate", Color.WHITE, 0.5)
+
+func show_relic_tooltip(relic_data: Dictionary):
+	if not card_tooltip:
+		return
+	card_tooltip.setup_relic_tooltip(relic_data)
+	card_tooltip.position = Vector2(
+		chest_button.position.x - card_tooltip.size.x / 2 + chest_button.size.x / 2,
+		chest_button.position.y + chest_button.size.y + 20
+	)
+	card_tooltip.visible = true
+
+func show_relic_display(relic_data: Dictionary):
+	if not relic_display:
+		return
+	if displayed_relic_instance:
+		displayed_relic_instance.queue_free()
+	displayed_relic_instance = TextureRect.new()
+	relic_display.add_child(displayed_relic_instance)
+	if relic_data.has("icon") and relic_data["icon"]:
+		displayed_relic_instance.texture = relic_data["icon"]
+	displayed_relic_instance.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	displayed_relic_instance.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	displayed_relic_instance.custom_minimum_size = Vector2(150, 150)
+	displayed_relic_instance.size = Vector2(150, 150)
+	displayed_relic_instance.position = Vector2(
+		relic_display.size.x / 2 - displayed_relic_instance.size.x / 2 - 50,
+		relic_display.size.y / 2 - displayed_relic_instance.size.y / 2 + 250
+	)
+	displayed_relic_instance.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	relic_display.visible = true
+	var tween = create_tween()
+	relic_display.scale = Vector2(0.5, 0.5)
+	relic_display.modulate = Color.TRANSPARENT
+	tween.tween_property(relic_display, "scale", Vector2(1.0, 1.0), 0.5).set_trans(Tween.TRANS_BACK)
+	tween.parallel().tween_property(relic_display, "modulate", Color.WHITE, 0.5)

@@ -10,6 +10,8 @@ class_name Shop
 @onready var music_player = $Audio/MusicPlayer
 @onready var audio_options = $Audio/AudioOptions
 
+@onready var card_tooltip: Panel = $CardToolTip
+
 var player_gold: int = 100
 var available_cards: Array = []
 var available_relics: Array = []
@@ -29,6 +31,8 @@ func _ready():
 	audio_options.visible = false
 	music_player.bus = "Music"
 	music_player.play()
+	if card_tooltip:
+		card_tooltip.visible = false
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
@@ -93,7 +97,7 @@ func load_sample_relics():
 	
 	available_relics.append({
 		"name": "Health Band",
-		"description": "Heals 5 HP after combat and boost healing by 1",
+		"description": "Heals 5 HP after combat",
 		"price": 75,
 		"icon": health_band_texture,
 		"id": "health_band"
@@ -133,10 +137,12 @@ func update_display():
 		cards_grid.add_child(shop_card)
 		shop_card.setup(card_item["data"], card_item["price"])
 		shop_card.purchased.connect(_on_card_purchased)
+		shop_card.mouse_entered.connect(_on_shop_item_mouse_entered.bind(card_item["data"]))
 	for relic_item in available_relics:
 		var shop_relic = preload("res://scenes/shop_relic.tscn").instantiate()
 		relic_grid.add_child(shop_relic)
 		shop_relic.setup(relic_item)
+		shop_relic.mouse_entered.connect(_on_shop_relic_mouse_entered.bind(relic_item))
 		shop_relic.purchased.connect(_on_relic_purchased)
 
 func _on_card_purchased(card_data: CardData, price: int):
@@ -182,3 +188,23 @@ func show_error_message(message: String):
 
 func _on_return_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/map.tscn")
+
+func _on_shop_item_mouse_entered(card_data: CardData):
+	if card_tooltip:
+		card_tooltip.setup_card_tooltip(card_data)
+		card_tooltip.position = _get_tooltip_position()
+		card_tooltip.visible = true
+
+func _on_shop_relic_mouse_entered(relic_data: Dictionary):
+	if card_tooltip:
+		card_tooltip.setup_relic_tooltip(relic_data)
+		card_tooltip.position = _get_tooltip_position()
+		card_tooltip.visible = true
+
+func _on_shop_item_mouse_exited():
+	if card_tooltip:
+		card_tooltip.visible = false
+
+func _get_tooltip_position() -> Vector2:
+	var mouse_pos = get_global_mouse_position()
+	return Vector2(mouse_pos.x + 20, mouse_pos.y + 20)

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://ci25fnnm04bjb"]
+[gd_scene load_steps=5 format=3 uid="uid://ci25fnnm04bjb"]
 
 [ext_resource type="Script" uid="uid://c27h7t2ql50gg" path="res://scripts/shop.gd" id="1_lx5au"]
 [ext_resource type="AudioStream" uid="uid://dcyuwhh1e044k" path="res://sounds/songs/Shop.mp3" id="2_xfvoa"]
 [ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="3_1l46r"]
+[ext_resource type="PackedScene" uid="uid://bl2dchpgxx6h6" path="res://scenes/card_tool_tip.tscn" id="4_032fp"]
 
 [node name="Shop" type="Control"]
 layout_mode = 3
@@ -84,3 +85,6 @@ layout_mode = 2
 stream = ExtResource("2_xfvoa")
 
 [node name="AudioOptions" parent="Audio" instance=ExtResource("3_1l46r")]
+
+[node name="CardToolTip" parent="." instance=ExtResource("4_032fp")]
+layout_mode = 0

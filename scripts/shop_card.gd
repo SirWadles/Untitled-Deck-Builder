@@ -21,6 +21,10 @@ func _ready():
 	purchase_button.text = "BUY"
 	purchase_button.custom_minimum_size = Vector2(0, 40)
 	purchase_button.pressed.connect(_on_purchase_button_pressed)
+	
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+	mouse_filter = Control.MOUSE_FILTER_PASS
 
 func setup(data: CardData, card_price: int):
 	card_data = data
@@ -62,3 +66,9 @@ func style_card_by_type():
 
 func _on_purchase_button_pressed():
 	purchased.emit(card_data, price)
+
+func _on_mouse_entered():
+	mouse_entered.emit()
+
+func _on_mouse_exited():
+	mouse_exited.emit()

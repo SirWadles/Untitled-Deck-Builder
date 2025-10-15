@@ -37,7 +37,7 @@ func setup_card_tooltip(card_data: CardData):
 	if card_data.damage > 0:
 		stats_text += "Damage: " + str(card_data.damage) + "\n"
 	if card_data.heal > 0:
-		stats_text += "Defense: " + str(card_data.heal) + "\n"
+		stats_text += "Heal: " + str(card_data.heal) + "\n"
 	stats_label.text = stats_text
 	stats_label.visible = !stats_text.is_empty()
 	cost_label.visible = true
@@ -48,7 +48,18 @@ func setup_relic_tooltip(relic_data: Dictionary):
 	name_label.text = relic_data["name"]
 	cost_label.text = "Price: " + str(relic_data["price"]) + " Gold"
 	desc_label.text = relic_data["description"]
+	if relic_data["price"] == 0:
+		cost_label.text = "Price: Free!"
 	var stats_text = ""
 	match relic_data["id"]:
 		"health_band":
-			stats_text += "Heals 5 HP after combat and boost healing by 1\n"
+			stats_text += "Heals 5 HP after combat\n"
+		"energy_crystal":
+			stats_text += "+1 Max Energy\n"
+		"crystal_shard":
+			stats_text += "+5 Damage to all attacks\n"
+	stats_label.text = stats_text
+	stats_label.visible = !stats_text.is_empty()
+	cost_label.visible = true
+	await get_tree().process_frame
+	custom_minimum_size = Vector2(180, 150)
