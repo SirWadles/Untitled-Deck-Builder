@@ -51,8 +51,7 @@ func modify_card_play(card_data: CardData) -> Dictionary:
 	for relic in active_relics:
 		match relic["id"]:
 			"health_band":
-				if card_data.heal > 0:
-					modifications["extra_heal"] += 1
+				modifications["extra_heal"] += 1
 	return modifications
 
 func has_relic_effect(effect_name: String) -> bool:

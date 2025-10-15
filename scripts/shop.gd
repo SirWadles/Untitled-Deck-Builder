@@ -67,11 +67,13 @@ func  setup_ui_theme():
 
 func load_shop_items():
 	var card_db = get_node("/root/CardStuff")
-	var all_cards = ["attack", "blood_fire", "abundance"]
+	var all_cards = ["attack", "blood_fire", "abundance", "self_harm"]
 	available_cards.clear()
 	available_relics.clear()
 	print("Loading shop items...")
-	for i in range(6):
+	var num_cards = randi_range(6, 10)
+	print(num_cards)
+	for i in range(num_cards):
 		var random_card_id = all_cards[randi() % all_cards.size()]
 		var card_data = card_db.get_card(random_card_id)
 		if card_data:
@@ -91,7 +93,7 @@ func load_sample_relics():
 	
 	available_relics.append({
 		"name": "Health Band",
-		"description": "Heals 5 HP after combat ",
+		"description": "Heals 5 HP after combat and boost healing by 1",
 		"price": 75,
 		"icon": health_band_texture,
 		"id": "health_band"

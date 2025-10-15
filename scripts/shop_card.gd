@@ -28,10 +28,15 @@ func setup(data: CardData, card_price: int):
 	name_label.text = data.card_name
 	price_label.text = str(price) + " Gold"
 	description_label.text = data.description
+	description_label.autowrap_mode = TextServer.AUTOWRAP_WORD
+	description_label.max_lines_visible = 2
+	description_label.custom_minimum_size.y = 0
 	if data.texture:
 		texture_rect.texture = data.texture
-		texture_rect.custom_minimum_size = Vector2(150, 150)
+		texture_rect.custom_minimum_size = Vector2(120, 120)
 	style_card_by_type()
+	custom_minimum_size = Vector2(180, 240)
+	size = Vector2(180, 240)
 
 func style_card_by_type():
 	var style_box = StyleBoxFlat.new()

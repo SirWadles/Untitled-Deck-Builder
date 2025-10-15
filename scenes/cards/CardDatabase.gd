@@ -10,6 +10,7 @@ func create_cards():
 	var death_grip_texture = preload("res://assets/Death Grip.png")
 	var abundance_texture = preload("res://assets/Abundance.png")
 	var blood_fire_texture = preload("res://assets/Good Blood Fire.png")
+	var self_harm_texture = preload("res://assets/Self Harm.png")
 	
 	cards["attack"] = CardData.new(
 		"attack",
@@ -42,6 +43,17 @@ func create_cards():
 		0,
 		7,
 		abundance_texture
+	)
+	
+	cards["self_harm"] = CardData.new(
+		"self_harm",
+		"Self Harm",
+		"DMG self for 3, 12 DMG to Enemies",
+		2,
+		12,
+		0,
+		-3,
+		self_harm_texture
 	)
 
 func get_card(card_id: String) -> CardData:

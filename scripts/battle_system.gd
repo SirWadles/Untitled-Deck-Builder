@@ -142,11 +142,16 @@ func start_targeting(card: Card):
 		is_player_targetable = false
 		if ui and ui.has_method("update_status"):
 			ui.update_status("Select enemy to attack")
-	elif card_id == "blood_fire":
+	elif card_id in ["blood_fire", "self_harm"]:
 		for enemy in enemies:
 			if enemy.current_health > 0:
 				enemy.set_targetable(true)
 		is_player_targetable = false
+		if ui and ui.has_method("update_status"):
+			if card_id == "self_harm":
+				ui.update_status("Self Harm - Click any enemy to damage all")
+			else:
+				ui.update_status("Blood Fire - Click any enemy to damage all")
 	elif card_id in ["abundance", "heal"]:
 		set_player_targetable(true)
 		is_player_targetable = true
@@ -230,7 +235,7 @@ func play_card_on_target(target: Enemy):
 		player_data.discard_card(card_data.card_id)
 	card_played.emit(card_to_play, target)
 	
-	if card_data.card_id in ["attack", "blood_fire"]:
+	if card_data.card_id in ["attack", "blood_fire", "self_harm"]:
 		print("7. Playing attack animation...")
 		player.play_attack_animation()
 		await player.attack_animation_finished
@@ -249,7 +254,7 @@ func play_card_on_target(target: Enemy):
 				print("11. Enemy HP after damage:", target.current_health)
 			elif card_data.heal < 0:
 				target.take_damage(-card_data.heal)
-		"blood_fire":
+		"blood_fire", "self_harm":
 			var living_enemies = 0
 			for enemy in enemies:
 				if enemy.current_health > 0:
@@ -257,6 +262,9 @@ func play_card_on_target(target: Enemy):
 					living_enemies += 1
 			if living_enemies > 0:
 				print("blood fire hit ", living_enemies, " enemies")
+			if card_data.card_id == "self_harm" and card_data.heal < 0:
+				var self_damage = abs(card_data.heal)
+				player.take_damage(self_damage)
 		"abundance", "heal":
 			if card_data.heal > 0:
 				if player.current_health > 50:
@@ -384,7 +392,8 @@ func _on_deck_view_button_pressed():
 
 func should_exhaust_card(card_id: String) -> bool:
 	var exhaust_cards = [
-		"blood_fire"
+		"blood_fire",
+		"self_harm"
 	]
 	return card_id in exhaust_cards
 

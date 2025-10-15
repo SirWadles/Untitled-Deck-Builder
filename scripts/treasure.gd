@@ -19,9 +19,9 @@ var current_card_reward: CardData = null
 var displayed_card_instance: Card = null
 
 var reward_probabilities = {
-	"gold": 0.5,
-	"card": 0.35,
-	"relic": 0.15
+	"gold": 0.4,
+	"card": 0.3,
+	"relic": 0.3
 }
 
 func _ready():
