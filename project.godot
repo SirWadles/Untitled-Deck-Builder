@@ -25,6 +25,7 @@ AudioManager="*res://audio_manager.gd"
 Settings="*res://settings.gd"
 MapState="*res://scripts/map_state.gd"
 RelicManager="*res://scripts/relic_manager.gd"
+CharacterData="*res://scripts/character_data.gd"
 
 [display]
 

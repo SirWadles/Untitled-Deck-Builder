@@ -27,9 +27,9 @@ func _ready():
 func setup(data: CardData, card_price: int):
 	card_data = data
 	price = card_price
-	name_label.text = "==================="
+	name_label.text = "===================="
 	price_label.text = str(price) + " Gold"
-	description_label.text = "==================="
+	description_label.text = "===================="
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	description_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

@@ -16,14 +16,27 @@ var relics: Array = []
 var battle_rewards: Array = []
 
 func _ready():
+	initialize_character()
 	reset_to_default()
 
+func initialize_character():
+	var character_data = get_node_or_null("/root/CharacterData")
+	if character_data and character_data is CharacterData:
+		character_type = character_data.selected_data
+		max_health = character_data.get_starting_health()
+		current_health = max_health
+		deck = character_data.get_character_deck().duplicate()
+	else:
+		character_type = "witch"
+		max_health = 50
+		current_health = max_health
+		deck = ["attack", "attack", "blood_fire", "attack", "abundance", "abundance", "blood_fire"]
+
 func reset_to_default():
-	max_health = 50
 	current_health = max_health
 	max_energy = 3
-	gold = 2000
-	deck = ["attack", "attack", "blood_fire", "attack", "abundance", "abundance", "blood_fire"]
+	gold = 200
+	deck = get_character_data().get_character_deck().duplicate()
 	discard_pile = []
 	exhaust_pile = []
 	relics = []
@@ -104,3 +117,12 @@ func get_exhaust_pile() -> Array[String]:
 func reset_exhaust_pile():
 	deck.append_array(exhaust_pile)
 	exhaust_pile.clear()
+
+func get_character_data() -> CharacterData:
+	var character_data = get_node_or_null("/root/CharacterData")
+	if character_data and character_data is CharacterData:
+		return character_data
+	var default_data = CharacterData.new()
+	get_tree().root.add_child(default_data)
+	default_data.name = "CharacterData"
+	return default_data

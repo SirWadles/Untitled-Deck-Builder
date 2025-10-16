@@ -75,7 +75,7 @@ func load_shop_items():
 	available_cards.clear()
 	available_relics.clear()
 	print("Loading shop items...")
-	var num_cards = randi_range(6, 10)
+	var num_cards = randi_range(6, 12)
 	print(num_cards)
 	for i in range(num_cards):
 		var random_card_id = all_cards[randi() % all_cards.size()]

@@ -31,13 +31,26 @@ func _ready():
 			healing_effect.animation_finished.connect(_on_heal_effect_finished)
 
 func setup_animations():
-	var tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
+	var character_data = get_node("/root/PlayerDatabase")
+	var character_type = character_data.character_type
+	var tile_sheet = Texture2D
 	var tile_sheet_heal = preload("res://assets/tilesheets/Healing Circle(3).png")
+	match character_type:
+		"wizard":
+			tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
+		"witch":
+			tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
+		_:
+			tile_sheet = preload("res://assets/tilesheets/Witch TileSheet(1).png")
 	var sprite_frames = SpriteFrames.new()
 	sprite_frames.clear_all()
 	var tile_width = 64
 	var tile_height = 64
 	var frames_per_row = 4
+	if character_type == "wizard":
+		setup_wizard_animations(sprite_frames, tile_sheet, tile_width, tile_height, frames_per_row)
+	else:
+		setup_witch_animations(sprite_frames, tile_sheet, tile_width, tile_height, frames_per_row)
 	sprite_frames.add_animation("idle")
 	sprite_frames.set_animation_speed("idle", 1.5)
 	sprite_frames.set_animation_loop("idle", true)
@@ -182,3 +195,51 @@ func test_heal():
 	play_heal_animation()
 	await heal_animation_finished
 	modulate = Color.WHITE
+
+func setup_witch_animations(sprite_frames: SpriteFrames, tile_sheet: Texture2D, tile_width: int, tile_height: int, frames_per_row: int):
+	sprite_frames.add_animation("idle")
+	sprite_frames.set_animation_speed("idle", 1.5)
+	sprite_frames.set_animation_loop("idle", true)
+	for i in range(2):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("idle", frame)
+	
+	sprite_frames.add_animation("attack")
+	sprite_frames.set_animation_speed("attack", 10)
+	sprite_frames.set_animation_loop("attack", false)
+	for i in range(2, frames_per_row):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("attack", frame)
+	for i in range(frames_per_row):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 1 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("attack", frame)
+
+func setup_wizard_animations(sprite_frames: SpriteFrames, tile_sheet: Texture2D, tile_width: int, tile_height: int, frames_per_row: int):
+	sprite_frames.add_animation("idle")
+	sprite_frames.set_animation_speed("idle", 1.5)
+	sprite_frames.set_animation_loop("idle", true)
+	for i in range(2):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("idle", frame)
+	
+	sprite_frames.add_animation("attack")
+	sprite_frames.set_animation_speed("attack", 10)
+	sprite_frames.set_animation_loop("attack", false)
+	for i in range(2, frames_per_row):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 0 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("attack", frame)
+	for i in range(frames_per_row):
+		var frame = AtlasTexture.new()
+		frame.atlas = tile_sheet
+		frame.region = Rect2(i * tile_width, 1 * tile_height, tile_width, tile_height)
+		sprite_frames.add_frame("attack", frame)
