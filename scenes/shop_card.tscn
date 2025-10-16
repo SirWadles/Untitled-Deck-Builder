@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bo1mdc5psr5v1"]
+[gd_scene load_steps=3 format=3 uid="uid://bo1mdc5psr5v1"]
 
 [ext_resource type="Script" uid="uid://cngyetpg7epr8" path="res://scripts/shop_card.gd" id="1_pce6i"]
+[ext_resource type="FontFile" uid="uid://j3u6vwrixpc0" path="res://fonts/boldpixels/BoldPixels.otf" id="2_y3h8k"]
 
 [node name="ShopCard" type="PanelContainer"]
 offset_right = 8.0
@@ -12,15 +13,23 @@ layout_mode = 2
 
 [node name="NameLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_y3h8k")
+theme_override_font_sizes/font_size = 20
 
 [node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
 layout_mode = 2
 
 [node name="DescriptionLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_y3h8k")
+theme_override_font_sizes/font_size = 20
 
 [node name="PriceLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_y3h8k")
+theme_override_font_sizes/font_size = 20
 
 [node name="PurchaseButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_y3h8k")
+theme_override_font_sizes/font_size = 20

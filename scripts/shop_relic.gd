@@ -26,13 +26,11 @@ func _ready():
 	style_box.border_width_right = 2
 	style_box.border_color = Color.DARK_GOLDENROD
 	add_theme_stylebox_override("panel", style_box)
-	
+		
 	purchase_button.text = "BUY"
 	purchase_button.custom_minimum_size = Vector2(0, 40)
 	purchase_button.pressed.connect(_on_purchase_button_pressed)
-	
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
+
 	mouse_filter = Control.MOUSE_FILTER_PASS
 
 func setup(data: Dictionary):
@@ -46,9 +44,3 @@ func setup(data: Dictionary):
 
 func _on_purchase_button_pressed():
 	purchased.emit(relic_data, relic_data["price"])
-
-func _on_mouse_entered():
-	mouse_entered.emit()
-
-func _on_mouse_exited():
-	mouse_exited.emit()

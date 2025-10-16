@@ -5,6 +5,8 @@ extends Panel
 @onready var desc_label: Label = $VBoxContainer/DescLabel
 @onready var stats_label: Label = $VBoxContainer/StatsLabel
 
+var mouse_offset = Vector2(20, 20)
+
 func _ready():
 	var stylebox = StyleBoxFlat.new()
 	stylebox.bg_color = Color(0.1, 0.1, 0.2, 0.95)
@@ -28,6 +30,11 @@ func _ready():
 	stats_label.add_theme_font_size_override("font_size", 12)
 	stats_label.add_theme_color_override("font_color", Color.ORANGE)
 	
+	z_index = 100
+
+func _process(_delta):
+	if visible:
+		_update_tooltip_position()
 
 func setup_card_tooltip(card_data: CardData):
 	name_label.text = card_data.card_name
@@ -43,6 +50,7 @@ func setup_card_tooltip(card_data: CardData):
 	cost_label.visible = true
 	await get_tree().process_frame
 	custom_minimum_size = Vector2(180, 150)
+	_update_tooltip_position()
 
 func setup_relic_tooltip(relic_data: Dictionary):
 	name_label.text = relic_data["name"]
@@ -63,3 +71,16 @@ func setup_relic_tooltip(relic_data: Dictionary):
 	cost_label.visible = true
 	await get_tree().process_frame
 	custom_minimum_size = Vector2(180, 150)
+	_update_tooltip_position()
+
+func _update_tooltip_position():
+	var mouse_pos = get_global_mouse_position()
+	var tooltip_pos = mouse_pos + mouse_offset
+	var viewport_size = get_viewport().get_visible_rect().size
+	if tooltip_pos.x + size.x > viewport_size.x:
+		tooltip_pos.x = mouse_pos.x - size.x - mouse_offset.x
+	if tooltip_pos.y + size.y > viewport_size.y:
+		tooltip_pos.y = mouse_pos.y - size.y - mouse_offset.y
+	tooltip_pos.x = max(0, tooltip_pos.x)
+	tooltip_pos.y = max(0, tooltip_pos.y)
+	global_position = tooltip_pos

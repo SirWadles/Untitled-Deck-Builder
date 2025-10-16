@@ -21,20 +21,18 @@ func _ready():
 	purchase_button.text = "BUY"
 	purchase_button.custom_minimum_size = Vector2(0, 40)
 	purchase_button.pressed.connect(_on_purchase_button_pressed)
-	
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
+
 	mouse_filter = Control.MOUSE_FILTER_PASS
 
 func setup(data: CardData, card_price: int):
 	card_data = data
 	price = card_price
-	name_label.text = data.card_name
+	name_label.text = "==================="
 	price_label.text = str(price) + " Gold"
-	description_label.text = data.description
-	description_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	description_label.max_lines_visible = 2
-	description_label.custom_minimum_size.y = 0
+	description_label.text = "==================="
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	description_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if data.texture:
 		texture_rect.texture = data.texture
 		texture_rect.custom_minimum_size = Vector2(120, 120)
@@ -66,9 +64,3 @@ func style_card_by_type():
 
 func _on_purchase_button_pressed():
 	purchased.emit(card_data, price)
-
-func _on_mouse_entered():
-	mouse_entered.emit()
-
-func _on_mouse_exited():
-	mouse_exited.emit()
