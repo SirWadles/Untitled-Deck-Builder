@@ -1,0 +1,137 @@
+[gd_scene load_steps=3 format=3 uid="uid://dy2q8wpvfd8kp"]
+
+[ext_resource type="Script" uid="uid://c62waq2rtpr5n" path="res://scripts/tutorial_scene.gd" id="1_tr4y6"]
+[ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="2_jelwi"]
+
+[node name="TutorialScene" type="CanvasLayer"]
+script = ExtResource("1_tr4y6")
+
+[node name="TutorialContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CardTip" type="Control" parent="TutorialContainer"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TutorialContainer/CardTip"]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 400.0
+color = Color(0.414497, 0.589938, 1, 1)
+
+[node name="Title" type="Label" parent="TutorialContainer/CardTip"]
+layout_mode = 1
+offset_left = 225.0
+offset_right = 389.0
+offset_bottom = 34.0
+theme_override_fonts/font = ExtResource("2_jelwi")
+theme_override_font_sizes/font_size = 32
+text = "Using Cards"
+
+[node name="Image" type="TextureRect" parent="TutorialContainer/CardTip"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Description" type="Label" parent="TutorialContainer/CardTip"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 385.0
+offset_right = 601.0
+offset_bottom = 408.0
+theme_override_fonts/font = ExtResource("2_jelwi")
+theme_override_font_sizes/font_size = 17
+text = "Click on a card in yourt hand, then click on an enemy to use it against them "
+
+[node name="EndTurnTip" type="Control" parent="TutorialContainer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TutorialContainer/EndTurnTip"]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 400.0
+color = Color(0.673846, 0.483567, 1, 1)
+
+[node name="Title" type="Label" parent="TutorialContainer/EndTurnTip"]
+layout_mode = 0
+offset_left = 225.0
+offset_right = 265.0
+offset_bottom = 34.0
+theme_override_fonts/font = ExtResource("2_jelwi")
+theme_override_font_sizes/font_size = 32
+
+[node name="Image" type="TextureRect" parent="TutorialContainer/EndTurnTip"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Description" type="Label" parent="TutorialContainer/EndTurnTip"]
+layout_mode = 0
+offset_top = 385.0
+offset_right = 40.0
+offset_bottom = 408.0
+theme_override_fonts/font = ExtResource("2_jelwi")
+theme_override_font_sizes/font_size = 17
+
+[node name="EnemyAttackTip" type="Control" parent="TutorialContainer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="TutorialContainer/EnemyAttackTip"]
+layout_mode = 0
+offset_right = 600.0
+offset_bottom = 400.0
+color = Color(6.73831e-07, 0.723121, 0.445623, 1)
+
+[node name="Title" type="Label" parent="TutorialContainer/EnemyAttackTip"]
+layout_mode = 0
+offset_left = 225.0
+offset_right = 265.0
+offset_bottom = 34.0
+theme_override_fonts/font = ExtResource("2_jelwi")
+theme_override_font_sizes/font_size = 32
+
+[node name="Image" type="TextureRect" parent="TutorialContainer/EnemyAttackTip"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Description" type="Label" parent="TutorialContainer/EnemyAttackTip"]
+layout_mode = 0
+offset_top = 385.0
+offset_right = 40.0
+offset_bottom = 408.0
+theme_override_fonts/font = ExtResource("2_jelwi")
+theme_override_font_sizes/font_size = 17
+
+[node name="PrevButton" type="Button" parent="TutorialContainer"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="NextButton" type="Button" parent="TutorialContainer"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="CloseButton" type="Button" parent="TutorialContainer"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
