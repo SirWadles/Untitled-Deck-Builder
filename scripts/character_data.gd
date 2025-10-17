@@ -1,5 +1,4 @@
 extends Node
-class_name CharacterDte
 
 var selected_character: String = "witch"
 

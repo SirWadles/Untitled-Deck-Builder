@@ -13,12 +13,19 @@ script = ExtResource("1_q54je")
 
 [node name="WitchButton" type="TextureButton" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 200.0
+offset_top = 400.0
+offset_right = 240.0
+offset_bottom = 440.0
+scale = Vector2(2, 2)
 
 [node name="WizardButton" type="TextureButton" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 0
+offset_left = 800.0
+offset_top = 400.0
+offset_right = 840.0
+offset_bottom = 440.0
+scale = Vector2(2, 2)
 
 [node name="DescriptionLabel" type="Label" parent="."]
 layout_mode = 0

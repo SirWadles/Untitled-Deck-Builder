@@ -50,4 +50,4 @@ func show_tutorial():
 func _on_start_game_button_pressed():
 	start_sound.play()
 	await get_tree().create_timer(1.4).timeout
-	get_tree().change_scene_to_file("res://scenes/map.tscn")
+	get_tree().change_scene_to_file("res://scenes/character_selection.tscn")

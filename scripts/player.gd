@@ -33,7 +33,7 @@ func _ready():
 func setup_animations():
 	var character_data = get_node("/root/PlayerDatabase")
 	var character_type = character_data.character_type
-	var tile_sheet = Texture2D
+	var tile_sheet: Texture2D
 	var tile_sheet_heal = preload("res://assets/tilesheets/Healing Circle(3).png")
 	match character_type:
 		"wizard":

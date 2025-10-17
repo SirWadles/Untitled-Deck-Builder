@@ -6,6 +6,7 @@ var current_health: int = 50
 var max_energy: int = 3
 var current_energy: int = 3
 var gold: int = 100
+var character_type: String = "witch"
 
 var deck: Array[String] = ["attack", "attack", "blood_fire", "attack", "abundance", "abundance", "blood_fire"]
 var discard_pile: Array[String] = []
@@ -21,8 +22,8 @@ func _ready():
 
 func initialize_character():
 	var character_data = get_node_or_null("/root/CharacterData")
-	if character_data and character_data is CharacterData:
-		character_type = character_data.selected_data
+	if character_data and character_data.has_method("get_character_deck"):
+		character_type = character_data.selected_character
 		max_health = character_data.get_starting_health()
 		current_health = max_health
 		deck = character_data.get_character_deck().duplicate()
@@ -36,11 +37,11 @@ func reset_to_default():
 	current_health = max_health
 	max_energy = 3
 	gold = 200
-	deck = get_character_data().get_character_deck().duplicate()
-	discard_pile = []
-	exhaust_pile = []
-	relics = []
-	battle_rewards = []
+	var char_data = get_character_data()
+	if char_data and char_data.has_method("get_character_deck"):
+		deck = char_data.get_character_deck().duplicate()
+	else:
+		deck = ["attack", "attack", "blood_fire", "attack", "abundance", "abundance", "blood_fire"]
 
 func reshuffle_discard():
 	deck.append_array(discard_pile)
@@ -98,7 +99,6 @@ func full_heal():
 func get_health_percentage() -> float:
 	return float(current_health) / float(max_health)
 
-
 func get_max_energy() -> int:
 	var relic_manager = get_node("/root/RelicManager")
 	var energy_crystal_count = relic_manager.get_relic_count("energy_crystal")
@@ -118,11 +118,12 @@ func reset_exhaust_pile():
 	deck.append_array(exhaust_pile)
 	exhaust_pile.clear()
 
-func get_character_data() -> CharacterData:
+func get_character_data() -> Node:
 	var character_data = get_node_or_null("/root/CharacterData")
-	if character_data and character_data is CharacterData:
+	if character_data and character_data.has_method("get_character_deck"):
 		return character_data
-	var default_data = CharacterData.new()
+	var character_script = load("res://scripts/character_data.gd")
+	var default_data = character_script.new()
 	get_tree().root.add_child(default_data)
 	default_data.name = "CharacterData"
 	return default_data
