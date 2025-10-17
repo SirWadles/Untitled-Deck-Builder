@@ -6,7 +6,6 @@ extends CanvasLayer
 @onready var enemy_attack_tip: Control = $TutorialContainer/EnemyAttackTip
 @onready var next_button: Button = $TutorialContainer/NextButton
 @onready var prev_button: Button = $TutorialContainer/PrevButton
-@onready var close_button: Button = $TutorialContainer/CloseButton
 @onready var start_game_button: Button = $TutorialContainer/StartGameButton
 
 @onready var prev_sound: AudioStreamPlayer2D = $Audio/PrevButtonSound

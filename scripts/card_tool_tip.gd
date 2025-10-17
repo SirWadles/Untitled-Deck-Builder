@@ -4,6 +4,7 @@ extends Panel
 @onready var cost_label: Label = $VBoxContainer/CostLabel
 @onready var desc_label: Label = $VBoxContainer/DescLabel
 @onready var stats_label: Label = $VBoxContainer/StatsLabel
+@onready var vbox_container: VBoxContainer = $VBoxContainer
 
 var mouse_offset = Vector2(20, 20)
 
@@ -22,6 +23,11 @@ func _ready():
 	stylebox.expand_margin_left = 5
 	add_theme_stylebox_override("panel", stylebox)
 	
+	#name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	#cost_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	#desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	#stats_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	
 	name_label.add_theme_font_size_override("font_size", 16)
 	name_label.add_theme_color_override("font_color", Color.GOLD)
 	cost_label.add_theme_font_size_override("font_size", 14)
@@ -29,6 +35,9 @@ func _ready():
 	desc_label.add_theme_font_size_override("font_size", 12)
 	stats_label.add_theme_font_size_override("font_size", 12)
 	stats_label.add_theme_color_override("font_color", Color.ORANGE)
+	
+	custom_minimum_size = Vector2(180, 0)
+	size = Vector2.ZERO
 	
 	z_index = 100
 
@@ -49,7 +58,7 @@ func setup_card_tooltip(card_data: CardData):
 	stats_label.visible = !stats_text.is_empty()
 	cost_label.visible = true
 	await get_tree().process_frame
-	custom_minimum_size = Vector2(180, 150)
+	_resize_to_fit_content()
 	_update_tooltip_position()
 
 func setup_relic_tooltip(relic_data: Dictionary):
@@ -70,7 +79,7 @@ func setup_relic_tooltip(relic_data: Dictionary):
 	stats_label.visible = !stats_text.is_empty()
 	cost_label.visible = true
 	await get_tree().process_frame
-	custom_minimum_size = Vector2(180, 150)
+	_resize_to_fit_content()
 	_update_tooltip_position()
 
 func _update_tooltip_position():
@@ -84,3 +93,19 @@ func _update_tooltip_position():
 	tooltip_pos.x = max(0, tooltip_pos.x)
 	tooltip_pos.y = max(0, tooltip_pos.y)
 	global_position = tooltip_pos
+
+func _resize_to_fit_content():
+	vbox_container.queue_sort()
+	await get_tree().process_frame
+	
+	var content_width = 0
+	var content_height = 0
+	
+	content_width = max(content_width, name_label.size.x)
+	content_width = max(content_width, cost_label.size.x)
+	content_width = max(content_width, desc_label.size.x)
+	content_width = max(content_width, stats_label.size.x)
+	
+	content_width = max(content_width + 20, 180)
+	content_height = vbox_container.size.y + 20
+	size = Vector2(content_width, content_height)

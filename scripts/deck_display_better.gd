@@ -2,6 +2,7 @@ extends Control
 
 @onready var grid_container: GridContainer = $VBoxContainer/GridContainer
 @onready var tool_tip: Panel = $VBoxContainer/CardToolTip
+@onready var title_label: Label = $VBoxContainer/TitleLabel
 
 var card_database = CardDatabase
 
@@ -9,7 +10,9 @@ func _ready():
 	card_database = get_node("/root/CardStuff")
 	tool_tip.visible = false
 
-func display_deck(deck: Array[String]):
+func display_deck(deck: Array[String], title: String = ""):
+	if title_label and title != "":
+		title_label.text = title
 	for child in grid_container.get_children():
 		child.queue_free()
 	for card_id in deck:

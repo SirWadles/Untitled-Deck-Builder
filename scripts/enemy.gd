@@ -131,8 +131,8 @@ func setup_attack_pattern(enemy_data: Dictionary):
 	match enemy_type:
 		"slime":
 			attack_patterns = [
-				{"type": "attack", "damage": 3, "weight": 8, "icon": "attack"},
-				{"type": "strong_attack", "damage": 6, "weight": 2, "icon": "attack"}
+				{"type": "attack", "damage": 3, "weight": 7, "icon": "attack"},
+				{"type": "strong_attack", "damage": 6, "weight": 3, "icon": "attack"}
 			]
 		"tree":
 			attack_patterns = [

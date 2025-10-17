@@ -5,6 +5,9 @@ extends Control
 @onready var description_label = $DescriptionLabel
 @onready var select_sound = $SelectSound
 
+@onready var witch_deck_display: Control = $WitchDeckDisplay
+@onready var wizard_deck_display: Control = $WizardDeckDisplay
+
 var selected_character: String = ""
 
 func _ready():
@@ -27,6 +30,7 @@ func _ready():
 	if wizard_button:
 		print("Wizard button visible: ", wizard_button.visible)
 		print("Wizard button position: ", wizard_button.position)
+	_display_character_decks()
 	_update_description()
 
 func _on_witch_pressed():
@@ -53,3 +57,13 @@ func _save_character_choice():
 
 func _update_description():
 	pass
+
+func _display_character_decks():
+	var character_script = load("res://scripts/character_data.gd")
+	var witch_data = character_script.new()
+	witch_data.selected_character = "witch"
+	witch_deck_display.display_deck(witch_data.get_character_deck(), "Witch's Starting Deck")
+	
+	var wizard_data = character_script.new()
+	wizard_data.selected_character = "wizard"
+	wizard_deck_display.display_deck(wizard_data.get_character_deck(), "Wizard's Starting Deck")
