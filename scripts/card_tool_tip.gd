@@ -7,6 +7,7 @@ extends Panel
 @onready var vbox_container: VBoxContainer = $VBoxContainer
 
 var mouse_offset = Vector2(20, 20)
+var follow_mouse: bool = true
 
 func _ready():
 	var stylebox = StyleBoxFlat.new()
@@ -42,7 +43,7 @@ func _ready():
 	z_index = 100
 
 func _process(_delta):
-	if visible:
+	if visible and follow_mouse:
 		_update_tooltip_position()
 
 func setup_card_tooltip(card_data: CardData):
@@ -59,7 +60,8 @@ func setup_card_tooltip(card_data: CardData):
 	cost_label.visible = true
 	await get_tree().process_frame
 	_resize_to_fit_content()
-	_update_tooltip_position()
+	if follow_mouse:
+		_update_tooltip_position()
 
 func setup_relic_tooltip(relic_data: Dictionary):
 	name_label.text = relic_data["name"]
@@ -80,7 +82,8 @@ func setup_relic_tooltip(relic_data: Dictionary):
 	cost_label.visible = true
 	await get_tree().process_frame
 	_resize_to_fit_content()
-	_update_tooltip_position()
+	if follow_mouse:
+		_update_tooltip_position()
 
 func _update_tooltip_position():
 	var mouse_pos = get_global_mouse_position()

@@ -46,9 +46,12 @@ func clear_hand():
 			child.queue_free()
 	_update_layout()
 
-func set_cards_selectable(selectable: bool):
+func set_cards_selectable(selectable: bool, except_card: Card = null):
 	for card in cards:
-		card.set_selectable(selectable)
+		if except_card and card == except_card: 
+			continue
+		else:
+			card.set_selectable(selectable)
 
 func card_selected(card: Card):
 	if selected_card and selected_card != card:
@@ -92,3 +95,5 @@ func adjust_spacing_based_on_hand_size():
 func card_deselected(card: Card):
 	if selected_card == card:
 		selected_card = null
+	if battle_system and battle_system.has_method("on_card_deselected"):
+		battle_system.on_card_deselected(card)

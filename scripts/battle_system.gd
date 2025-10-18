@@ -126,14 +126,19 @@ func draw_cards(amount: int):
 
 func on_card_selected(card: Card):
 	if current_state != BattleState.PLAYER_TURN:
+		print("Cannot select card - not player turn. Current state: ", current_state)
 		return
 	if player.can_play_card(card.card_data.cost):
+		print("Card selected: ", card.card_data.card_name)
 		current_selected_card = card
 		current_state = BattleState.TARGETING
 		start_targeting(card)
 
 func start_targeting(card: Card):
-	hand.set_cards_selectable(false)
+	print("Starting targeting for card: ", card.card_data.card_name)
+	for other_card in hand.cards:
+		if other_card != card:
+			other_card.set_selectable(false)
 	var card_id = card.card_data.card_id
 	if card_id in ["attack"]:
 		for enemy in enemies:
@@ -404,3 +409,14 @@ func play_death_grip_animation(target: Enemy):
 	animation_container.add_child(animation_instance)
 	animation_instance.target_enemy = target
 	animation_instance.target_position = target.global_position
+
+func _on_card_deselected(card: Card):
+	if current_state == BattleState.TARGETING and card == current_selected_card:
+		print("Card deselected")
+		reset_targeting()
+		current_selected_card = null
+		current_state = BattleState.PLAYER_TURN
+		for card_in_hand in hand.cards:
+			card_in_hand.set_selectable(true)
+		if ui and ui.has_method("update_status"):
+			ui.update_status("Your Turn - Select a Card")

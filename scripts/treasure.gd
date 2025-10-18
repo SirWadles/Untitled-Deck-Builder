@@ -22,9 +22,9 @@ var displayed_card_instance: Card = null
 var displayed_relic_instance: TextureRect = null
 
 var reward_probabilities = {
-	"gold": 0,
-	"card": 0,
-	"relic": 1
+	"gold": 0.35,
+	"card": 0.35,
+	"relic": 0.3
 }
 
 func _ready():
@@ -122,6 +122,9 @@ func animate_chest_open():
 	atlas.region = Rect2(0, 96, 32, 32)
 
 func get_random_reward_type() -> String:
+	var total_probability = 0
+	for reward_type in reward_probabilities:
+		total_probability += reward_probabilities[reward_type]
 	var rand_value = randf()
 	var cumulative_probability = 0.0
 	for reward_type in reward_probabilities:
@@ -160,15 +163,17 @@ func grant_relic_reward():
 	var available_relics = get_sample_relics()
 	if available_relics.size() > 0:
 		var random_relic = available_relics[randi() % available_relics.size()]
-		player_data.add_relic(random_relic)
-		show_treasure_message("Found a relic " + random_relic["name"] + "!", Color.PURPLE)
-		show_relic_display(random_relic)
-		show_relic_tooltip(random_relic)
 		var relic_manager = get_node("/root/RelicManager")
 		if relic_manager:
 			relic_manager.add_relic(random_relic)
+			show_treasure_message("Found a relic " + random_relic["name"] + "!", Color.PURPLE)
+			show_relic_display(random_relic)
+			show_relic_tooltip(random_relic)
 		else:
-			grant_gold_reward()
+			player_data.add_child(random_relic)
+			show_treasure_message("Found a relic " + random_relic["name"] + "!", Color.PURPLE)
+			show_relic_display(random_relic)
+			show_relic_tooltip(random_relic)
 
 func get_sample_relics() -> Array:
 	var health_band_texture = preload("res://assets/relics/Band_of_Regeneration.png")
@@ -229,17 +234,13 @@ func _on_return_button_pressed():
 func show_card_tooltip(card_data: CardData):
 	if not card_tooltip:
 		return
+	card_tooltip.follow_mouse = false
 	card_tooltip.setup_card_tooltip(card_data)
-	#card_tooltip.name_label.text = card_data.card_name
-	#card_tooltip.cost_label.text = "Cost: " + str(card_data.cost)
-	#card_tooltip.desc_label.text = card_data.description
 	card_tooltip.position = Vector2(
-		chest_button.position.x - card_tooltip.size.x / 2 + chest_button.size.x / 2,
+		chest_button.position.x + chest_button.size.x - 10,
 		chest_button.position.y + chest_button.size.y + 20
 	)
 	card_tooltip.visible = true
-	#await get_tree().create_timer(3.0).timeout
-	#card_tooltip.visible = false
 
 func show_card_display(card_data: CardData):
 	if not card_display:
@@ -273,9 +274,10 @@ func show_card_display(card_data: CardData):
 func show_relic_tooltip(relic_data: Dictionary):
 	if not card_tooltip:
 		return
+	card_tooltip.follow_mouse = false
 	card_tooltip.setup_relic_tooltip(relic_data)
 	card_tooltip.position = Vector2(
-		chest_button.position.x - card_tooltip.size.x / 2 + chest_button.size.x / 2,
+		chest_button.position.x + chest_button.size.x - 10,
 		chest_button.position.y + chest_button.size.y + 20
 	)
 	card_tooltip.visible = true
