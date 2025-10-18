@@ -29,6 +29,16 @@ func add_card(card_data: CardData):
 	cards.append(new_card)
 	_update_layout()
 	adjust_spacing_based_on_hand_size()
+	animate_card_entrance(new_card)
+
+func animate_card_entrance(card: Card):
+	card.scale = Vector2(0.5, 0.5)
+	card.modulate = Color(1, 1, 1, 0)
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(card, "scale", Vector2(1, 1), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(card, "modulate", Color(1, 1, 1, 1), 0.2)
 
 func _update_layout():
 	card_container.queue_redraw()
@@ -52,12 +62,21 @@ func card_selected(card: Card):
 
 func play_card(card: Card, target: Enemy):
 	if card:
+		animate_card_entrance(card)
+		await get_tree().create_timer(0.2).timeout
 		card_played.emit(card, target)
 		cards.erase(card)
 		selected_card.queue_free()
 		play_sound.play()
 		if selected_card == card:
 			selected_card = null
+
+func animate_card_play(card: Card):
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(card, "scale", Vector2(1.2, 1.2), 0.1)
+	tween.tween_property(card, "modulate", Color(1, 1, 1, 0), 0.2)
+	tween.tween_property(card, "position.y", card.position.y - 50, 0.2)
 
 func get_card_count() -> int:
 	return cards.size()

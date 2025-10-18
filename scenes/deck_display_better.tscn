@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://fvvkt48a13xs"]
+[gd_scene load_steps=4 format=3 uid="uid://fvvkt48a13xs"]
 
 [ext_resource type="PackedScene" uid="uid://bl2dchpgxx6h6" path="res://scenes/card_tool_tip.tscn" id="1_equ7r"]
 [ext_resource type="Script" uid="uid://ci0uj4dhpapx7" path="res://scripts/deck_display_better.gd" id="1_waj1h"]
+[ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="2_0esv2"]
 
 [node name="DeckDisplay" type="Control"]
 layout_mode = 3
@@ -19,6 +20,7 @@ offset_bottom = 40.0
 
 [node name="TitleLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("2_0esv2")
 text = "Starting Deck"
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer"]

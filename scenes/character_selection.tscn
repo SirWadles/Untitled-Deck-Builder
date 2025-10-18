@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://curec8xoswwie"]
+[gd_scene load_steps=4 format=3 uid="uid://curec8xoswwie"]
 
 [ext_resource type="Script" uid="uid://dfw26atawaaq6" path="res://scripts/character_selection.gd" id="1_q54je"]
 [ext_resource type="PackedScene" uid="uid://fvvkt48a13xs" path="res://scenes/deck_display_better.tscn" id="2_dd54q"]
+[ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="3_o5bvq"]
 
 [node name="CharacterSelection" type="Control"]
 layout_mode = 3
@@ -31,9 +32,11 @@ scale = Vector2(2, 2)
 
 [node name="Label" type="Label" parent="WitchButton"]
 layout_mode = 0
-offset_top = 50.0
-offset_right = 44.0
-offset_bottom = 73.0
+offset_left = 10.0
+offset_top = 70.0
+offset_right = 54.0
+offset_bottom = 93.0
+theme_override_fonts/font = ExtResource("3_o5bvq")
 text = "Witch"
 
 [node name="WitchDeckDisplay" parent="." instance=ExtResource("2_dd54q")]
@@ -54,9 +57,11 @@ scale = Vector2(2, 2)
 
 [node name="Label" type="Label" parent="WizardButton"]
 layout_mode = 0
-offset_top = 50.0
-offset_right = 54.0
-offset_bottom = 73.0
+offset_left = 10.0
+offset_top = 70.0
+offset_right = 64.0
+offset_bottom = 93.0
+theme_override_fonts/font = ExtResource("3_o5bvq")
 text = "Wizard"
 
 [node name="WizardDeckDisplay" parent="." instance=ExtResource("2_dd54q")]
@@ -64,8 +69,8 @@ layout_mode = 0
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 750.0
-offset_right = 750.0
+offset_left = 650.0
+offset_right = 650.0
 grow_horizontal = 1
 grow_vertical = 1
 
@@ -85,4 +90,6 @@ offset_left = -70.0
 offset_right = 70.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme_override_fonts/font = ExtResource("3_o5bvq")
+theme_override_font_sizes/font_size = 32
 text = "Select a Character"
