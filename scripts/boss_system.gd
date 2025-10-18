@@ -126,7 +126,7 @@ func start_targeting(card: Card):
 		is_player_targetable = false
 		if ui and ui.has_method("update_status"):
 			ui.update_status("Select enemy to attack")
-	elif card_id == "blood_fire":
+	elif card_id in ["blood_fire", "self_harm"]:
 		for enemy in enemies:
 			if enemy.current_health > 0:
 				enemy.set_targetable(true)
@@ -163,8 +163,8 @@ func play_card_on_player():
 		current_selected_card = null
 		var relic_manager = get_node("/root/RelicManager")
 		var card_modifications = relic_manager.modify_card_play(card_data)
+		var actual_heal = card_data.heal + card_modifications["extra_heal"]
 		if card_data.heal > 0:
-			var actual_heal = card_data.heal + card_modifications["extra_heal"]
 			player.heal(actual_heal)
 			player.play_heal_animation()
 			await player.heal_animation_finished
@@ -172,6 +172,11 @@ func play_card_on_player():
 			if card_modifications["extra_heal"] > 0:
 				print("heal boosted " + str(card_modifications["extra_heal"]))
 		hand.play_card(card_to_play, enemies[0] if enemies.size() > 0 else null)
+		var player_data = get_node("/root/PlayerDatabase")
+		if should_exhaust_card(card_data.card_id):
+			player_data.exhaust_card(card_data.card_id)
+		else:
+			player_data.discard_card()
 		reset_targeting()
 		current_selected_card = null
 		current_state = BattleState.PLAYER_TURN
@@ -192,6 +197,10 @@ func play_card_on_target(target: Enemy):
 		print("nope broke")
 		return
 	var card_data = current_selected_card.card_data
+	var relic_manager = get_node("/root/RelicManager")
+	var card_modifications = relic_manager.modify_card_play(card_data)
+	var actual_damage = card_data.damage + card_modifications["extra_damage"]
+	var actual_heal = card_data.heal + card_modifications["extra_heal"]
 	if card_data.card_id == "attack":
 		play_death_grip_animation(target)
 	print("4. Card data:", card_data.card_name, "Damage:", card_data.damage)
@@ -214,26 +223,26 @@ func play_card_on_target(target: Enemy):
 	print("9. Applying card effects...")
 	match card_data.card_id:
 		"attack":
-			if card_data.damage > 0:
-				print("10. Dealing", card_data.damage, "damage to", target.enemy_name)
+			if actual_damage > 0:
+				print("10. Dealing", actual_damage, "damage to", target.enemy_name)
 				target.take_damage(card_data.damage)
 				print("11. Enemy HP after damage:", target.current_health)
-			elif card_data.heal < 0:
-				target.take_damage(-card_data.heal)
+			elif actual_heal < 0:
+				target.take_damage(-actual_heal)
 		"blood_fire":
 			var living_enemies = 0
 			for enemy in enemies:
 				if enemy.current_health > 0:
-					enemy.take_damage(card_data.damage)
+					enemy.take_damage(actual_damage)
 					living_enemies += 1
 			if living_enemies > 0:
 				print("blood fire hit ", living_enemies, " enemies")
 		"abundance", "heal":
-			if card_data.heal > 0:
+			if actual_heal > 0:
 				if player.current_health > 50:
 					pass
 				else:
-					player.heal(card_data.heal)
+					player.heal(actual_heal)
 	print("12. Resetting targeting...")
 	reset_targeting()
 	current_state = BattleState.PLAYER_TURN
@@ -381,3 +390,10 @@ func _on_quit_button():
 func _on_deck_view_button_pressed():
 	if deck_viewer:
 		deck_viewer.show_viewer()
+
+func should_exhaust_card(card_id: String) -> bool:
+	var exhaust_cards = [
+		"blood_fire",
+		"self_harm"
+	]
+	return card_id in exhaust_cards

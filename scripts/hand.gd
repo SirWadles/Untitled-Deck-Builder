@@ -32,13 +32,7 @@ func add_card(card_data: CardData):
 	animate_card_entrance(new_card)
 
 func animate_card_entrance(card: Card):
-	card.scale = Vector2(0.5, 0.5)
-	card.modulate = Color(1, 1, 1, 0)
-	
-	var tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(card, "scale", Vector2(1, 1), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(card, "modulate", Color(1, 1, 1, 1), 0.2)
+	card.play_entrance_animation()
 
 func _update_layout():
 	card_container.queue_redraw()
@@ -57,16 +51,18 @@ func set_cards_selectable(selectable: bool):
 		card.set_selectable(selectable)
 
 func card_selected(card: Card):
+	if selected_card and selected_card != card:
+		selected_card.deselect()
 	selected_card = card
 	battle_system.on_card_selected(card)
 
 func play_card(card: Card, target: Enemy):
 	if card:
-		animate_card_entrance(card)
+		card.play_play_animation()
 		await get_tree().create_timer(0.2).timeout
 		card_played.emit(card, target)
 		cards.erase(card)
-		selected_card.queue_free()
+		card.queue_free()
 		play_sound.play()
 		if selected_card == card:
 			selected_card = null
@@ -92,3 +88,7 @@ func adjust_spacing_based_on_hand_size():
 		spacing = 55
 
 	card_container.add_theme_constant_override("separation", spacing)
+
+func card_deselected(card: Card):
+	if selected_card == card:
+		selected_card = null

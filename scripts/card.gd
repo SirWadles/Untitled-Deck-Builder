@@ -13,17 +13,18 @@ var hand: Node
 var is_selectable: bool = false
 var pending_selectable: bool = false
 var is_selected: bool = false
-var original_position: Vector2
-var original_scale: Vector2 = Vector2(1.5, 1.5)
+var base_position: Vector2
+var base_scale: Vector2 = Vector2(1.5, 1.5)
 var highlight_tween: Tween
 
 func _ready():
-	scale = Vector2(1.5, 1.5)
+	base_scale = Vector2(1, 1)
 	button.pressed.connect(_on_card_clicked)
+	button.mouse_entered.connect(_on_mouse_entered)
+	button.mouse_exited.connect(_on_mouse_exited)
 	button.size = Vector2(52, 64)
 	if pending_selectable != is_selectable:
 		button.disabled = !is_selectable
-	original_position = position
 
 func setup(data: CardData, hand_reference: Node = null):
 	card_data = data
@@ -45,6 +46,8 @@ func _deferred_setup(data: CardData):
 			card_art.texture = data.texture
 		else: 
 			card_art.modulate = Color(0.5, 0.5, 0.5)
+	await get_tree().process_frame
+	base_position = position
 	#set_card_visuals_based_on_type()
 
 #func set_card_visuals_based_on_type():
@@ -62,13 +65,18 @@ func set_selectable(selectable: bool):
 	else:
 		pending_selectable = selectable
 	if selectable:
-		modulate = Color.WHITE
+		animate_to_normal_state()
 	else:
-		modulate = Color.GRAY
+		if is_selected:
+			deselect()
+		animate_to_disabled_state()
 
 func _on_card_clicked():
 	if is_selectable and hand != null and hand.has_method("card_selected"):
-		hand.card_selected(self)
+		if not is_selected:
+			select()
+		else:
+			deselect()
 
 func select():
 	if not is_selectable or is_selected:
@@ -78,8 +86,8 @@ func select():
 		highlight_tween.kill()
 	highlight_tween = create_tween()
 	highlight_tween.set_parallel(true)
-	highlight_tween.tween_property(self, "scale", original_scale * 1.2, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	highlight_tween.tween_property(self, "position:y", original_position.y - 25, 0.15)
+	highlight_tween.tween_property(self, "scale", base_scale * 1.2, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	#highlight_tween.tween_property(self, "position:y", base_position.y - 25, 0.15)
 	highlight_tween.tween_property(card_border, "modulate", Color(1.2, 1.2, 0.8, 1), 0.1)
 	highlight_tween.tween_property(self, "modulate", Color(1.2, 1.2, 1, 1), 0.1)
 	
@@ -95,8 +103,8 @@ func deselect():
 		highlight_tween.kill()
 	highlight_tween = create_tween()
 	highlight_tween.set_parallel(true)
-	highlight_tween.tween_property(self, "scale", original_scale, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	highlight_tween.tween_property(self, "position:y", original_position.y - 25, 0.15)
+	highlight_tween.tween_property(self, "scale", base_scale, 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	#highlight_tween.tween_property(self, "position:y", base_position.y, 0.15)
 	highlight_tween.tween_property(card_border, "modulate", Color.WHITE, 0.1)
 	highlight_tween.tween_property(self, "modulate", Color.WHITE, 0.1)
 	
@@ -110,8 +118,8 @@ func _on_mouse_entered():
 			highlight_tween.kill()
 		highlight_tween = create_tween()
 		highlight_tween.set_parallel(true)
-		highlight_tween.tween_property(self, "scale", original_scale * 1.1, 0.1)
-		highlight_tween.tween_property(self, "position:y", original_position.y - 10, 0.1)
+		highlight_tween.tween_property(self, "scale", base_scale * 1.1, 0.1)
+		#highlight_tween.tween_property(self, "position:y", base_position.y - 10, 0.1)
 		highlight_tween.tween_property(card_border, "modulate", Color(1.1, 1.1, 1, 1), 0.1)
 
 func _on_mouse_exited():
@@ -120,8 +128,8 @@ func _on_mouse_exited():
 			highlight_tween.kill()
 		highlight_tween = create_tween()
 		highlight_tween.set_parallel(true)
-		highlight_tween.tween_property(self, "scale", original_scale, 0.1)
-		highlight_tween.tween_property(self, "position:y", original_position.y, 0.1)
+		highlight_tween.tween_property(self, "scale", base_scale, 0.1)
+		#highlight_tween.tween_property(self, "position:y", base_position.y, 0.1)
 		highlight_tween.tween_property(card_border, "modulate", Color.WHITE, 0.1)
 
 func animate_to_normal_state():
@@ -135,26 +143,29 @@ func animate_to_normal_state():
 func animate_to_disabled_state():
 	if highlight_tween:
 		highlight_tween.kill()
+	highlight_tween = create_tween()
 	highlight_tween.set_parallel(true)
 	highlight_tween.tween_property(self, "modulate", Color.GRAY, 0.2)
 	highlight_tween.tween_property(card_border, "modulate", Color(0.7, 0.7, 0.7, 1), 0.2)
 
 func play_entrance_animation():
-	scale = Vector2(0.8, 0.8)
+	scale = Vector2(0.5, 0.5)
 	modulate = Color(1, 1, 1, 0)
 	if highlight_tween:
 		highlight_tween.kill()
 	highlight_tween = create_tween()
 	highlight_tween.set_parallel(true)
-	highlight_tween.tween_property(self, "scale", original_scale, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	highlight_tween.tween_property(self, "scale", base_scale, 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	highlight_tween.tween_property(self, "modulate", Color.WHITE, 0.2)
+	await highlight_tween.finished
+	base_position = position
 
 func play_play_animation():
 	if highlight_tween:
 		highlight_tween.kill()
 	highlight_tween = create_tween()
 	highlight_tween.set_parallel(true)
-	highlight_tween.tween_property(self, "scale", original_scale * 1.3, 0.15)
+	highlight_tween.tween_property(self, "scale", base_scale * 1.3, 0.15)
 	highlight_tween.tween_property(self, "modulate", Color(1, 1, 1, 0), 0.2)
 	highlight_tween.tween_property(self, "position:y", position.y - 40, 0.2)
 	
