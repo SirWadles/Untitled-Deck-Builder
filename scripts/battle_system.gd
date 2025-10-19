@@ -125,6 +125,10 @@ func draw_cards(amount: int):
 			print("Damn you fucked up", card_id)
 
 func on_card_selected(card: Card):
+	if current_state == BattleState.TARGETING and current_selected_card == card:
+		print("Same card clicked - Deselecting")
+		_on_card_deselected(card)
+		return
 	if current_state != BattleState.PLAYER_TURN:
 		print("Cannot select card - not player turn. Current state: ", current_state)
 		return
@@ -175,8 +179,6 @@ func _input(event):
 		var player_rect = Rect2(player.global_position - Vector2(50, 50), Vector2(100, 100))
 		if player_rect.has_point(mouse_pos):
 			play_card_on_player()
-	if event.is_action_pressed("ui_accept"):
-		player.test_heal()
 
 func play_card_on_player():
 	if current_selected_card:
@@ -187,20 +189,22 @@ func play_card_on_player():
 		player.spend_energy(card_data.cost)
 		var card_to_play = current_selected_card
 		current_selected_card = null
+		var relic_manager = get_node("/root/RelicManager")
+		var card_modifications = relic_manager.modify_card_play(card_data)
+		var actual_heal = card_data.heal + card_modifications["extra_heal"]
 		if card_data.heal > 0:
-			player.heal(card_data.heal)
+			player.heal(actual_heal)
 			player.play_heal_animation()
 			await player.heal_animation_finished
 			print("Player healed")
+			if card_modifications["extra_heal"] > 0:
+				print("heal boosted " + str(card_modifications["extra_heal"]))
 		hand.play_card(card_to_play, enemies[0] if enemies.size() > 0 else null)
 		var player_data = get_node("/root/PlayerDatabase")
 		if should_exhaust_card(card_data.card_id):
-			print("7. Playing attack animation...")
 			player_data.exhaust_card(card_data.card_id)
 		else:
-			print("7. Playing attack animation...")
 			player_data.discard_card(card_data.card_id)
-		card_played.emit(card_to_play, enemies[0] if enemies.size() > 0 else null)
 		reset_targeting()
 		current_selected_card = null
 		current_state = BattleState.PLAYER_TURN

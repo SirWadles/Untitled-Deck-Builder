@@ -128,3 +128,15 @@ and map."
 [node name="CreditsMenu" parent="." instance=ExtResource("8_jk1qb")]
 layout_mode = 1
 scale = Vector2(1.7, 1.7)
+
+[node name="InfoLabel4" type="Label" parent="."]
+offset_left = 424.0
+offset_top = 516.0
+offset_right = 634.0
+offset_bottom = 605.0
+scale = Vector2(1.3, 1.3)
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 19
+text = "Really sorry but when
+selecting and deselecting
+you need to click twice"

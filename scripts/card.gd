@@ -77,8 +77,6 @@ func _on_card_clicked():
 			select()
 		else:
 			deselect()
-			if hand.has_method("card_deselected"):
-				hand.card_deselected(self)
 
 func select():
 	if not is_selectable or is_selected:
@@ -86,6 +84,8 @@ func select():
 	is_selected = true
 	if highlight_tween:
 		highlight_tween.kill()
+	scale = base_scale
+	position.y = base_position.y
 	highlight_tween = create_tween()
 	highlight_tween.set_parallel(true)
 	var target_scale = base_scale * 1.2
@@ -120,7 +120,6 @@ func _on_mouse_entered():
 		highlight_tween = create_tween()
 		highlight_tween.set_parallel(true)
 		highlight_tween.tween_property(self, "scale", base_scale * 1.1, 0.1)
-		#highlight_tween.tween_property(self, "position:y", base_position.y - 10, 0.1)
 		highlight_tween.tween_property(card_border, "modulate", Color(1.1, 1.1, 1, 1), 0.1)
 
 func _on_mouse_exited():

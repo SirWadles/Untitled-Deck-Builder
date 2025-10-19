@@ -51,6 +51,8 @@ func set_cards_selectable(selectable: bool, except_card: Card = null):
 		if except_card and card == except_card: 
 			continue
 		else:
+			if card == selected_card and !selectable:
+				continue
 			card.set_selectable(selectable)
 
 func card_selected(card: Card):
