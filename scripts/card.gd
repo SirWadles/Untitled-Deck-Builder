@@ -48,15 +48,6 @@ func _deferred_setup(data: CardData):
 			card_art.modulate = Color(0.5, 0.5, 0.5)
 	await get_tree().process_frame
 	base_position = position
-	#set_card_visuals_based_on_type()
-
-#func set_card_visuals_based_on_type():
-	#if card_data.damage > 0:
-		#card_border.modulate = Color(1, 0.3, 0.3)
-	#elif card_data.heal > 0:
-		#card_border.modulate = Color(0.3, 1, 0.3)
-	#elif card_data.defense > 0:
-		#card_border.modulate = Color(0.3, 0.3, 1)
 
 func set_selectable(selectable: bool):
 	is_selectable = selectable

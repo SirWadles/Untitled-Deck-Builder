@@ -133,6 +133,13 @@ func on_card_selected(card: Card):
 		print("Cannot select card - not player turn. Current state: ", current_state)
 		return
 	if player.can_play_card(card.card_data.cost):
+		if card.card_data.card_id in ["abundance", "heal"]:
+			if player.player_data.current_health >= player.player_data.max_health:
+				print("Cannot use healing card")
+				if ui and ui.has_method("update_status"):
+					ui.update_status("Already at max health")
+				card.deselect()
+				return
 		print("Card selected: ", card.card_data.card_name)
 		current_selected_card = card
 		current_state = BattleState.TARGETING
@@ -144,6 +151,17 @@ func start_targeting(card: Card):
 		if other_card != card:
 			other_card.set_selectable(false)
 	var card_id = card.card_data.card_id
+	if card_id in ["abundance", "heal"]:
+		if player.player_data.current_health >= player.player_data.max_health:
+			print("Cannot heal target - at max hp")
+			card.scale = Vector2(1, 1)
+			reset_targeting()
+			current_selected_card = null
+			current_state = BattleState.PLAYER_TURN
+			hand.set_cards_selectable(true)
+			if ui and ui.has_method("update_status"):
+				ui.update_status("Already at max hp")
+			return
 	if card_id in ["attack"]:
 		for enemy in enemies:
 			if enemy.current_health > 0:
@@ -193,7 +211,7 @@ func play_card_on_player():
 		var card_modifications = relic_manager.modify_card_play(card_data)
 		var actual_heal = card_data.heal + card_modifications["extra_heal"]
 		if card_data.heal > 0:
-			player.heal(actual_heal)
+			player.heal(actual_heal, false)
 			player.play_heal_animation()
 			await player.heal_animation_finished
 			print("Player healed")
@@ -276,10 +294,8 @@ func play_card_on_target(target: Enemy):
 				player.take_damage(self_damage)
 		"abundance", "heal":
 			if card_data.heal > 0:
-				if player.current_health > 50:
-					pass
-				else:
-					player.heal(card_data.heal)
+				if player.player_data.current_health < player.player_data.max_health:
+					player.heal(card_data.heal, false)
 	print("12. Resetting targeting...")
 	reset_targeting()
 	current_state = BattleState.PLAYER_TURN

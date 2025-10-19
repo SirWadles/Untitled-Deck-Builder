@@ -58,14 +58,20 @@ grow_vertical = 2
 
 [node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 24
 text = "Start"
 
 [node name="OptionsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 24
 text = "Options"
 
 [node name="CreditButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 24
 text = "Credits"
 
 [node name="Audio" type="Node2D" parent="."]
@@ -126,10 +132,12 @@ menu in shop
 and map."
 
 [node name="CreditsMenu" parent="." instance=ExtResource("8_jk1qb")]
+visible = false
 layout_mode = 1
 scale = Vector2(1.7, 1.7)
 
 [node name="InfoLabel4" type="Label" parent="."]
+layout_mode = 0
 offset_left = 424.0
 offset_top = 516.0
 offset_right = 634.0

@@ -46,9 +46,16 @@ func reset_to_default():
 func reshuffle_discard():
 	deck.append_array(discard_pile)
 	discard_pile.clear()
+	deck.shuffle()
 
 func draw_cards(amount: int) -> Array[String]:
 	var drawn_cards: Array[String] = []
+	if deck.size() == 0:
+		if discard_pile.size() > 0:
+			reshuffle_discard()
+		else:
+			return drawn_cards
+	deck.shuffle()
 	for i in range(amount):
 		if deck.size() == 0:
 			if discard_pile.size() > 0:
@@ -77,9 +84,9 @@ func take_damage(damage: int):
 	if current_health < 0:
 		current_health = 0
 
-func heal(amount: int):
+func heal(amount: int, allow_overheal: bool = false):
 	current_health += amount
-	if current_health > max_health:
+	if not allow_overheal and current_health > max_health:
 		current_health = max_health
 
 func add_gold(amount: int):

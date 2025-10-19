@@ -165,8 +165,8 @@ func take_damage(damage: int):
 	player_data.take_damage(damage)
 	update_display()
 
-func heal(amount: int):
-	player_data.heal(amount)
+func heal(amount: int, allow_overheal: bool = false):
+	player_data.heal(amount, allow_overheal)
 	update_display()
 
 func can_play_card(cost: int) -> bool:

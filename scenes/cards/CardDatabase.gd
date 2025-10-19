@@ -17,7 +17,7 @@ func create_cards():
 		"Death Grip",
 		"5 DMG to One",
 		1, #cost
-		5, #damage
+		51, #damage
 		0, #defense
 		0, #heal
 		death_grip_texture #texture

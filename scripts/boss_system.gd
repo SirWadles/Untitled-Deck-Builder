@@ -121,6 +121,13 @@ func on_card_selected(card: Card):
 		print("Cannot select card - not player turn. Current state: ", current_state)
 		return
 	if player.can_play_card(card.card_data.cost):
+		if card.card_data.card_id in ["abundance", "heal"]:
+			if player.player_data.current_health >= player.player_data.max_health:
+				print("Cannot use healing card")
+				if ui and ui.has_method("update_status"):
+					ui.update_status("Already at max health")
+				card.deselect()
+				return
 		print("Card selected: ", card.card_data.card_name)
 		current_selected_card = card
 		current_state = BattleState.TARGETING
