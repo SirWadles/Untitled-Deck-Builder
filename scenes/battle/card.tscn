@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cwdtijg713j6n"]
+[gd_scene load_steps=6 format=3 uid="uid://cwdtijg713j6n"]
 
 [ext_resource type="Script" uid="uid://vurxkpw0phey" path="res://scripts/card.gd" id="1_e68ej"]
 [ext_resource type="Texture2D" uid="uid://c5wcgt1syqw0g" path="res://assets/Card Border.png" id="2_12e7e"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="4_03ymh"]
 [ext_resource type="Texture2D" uid="uid://rkc5gk34u2fe" path="res://assets/Counter.png" id="4_h4mno"]
+[ext_resource type="PackedScene" uid="uid://bl2dchpgxx6h6" path="res://scenes/card_tool_tip.tscn" id="5_h4mno"]
 
 [node name="Card" type="Control"]
 layout_mode = 3
@@ -16,10 +17,12 @@ script = ExtResource("1_e68ej")
 texture = ExtResource("2_12e7e")
 
 [node name="CardCounter" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(0, -28)
 texture = ExtResource("4_h4mno")
 
 [node name="NameLabel" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_left = -23.0
 offset_top = -44.0
@@ -29,6 +32,7 @@ theme_override_fonts/font = ExtResource("4_03ymh")
 theme_override_font_sizes/font_size = 50
 
 [node name="CostLabel" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_left = -2.0
 offset_top = -34.0
@@ -38,6 +42,7 @@ theme_override_fonts/font = ExtResource("4_03ymh")
 theme_override_font_sizes/font_size = 50
 
 [node name="DescriptionLabel" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_left = -27.0
 offset_top = 32.0
@@ -60,3 +65,6 @@ offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 flat = true
+
+[node name="CardToolTip" parent="." instance=ExtResource("5_h4mno")]
+layout_mode = 0
