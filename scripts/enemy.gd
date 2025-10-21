@@ -141,9 +141,10 @@ func setup_attack_pattern(enemy_data: Dictionary):
 			]
 		"boss_1":
 			attack_patterns = [
-				{"type": "attack", "damage": 5, "weight": 5, "icon": "attack"},
-				{"type": "strong_attack", "damage": 8, "weight": 2, "icon": "attack"},
-				{"type": "debuff", "damage": 3, "weak": 1, "weight": 3, "icon": "attack"}
+				{"type": "attack", "damage": 5, "weight": 4, "icon": "attack"},
+				{"type": "strong_attack", "damage": 8, "weight": 1, "icon": "attack"},
+				{"type": "debuff", "damage": 3, "debuff_type": "weak", "duration": 2, "value": 3, "weight": 5, "icon": "debuff"},
+				{"type": "debuff", "damage": 0, "debuff_type": "vulnerable", "duration": 2, "value": 3, "weight": 0, "icon": "debuff"}
 			]
 		_:
 			attack_patterns = [
@@ -196,17 +197,28 @@ func choose_next_attack():
 func update_intent_display():
 	if not intent_icon or not intent_value:
 		return
-	if intent_icon is AnimatedSprite2D:
-		if intent_icon.sprite_frames and intent_icon.sprite_frames.has_animation("default"):
-			if not intent_icon.is_playing():
-				intent_icon.play("default")
 	match next_attack["type"]:
-		"attack", "strong_attack", "debuff":
+		"attack", "strong_attack":
+			if intent_icon is AnimatedSprite2D:
+				intent_icon.frame = 0
 			intent_value.text = str(next_attack.get("damage", damage)) + " DMG"
 		"block":
+			if intent_icon is AnimatedSprite2D:
+				intent_icon.frame = 1
 			intent_value.text = "Block: " + str(next_attack.get("block", 0))
+		"debuff":
+			if intent_icon is AnimatedSprite2D:
+				intent_icon.frame = 2
+			var debuff_type = next_attack.get("debuff_type", "weak")
+			var debuff_duration = next_attack.get("duration", 2)
+			var damage_text = ""
+			if next_attack.has("damage") and next_attack["damage"] > 0:
+				damage_text = str(next_attack["damage"]) + " DMG + "
+			intent_value.text = damage_text + debuff_type.capitalize() + " (" + str(debuff_duration) + ")"
 		_:
-			intent_value.text = str(next_attack.get("damage", damage)) + " DMG"
+			if intent_icon is AnimatedSprite2D:
+				intent_icon.frame = 0
+			intent_value.text = str(next_attack.get("damage", damage)) + "DMG"
 	intent_icon.visible = true
 	intent_value.add_theme_font_size_override("font_size", 16)
 	intent_value.visible = true
@@ -220,8 +232,12 @@ func hide_intent():
 func execute_attack():
 	match next_attack["type"]:
 		"attack", "strong_attack":
-			battle_system.player.take_damage(next_attack.get("damage", damage))
-			print(enemy_name + " attack for " + str(next_attack.get("damage", damage)))
+			var base_damage = next_attack.get("damage", damage)
+			var actual_damage = base_damage
+			if battle_system and battle_system.has_method("calculate_player_incoming_damage"):
+				actual_damage = battle_system.calculate_player_incoming_damage(base_damage)
+			battle_system.player.take_damage(actual_damage)
+			print(enemy_name + " attack for " + str(actual_damage) + " damage")
 		"block":
 			print("RAAAAHHH")
 			print(enemy_name + " will block " + str(next_attack.get("block", 0)) + " damage")
@@ -232,8 +248,11 @@ func execute_attack():
 			battle_system.player.apply_debuff(debuff_type, debuff_duration, debuff_value)
 			var debuff_damage = next_attack.get("damage", 0)
 			if debuff_damage > 0:
-				battle_system.player.take_damage(debuff_damage)
-				print(enemy_name + " debuffs and attacks for " + str(debuff_damage) + " damage")
+				var actual_damage = debuff_damage
+				if battle_system and battle_system.has_method("calculate_player_incoming_damage"):
+					actual_damage = battle_system.calculate_player_incoming_damage(debuff_damage)
+				battle_system.player.take_damage(actual_damage)
+				print(enemy_name + " debuffs and attacks for " + str(actual_damage) + " damage")
 			else:
 				print(enemy_name + " applies " + debuff_type + " debuff")
 	choose_next_attack()

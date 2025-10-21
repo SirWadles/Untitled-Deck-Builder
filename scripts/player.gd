@@ -168,8 +168,14 @@ func _on_target_button_pressed():
 		player_clicked.emit(self)
 
 func take_damage(damage: int):
-	player_data.take_damage(damage)
+	var actual_damage = damage
+	if battle_system and battle_system.has_method("calculate_player_incoming_damage"):
+		actual_damage = battle_system.calculate_player_incoming_damage(damage)
+	player_data.take_damage(actual_damage)
 	update_display()
+	var tween = create_tween()
+	tween.tween_property(self, "modulate", Color.RED, 0.1)
+	tween.tween_property(self, "modulate", Color.WHITE, 0.1)
 
 func heal(amount: int, allow_overheal: bool = false):
 	player_data.heal(amount, allow_overheal)
@@ -300,7 +306,7 @@ func update_debuff_indicators():
 
 func create_debuff_indicator(debuff_type: String, debuff_data: Dictionary) -> Node2D:
 	var indicator = Node2D.new()
-	var sprite = Texture2D.new()
+	var sprite = Sprite2D.new()
 	var texture = get_debuff_texture(debuff_type)
 	if texture:
 		sprite.texture = texture
@@ -330,3 +336,11 @@ func get_debuff_texture(debuff_type) -> Texture2D:
 			return preload("res://assets/tilesheets/Indicator TileSheet.png")
 		_:
 			return null
+
+func calculate_outgoing_damage(base_damage: int) -> int:
+	var actual_damage = base_damage
+	if has_debuff("weak"):
+		var weak_value = get_debuff_value("weak")
+		actual_damage = max(0, actual_damage - weak_value)
+		print("Weak debuff reduces damage: ", base_damage, " -> ", actual_damage)
+	return actual_damage

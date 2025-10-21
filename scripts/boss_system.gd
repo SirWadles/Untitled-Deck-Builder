@@ -245,16 +245,18 @@ func play_card_on_target(target: Enemy):
 	match card_data.card_id:
 		"attack":
 			if card_data.damage > 0:
-				print("10. Dealing", card_data.damage, "damage to", target.enemy_name)
-				target.take_damage(card_data.damage)
+				var actual_damage = player.calculate_outgoing_damage(card_data.damage)
+				print("10. Dealing", actual_damage, "damage to", target.enemy_name)
+				target.take_damage(actual_damage)
 				print("11. Enemy HP after damage:", target.current_health)
 			elif card_data.heal < 0:
 				target.take_damage(-card_data.heal)
 		"blood_fire", "self_harm":
 			var living_enemies = 0
+			var actual_damage = player.calculate_outgoing_damage(card_data.damage)
 			for enemy in enemies:
 				if enemy.current_health > 0:
-					enemy.take_damage(card_data.damage)
+					enemy.take_damage(actual_damage)
 					living_enemies += 1
 			if living_enemies > 0:
 				print("blood fire hit ", living_enemies, " enemies")
@@ -376,9 +378,10 @@ func play_area_attack(card: Card):
 		player.spend_energy(card_data.cost)
 		hand.play_card(card, enemies[0] if enemies.size() > 0 else null)
 		var living_enemies = 0
+		var actual_damage = player.calculate_outgoing_damage(card_data.damage)
 		for enemy in enemies:
 			if enemy.current_health > 0:
-				enemy.take_damage(card_data.damage)
+				enemy.take_damage(actual_damage)
 				living_enemies += 1
 		if living_enemies > 0:
 			print("Blood fire hit ", living_enemies)
@@ -432,3 +435,11 @@ func _on_card_deselected(card: Card):
 			card_in_hand.set_selectable(true)
 		if ui and ui.has_method("update_status"):
 			ui.update_status("Your Turn - Select a Card")
+
+func calculate_player_incoming_damage(base_damage: int) -> int:
+	var actual_damage = base_damage
+	if player.has_debuff("vulnerable"):
+		var vulnerable_value = player.get_debuff_value("vulnerable")
+		actual_damage += vulnerable_value
+		print("Vulnerable increased damage ", base_damage, " -> ", actual_damage)
+	return actual_damage
