@@ -226,8 +226,16 @@ func execute_attack():
 			print("RAAAAHHH")
 			print(enemy_name + " will block " + str(next_attack.get("block", 0)) + " damage")
 		"debuff":
-			battle_system.player.take_damage(next_attack.get("damage", damage))
-			print(enemy_name + " debuffs and attacks for " + str(next_attack.get("damage", damage)))
+			var debuff_type = next_attack.get("debuff_type", "weak")
+			var debuff_duration = next_attack.get("duration", 2)
+			var debuff_value = next_attack.get("value", 1)
+			battle_system.player.apply_debuff(debuff_type, debuff_duration, debuff_value)
+			var debuff_damage = next_attack.get("damage", 0)
+			if debuff_damage > 0:
+				battle_system.player.take_damage(debuff_damage)
+				print(enemy_name + " debuffs and attacks for " + str(debuff_damage) + " damage")
+			else:
+				print(enemy_name + " applies " + debuff_type + " debuff")
 	choose_next_attack()
 
 func update_intent_position():

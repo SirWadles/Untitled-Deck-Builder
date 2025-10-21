@@ -16,6 +16,8 @@ var current_energy: int = 3
 var battle_system: BattleSystem = null
 var is_attacking: bool = false
 var is_healing: bool = false
+var active_debuffs: Dictionary = {}
+var debuff_indicators: Array[Node] = []
 
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
@@ -29,6 +31,10 @@ func _ready():
 		healing_effect.visible = false
 		if not healing_effect.animation_finished.is_connected(_on_heal_effect_finished):
 			healing_effect.animation_finished.connect(_on_heal_effect_finished)
+	if not has_node("DebuffContainer"):
+		var container = Node2D.new()
+		container.name = "DebuffContainer"
+		add_child(container)
 
 func setup_animations():
 	var character_data = get_node("/root/PlayerDatabase")
@@ -177,6 +183,7 @@ func spend_energy(amount: int):
 	update_display()
 
 func start_turn():
+	process_debuffs()
 	current_energy = player_data.get_max_energy()
 	update_display()
 
@@ -243,3 +250,83 @@ func setup_wizard_animations(sprite_frames: SpriteFrames, tile_sheet: Texture2D,
 		frame.atlas = tile_sheet
 		frame.region = Rect2(i * tile_width, 1 * tile_height, tile_width, tile_height)
 		sprite_frames.add_frame("attack", frame)
+
+func apply_debuff(debuff_type: String, duration: int, value: int = 0):
+	if not active_debuffs.has(debuff_type):
+		active_debuffs[debuff_type] = {"duration": duration, "value": value}
+	else:
+		active_debuffs[debuff_type].duration = duration
+		active_debuffs[debuff_type].value = value
+	update_debuff_indicators()
+
+func remove_debuff(debuff_type: String):
+	if active_debuffs.has(debuff_type):
+		active_debuffs.erase(debuff_type)
+		update_debuff_indicators()
+
+func process_debuffs():
+	var debuffs_to_remove: Array[String] = []
+	for debuff_type in active_debuffs:
+		active_debuffs[debuff_type].duration -= 1
+		if active_debuffs[debuff_type].duration <= 0:
+			debuffs_to_remove.append(debuff_type)
+	for debuff_type in debuffs_to_remove:
+		remove_debuff(debuff_type)
+
+func has_debuff(debuff_type: String) -> bool:
+	return active_debuffs.has(debuff_type)
+
+func get_debuff_value(debuff_type: String) -> int:
+	if active_debuffs.has(debuff_type):
+		return active_debuffs[debuff_type].value
+	return 0
+
+func update_debuff_indicators():
+	var container = get_node_or_null("DebuffContainer")
+	if not container:
+		return
+	for indicator in debuff_indicators:
+		container.remove_child(indicator)
+		indicator.queue_free()
+	debuff_indicators.clear()
+	var index = 0
+	for debuff_type in active_debuffs:
+		var indicator = create_debuff_indicator(debuff_type, active_debuffs[debuff_type])
+		if indicator:
+			indicator.position = Vector2(-40 + (index * 25), -80)
+			container.add_child(indicator)
+			debuff_indicators.append(indicator)
+			index += 1
+
+func create_debuff_indicator(debuff_type: String, debuff_data: Dictionary) -> Node2D:
+	var indicator = Node2D.new()
+	var sprite = Texture2D.new()
+	var texture = get_debuff_texture(debuff_type)
+	if texture:
+		sprite.texture = texture
+		sprite.scale = Vector2(0.4, 0.4)
+		indicator.add_child(sprite)
+	var label = Label.new()
+	label.text = str(debuff_data.duration)
+	label.add_theme_font_size_override("font_size", 12)
+	label.position = Vector2(8, 8)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	indicator.add_child(label)
+	var area = Area2D.new()
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(20, 20)
+	collision.shape = shape
+	area.add_child(collision)
+	indicator.add_child(area)
+	return indicator
+
+func get_debuff_texture(debuff_type) -> Texture2D:
+	match debuff_type:
+		"weak":
+			return preload("res://assets/tilesheets/Indicator TileSheet.png")
+		"vulnerable":
+			return preload("res://assets/tilesheets/Indicator TileSheet.png")
+		_:
+			return null

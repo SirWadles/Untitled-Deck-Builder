@@ -22,7 +22,6 @@ position = Vector2(0, -28)
 texture = ExtResource("4_h4mno")
 
 [node name="NameLabel" type="Label" parent="."]
-visible = false
 layout_mode = 0
 offset_left = -23.0
 offset_top = -44.0
