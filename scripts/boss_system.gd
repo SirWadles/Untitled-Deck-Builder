@@ -14,6 +14,7 @@ class_name BossSystem
 @onready var music_player = $MusicPlayer
 @onready var play_again_button: Button = $PlayAgainButton
 @onready var quit_button: Button = $QuitButton
+@onready var mistouch_prevent: ColorRect = $ColorRect
 
 @onready var deck_viewer: Control = $DeckViewer
 @onready var deck_view_button: Button = $UI/DeckViewButton
@@ -36,6 +37,7 @@ enum BattleState {
 }
 
 func _ready():
+	mistouch_prevent.visible = false
 	win_song.bus = "Music"
 	lose_song.bus = "Music"
 	music_player.bus = "Music"
@@ -300,6 +302,7 @@ func _on_card_played(card: Card, target: Enemy):
 	check_battle_end()
 
 func check_battle_end():
+	mistouch_prevent.visible = false
 	var all_defeated = true
 	for enemy in enemies:
 		if enemy.current_health > 0:
@@ -355,9 +358,11 @@ func end_turn():
 		hand.set_cards_selectable(false)
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.discard_hand()
+		mistouch_prevent.visible = true
 		start_enemy_turn()
 
 func start_enemy_turn():
+	player.process_debuffs()
 	if ui and ui.has_method("update_status"):
 		ui.update_status("BOSS TURN - Survive!")
 	for enemy in enemies:
@@ -370,6 +375,7 @@ func start_enemy_turn():
 			await get_tree().create_timer(0.8).timeout
 	check_battle_end()
 	await get_tree().create_timer(1.0).timeout
+	mistouch_prevent.visible = false
 	start_player_turn()
 
 func play_area_attack(card: Card):

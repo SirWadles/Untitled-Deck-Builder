@@ -14,6 +14,7 @@ class_name BattleSystem
 @onready var music_player = $MusicPlayer
 @onready var play_again_button: Button = $PlayAgainButton
 @onready var quit_button: Button = $QuitButton
+@onready var color_rect: ColorRect = $ColorRect
 
 @onready var deck_viewer: Control = $DeckViewer
 @onready var deck_view_button: Button = $UI/DeckViewButton
@@ -37,6 +38,7 @@ enum BattleState {
 }
 
 func _ready():
+	color_rect.visible = false
 	if hand:
 		hand.card_played.connect(_on_card_played)
 	create_enemies()
@@ -365,6 +367,7 @@ func end_turn():
 		start_enemy_turn()
 
 func start_enemy_turn():
+	color_rect.visible = true
 	if ui and ui.has_method("update_status"):
 		ui.update_status("Enemy Turn")
 	for enemy in enemies:
@@ -374,6 +377,7 @@ func start_enemy_turn():
 		if enemy.current_health > 0:
 			enemy.execute_attack()
 			await get_tree().create_timer(0.8).timeout
+	color_rect.visible = false
 	check_battle_end()
 	await get_tree().create_timer(1.0).timeout
 	start_player_turn()
