@@ -34,7 +34,10 @@ func _ready():
 	if not has_node("DebuffContainer"):
 		var container = Node2D.new()
 		container.name = "DebuffContainer"
+		container.position = Vector2.ZERO
+		container.z_index = 5
 		add_child(container)
+		print("DEBUG: Created DebuffContainer with z-index: ", container.z_index)
 
 func setup_animations():
 	var character_data = get_node("/root/PlayerDatabase")
@@ -263,6 +266,8 @@ func apply_debuff(debuff_type: String, duration: int, value: int = 0):
 	else:
 		active_debuffs[debuff_type].duration = duration
 		active_debuffs[debuff_type].value = value
+	print("DEBUG: Applied debuff - Type: ", debuff_type, " Duration: ", duration, " Value: ", value)
+	print("DEBUG: Active debuffs: ", active_debuffs)
 	update_debuff_indicators()
 
 func remove_debuff(debuff_type: String):
@@ -276,6 +281,7 @@ func process_debuffs():
 		active_debuffs[debuff_type].duration -= 1
 		if active_debuffs[debuff_type].duration <= 0:
 			debuffs_to_remove.append(debuff_type)
+	update_debuff_indicators()
 	for debuff_type in debuffs_to_remove:
 		remove_debuff(debuff_type)
 
@@ -290,42 +296,71 @@ func get_debuff_value(debuff_type: String) -> int:
 func update_debuff_indicators():
 	var container = get_node_or_null("DebuffContainer")
 	if not container:
+		print("No container found")
 		return
+	print("DEBUG: Updating debuff indicators. Active debuffs: ", active_debuffs.keys())
 	for indicator in debuff_indicators:
-		container.remove_child(indicator)
+		if is_instance_valid(indicator) and indicator.get_parent() == container:
+			container.remove_child(indicator)
 		indicator.queue_free()
 	debuff_indicators.clear()
+	await get_tree().process_frame
 	var index = 0
 	for debuff_type in active_debuffs:
+		print("DEBUG: Creating indicator for: ", debuff_type)
 		var indicator = create_debuff_indicator(debuff_type, active_debuffs[debuff_type])
 		if indicator:
 			indicator.position = Vector2(-40 + (index * 25), -80)
 			container.add_child(indicator)
 			debuff_indicators.append(indicator)
 			index += 1
+	print("DEBUG: Created ", debuff_indicators.size(), " indicators")
 
 func create_debuff_indicator(debuff_type: String, debuff_data: Dictionary) -> Node2D:
 	var indicator = Node2D.new()
-	var sprite = Sprite2D.new()
-	var texture = get_debuff_texture(debuff_type)
-	if texture:
-		sprite.texture = texture
-		sprite.scale = Vector2(0.4, 0.4)
-		indicator.add_child(sprite)
+	indicator.z_index = 10
+	var animated_sprite = AnimatedSprite2D.new()
+	animated_sprite.z_index = 11
+	var sprite_frames = SpriteFrames.new()
+	sprite_frames.add_animation("default")
+	var spritesheet = preload("res://assets/tilesheets/Indicator TileSheet.png")
+	var sheet_width = 256
+	var sheet_height = 32
+	var tile_size = 32
+	var frames_per_row = sheet_width / tile_size
+	var total_rows = sheet_height / tile_size
+	for row in range(total_rows):
+		for col in range(frames_per_row):
+			var atlas_texture = AtlasTexture.new()
+			atlas_texture.atlas = spritesheet
+			atlas_texture.region = Rect2(col * tile_size, row * tile_size, tile_size, tile_size)
+			sprite_frames.add_frame("default", atlas_texture)
+	sprite_frames.set_animation_loop("default", true)
+	sprite_frames.set_animation_speed("default", 5)
+	animated_sprite.sprite_frames = sprite_frames
+	animated_sprite.play("default")
+	animated_sprite.scale = Vector2(0.8, 0.8)
+	animated_sprite.visible = true
+	print("DEBUG: AnimatedSprite frames: ", sprite_frames.get_frame_count("default"))
+	print("DEBUG: AnimatedSprite playing: ", animated_sprite.is_playing())
+	indicator.add_child(animated_sprite)
+	
 	var label = Label.new()
+	label.z_index = 12
 	label.text = str(debuff_data.duration)
 	label.add_theme_font_size_override("font_size", 12)
 	label.position = Vector2(8, 8)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_color", Color.WHITE)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	var background = ColorRect.new()
+	background.z_index = 11
+	background.size = Vector2(25, 18)
+	background.position = Vector2(-12.5, 18)
+	background.color = Color(0, 0, 0, 0.7)
+	indicator.add_child(background)
 	indicator.add_child(label)
-	var area = Area2D.new()
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(20, 20)
-	collision.shape = shape
-	area.add_child(collision)
-	indicator.add_child(area)
 	return indicator
 
 func get_debuff_texture(debuff_type) -> Texture2D:

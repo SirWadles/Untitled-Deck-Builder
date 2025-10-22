@@ -143,8 +143,8 @@ func setup_attack_pattern(enemy_data: Dictionary):
 			attack_patterns = [
 				{"type": "attack", "damage": 5, "weight": 4, "icon": "attack"},
 				{"type": "strong_attack", "damage": 8, "weight": 1, "icon": "attack"},
-				{"type": "debuff", "damage": 3, "debuff_type": "weak", "duration": 2, "value": 3, "weight": 5, "icon": "debuff"},
-				{"type": "debuff", "damage": 0, "debuff_type": "vulnerable", "duration": 2, "value": 3, "weight": 0, "icon": "debuff"}
+				{"type": "debuff", "damage": 3, "debuff_type": "weak", "duration": 2, "value": 1, "weight": 2, "icon": "debuff"},
+				{"type": "debuff", "damage": 0, "debuff_type": "vulnerable", "duration": 2, "value": 2, "weight": 3, "icon": "debuff"}
 			]
 		_:
 			attack_patterns = [
