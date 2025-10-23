@@ -65,13 +65,13 @@ func _get_battle_system(root: Node) -> Node:
 	elif root.has_node("BossSystem"):
 		return root.get_node("BossSystem")
 	else:
-		return root if root.has_method("_on_map_node_pressed") else null
+		return root if (root.has_method("_on_map_node_pressed") or root.has_method("start_player_turn")) else null
 
 func _is_map_scene(root: Node) -> bool:
 	return (root.has_node("Map") or "map" in root.name.to_lower())
 
 func _get_map_system(root: Node) -> Node:
-	if root.has_method("Map"):
+	if root.has_node("Map"):
 		return root.get_node("Map")
 	else:
 		return root if root.has_method("_on_map_node_pressed") else null
@@ -89,3 +89,6 @@ func enable_navigation():
 func disable_navigation():
 	navigation_enabled = false
 	current_focus = null
+
+func is_controller_active() -> bool:
+	return Input.get_mouse_mode() == Input.MOUSE_MODE_HIDDEN
