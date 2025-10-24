@@ -17,11 +17,8 @@ var audio_settings = {
 var focusable_items: Array[Control] = []
 var current_focus_index: int = 0
 
-var input_held_timer: float = 0.0
-var is_holding_input: bool = false
-var hold_delay: float = 0.5
-var scroll_inteveral: float = 0.15
-var last_input_action: String = ""
+var input_cooldown: float = 0.0
+var is_in_cooldown: bool = false
 
 func _ready():
 	load_audio_settings()
@@ -43,57 +40,51 @@ func _ready():
 	setup_focus_neighbors()
 
 func _process(delta):
-	if visible and is_holding_input:
-		input_held_timer += delta
-		if input_held_timer >= hold_delay + scroll_inteveral:
-			handle_continuous_input()
-			input_held_timer = hold_delay
+	if visible and is_in_cooldown:
+		input_cooldown -= delta
+		if input_cooldown <= 0:
+			is_in_cooldown = false
 
 func _unhandled_input(event):
-	if visible:
-		if event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down") or \
-		event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right"):
-			if not is_holding_input:
-				handle_single_input(event)
-				is_holding_input = true
-				input_held_timer = 0.0
-				last_input_action = event.as_text().split("'")[1]
-		elif event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down") or \
-		event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right"):
-			is_holding_input = false
-			input_held_timer = 0.0
-		elif event.is_action_pressed("ui_cancel"):
-			_on_back_pressed()
-		elif event.is_action_pressed("ui_accept") and not (focusable_items[current_focus_index] is HSlider):
-			var focused_item = focusable_items[current_focus_index]
-			if focused_item == apply_button:
-				_on_apply_pressed()
-			elif focused_item == back_button:
-				_on_back_pressed()
-
-func handle_single_input(event):
+	if not visible or is_in_cooldown:
+		return
 	if event.is_action_pressed("ui_up"):
-		current_focus_index = wrapi(current_focus_index - 1, 0, focusable_items.size())
-		update_focus_highlight()
+		handle_navigation_input("ui_up")
 	elif event.is_action_pressed("ui_down"):
-		current_focus_index = wrapi(current_focus_index + 1, 0, focusable_items.size())
-		update_focus_highlight()
-	elif event.is_action_pressed("ui_left") and focusable_items[current_focus_index] is HSlider:
-		var slider = focusable_items[current_focus_index] as HSlider
-		slider.value = clamp(slider.value - 0.1, 0.0, 3.0)
-		_on_slider_changed(slider)
-	elif event.is_action_pressed("ui_right") and focusable_items[current_focus_index] is HSlider:
-		var slider = focusable_items[current_focus_index] as HSlider
-		slider.value = clamp(slider.value + 0.1, 0.0, 3.0)
-		_on_slider_changed(slider)
+		handle_navigation_input("ui_down")
+	elif event.is_action_pressed("ui_left"):
+		handle_navigation_input("ui_left")
+	elif event.is_action_pressed("ui_right"):
+		handle_navigation_input("ui_right")
+	elif event.is_action_pressed("ui_cancel"):
+		_on_back_pressed()
+	elif event.is_action_pressed("ui_accept") and not (focusable_items[current_focus_index] is HSlider):
+		var focused_item = focusable_items[current_focus_index]
+		if focused_item == apply_button:
+			_on_apply_pressed()
+		elif focused_item == back_button:
+			_on_back_pressed()
 
-func handle_continuous_input():
-	match last_input_action:
+func handle_navigation_input(action: String):
+	is_in_cooldown = true
+	input_cooldown = 0.5
+	match action:
 		"ui_up":
 			current_focus_index = wrapi(current_focus_index - 1, 0, focusable_items.size())
 			update_focus_highlight()
-		elif event.is_action_pressed("ui_down"):
-			current_focus_index = wrapi
+		"ui_down":
+			current_focus_index = wrapi(current_focus_index + 1, 0, focusable_items.size())
+			update_focus_highlight()
+		"ui_left":
+			if focusable_items[current_focus_index] is HSlider:
+				var slider = focusable_items[current_focus_index] as HSlider
+				slider.value = clamp(slider.value - 0.05, 0.0, 3.0)
+				_on_slider_changed(slider)
+		"ui_right":
+			if focusable_items[current_focus_index] is HSlider:
+				var slider = focusable_items[current_focus_index] as HSlider
+				slider.value = clamp(slider.value + 0.05, 0.0, 3.0)
+				_on_slider_changed(slider)
 
 func setup_focus_neighbors():
 	for i in range(focusable_items.size()):
