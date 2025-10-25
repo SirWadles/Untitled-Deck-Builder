@@ -67,7 +67,7 @@ func _unhandled_input(event):
 
 func handle_navigation_input(action: String):
 	is_in_cooldown = true
-	input_cooldown = 0.5
+	input_cooldown = 0.15
 	match action:
 		"ui_up":
 			current_focus_index = wrapi(current_focus_index - 1, 0, focusable_items.size())
@@ -161,12 +161,14 @@ func show_options():
 	get_tree().paused = true
 	current_focus_index = 0
 	update_focus_highlight()
-	GlobalInputHandler.disable_navigation()
+	if has_node("/root/GlobalInputHandler"):
+		get_node("/root/GlobalInputHandler").disable_navigation()
 
 func hide_options():
 	visible = false
 	get_tree().paused = false
-	GlobalInputHandler.enable_navigation()
+	if has_node("/root/GlobalInputHandler"):
+		get_node("/root/GlobalInputHandler").enable_navigation()
 
 func setup_slider_size():
 	master_slider.custom_minimum_size = Vector2(250, 30)
