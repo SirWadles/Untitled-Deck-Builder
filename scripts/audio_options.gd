@@ -134,15 +134,19 @@ func _on_sfx_changed(value: float):
 	AudioManager.set_sfx_volume(value)
 
 func _on_back_pressed():
-	hide()
+	hide_options()
 	button_sound.play()
-	GlobalInputHandler.enable_navigation()
+	var main_menu = get_parent()
+	if main_menu and main_menu.has_method("_on_options_closed"):
+		main_menu._on_options_closed()
 
 func _on_apply_pressed():
 	save_audio_settings()
-	hide()
+	hide_options()
 	button_sound.play()
-	GlobalInputHandler.enable_navigation()
+	var main_menu = get_parent()
+	if main_menu and main_menu.has_method("_on_options_closed"):
+		main_menu._on_options_closed()
 
 func apply_audio_settings():
 	AudioManager.set_master_volume(audio_settings.master_volume)
