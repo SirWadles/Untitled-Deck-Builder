@@ -12,12 +12,15 @@ extends Control
 @onready var audio_options = $AudioOptions
 @onready var credits_menu = $CreditsMenu
 
+@onready var panel: Panel = $Panel
+
 var input_handler: Node
 var is_submenu_open: bool = false
 
 func _ready():
 	if has_node("/root/GlobalInputHandler"):
 		input_handler = get_node("/root/GlobalInputHandler")
+	panel.visible = false
 	start_button.pressed.connect(_on_start_button_pressed)
 	options_button.pressed.connect(_on_options_button_pressed)
 	credit_button.pressed.connect(_on_credit_button_pressed)
@@ -54,6 +57,7 @@ func _setup_focus_neighbors():
 func _on_start_button_pressed():
 	print("Start Pressed")
 	start_sound.play()
+	panel.visible = true
 	await get_tree().create_timer(2.5).timeout
 	music_player.stop()
 	get_tree().change_scene_to_file("res://scenes/tutorial_scene.tscn")
@@ -104,20 +108,23 @@ func hide_credits():
 
 func _on_button_focus_entered(button: Control):
 	print("Focus: ", button.name)
+	for btn in [start_button, options_button, credit_button]:
+		btn.modulate = Color.WHITE
+	button.modulate = Color.ROYAL_BLUE
 
 func _input(event):
 	if is_submenu_open:
 		return
-	if input_handler and input_handler.navigation_enabled and not audio_options.visible and not credits_menu.visible:
-		if event.is_action_pressed("ui_accept"):
-			if start_button.has_focus():
-				_on_start_button_pressed()
-			elif options_button.has_focus():
-				_on_options_button_pressed()
-			elif credit_button.has_focus():
-				_on_credit_button_pressed()
-		elif event.is_action_pressed("ui_cancel"):
-			pass
+	#if input_handler and input_handler.navigation_enabled and not audio_options.visible and not credits_menu.visible:
+		#if event.is_action_pressed("ui_accept"):
+			#if start_button.has_focus():
+				#_on_start_button_pressed()
+			#elif options_button.has_focus():
+				#_on_options_button_pressed()
+			#elif credit_button.has_focus():
+				#_on_credit_button_pressed()
+		#elif event.is_action_pressed("ui_cancel"):
+			#pass
 
 func _notification(what):
 	if what == NOTIFICATION_VISIBILITY_CHANGED:

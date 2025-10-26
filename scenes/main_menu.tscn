@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://ddgtnbpobb7o5"]
+[gd_scene load_steps=10 format=3 uid="uid://ddgtnbpobb7o5"]
 
 [ext_resource type="Script" uid="uid://wjiyap1g6tox" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="1_l6cm7"]
@@ -8,6 +8,9 @@
 [ext_resource type="AudioStream" uid="uid://csu04si0bluyt" path="res://sounds/songs/Ossatura - OPENER DRAFT 2(1).mp3" id="6_oa1go"]
 [ext_resource type="PackedScene" uid="uid://nvxf85haenae" path="res://scenes/credits_menu.tscn" id="8_jk1qb"]
 [ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="8_tbmy8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbmy8"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -148,3 +151,9 @@ theme_override_font_sizes/font_size = 19
 text = "Really sorry but when
 selecting and deselecting
 you need to click twice"
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 1024.0
+offset_bottom = 640.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tbmy8")
