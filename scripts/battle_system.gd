@@ -37,6 +37,13 @@ enum BattleState {
 	TARGETING
 }
 
+var controller_navigation_enabled: bool = false
+var current_focused_card_index: int = -1
+var current_focused_enemy_index: int = -1
+var controller_focus_state: String = "CARDS"
+var end_turn_button_focused: bool = false
+var deck_view_button_focused: bool = false
+
 func _ready():
 	color_rect.visible = false
 	if hand:
@@ -61,6 +68,80 @@ func _ready():
 		animation_container = Node2D.new()
 		animation_container.name = "AnimationContainer"
 		add_child(animation_container)
+	#set_process_unhandled_input(true)
+	#_update_controller_focus()
+#
+#func _unhandled_input(event):
+	#if not controller_focus_state:
+		#return
+	#if event.is_action_pressed("ui_left"):
+		#_handle_controller_navigation(-1, 0)
+	#elif event.is_action_pressed("ui_right"):
+		#_handle_controller_navigation(1, 0)
+	#elif event.is_action_pressed("ui_up"):
+		#_handle_controller_navigation(0, -1)
+	#elif event.is_action_pressed("ui_down"):
+		#_handle_controller_navigation(0, 1)
+	#elif event.is_action_pressed("ui_accept"):
+		#_handle_controller_accept()
+	#elif event.is_action_pressed("ui_cancel"):
+		#_handle_controller_cancel()
+	#elif event.is_action_pressed("ui_end_turn"):
+		#end_turn()
+	#elif event.is_action_pressed("ui_view_deck"):
+		#_on_deck_view_button_pressed()
+#
+#func _handle_controller_navigation(x_dir: int, y_dir: int):
+	#match controller_focus_state:
+		#"CARDS":
+			#_navigate_cards(x_dir, y_dir)
+		#"ENEMIES":
+			#_navigate_enemies(x_dir, y_dir)
+		#"UI":
+			#_navigate_ui(x_dir, y_dir)
+		#"PLAYER":
+			#if y_dir > 0:
+				#controller_focus_state = "UI"
+				#_update_controller_focus()
+#
+#func _navigate_cards(x_dir: int):
+	#if hand.cards.is_empty():
+		#return
+	#if current_focused_card_index == 1:
+		#current_focused_card_index = 0
+	#else:
+		#current_focused_card_index += x_dir
+		#current_focused_card_index = clampi(current_focused_card_index, 0, hand.cards.size() - 1)
+	#_update_controller_focus()
+#
+#func _navigate_enemies(x_dir: int):
+	#var alive_enemies = _get_alive_enemies()
+	#if alive_enemies.is_empty():
+		#return
+	#if current_focused_enemy_index == 1:
+		#current_focused_enemy_index = 0
+	#else:
+		#current_focused_enemy_index += x_dir
+		#current_focused_enemy_index = clampi(current_focused_enemy_index, 0, alive_enemies.size() - 1)
+	#
+#
+#func _navigate_ui(y_dir: int):
+	#if y_dir < 0:
+		#controller_focus_state = "CARDS"
+		#current_focused_card_index = 0
+	#elif y_dir > 0:
+		#if end_turn_button_focused:
+			#end_turn_button_focused = false
+			#deck_view_button_focused = true
+		#else:
+			#end_turn_button_focused = true
+			#deck_view_button_focused = false
+	#_update_controller_focus()
+
+func _handle_controller_accept():
+	pass
+	#Aint done yet
+
 
 func create_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")

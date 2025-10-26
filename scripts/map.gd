@@ -129,22 +129,72 @@ func _input(event):
 			_navigation_to_adjacent_node(-1)
 			is_in_cooldown = true
 			navigation_cooldown = 0.3
+		elif event.is_action_pressed("ui_left") and event.is_action_pressed("ui_up"):
+			_navigation_to_adjacent_node(-1)
+			is_in_cooldown = true
+			navigation_cooldown = 0.3
+		elif event.is_action_pressed("ui_up") and event.is_action_pressed("ui_up"):
+			_navigation_to_adjacent_node(-1)
+			is_in_cooldown = true
+			navigation_cooldown = 0.3
+		elif event.is_action_pressed("ui_left") and event.is_action_pressed("ui_down"):
+			_navigation_to_adjacent_node(1)
+			is_in_cooldown = true
+			navigation_cooldown = 0.3
+		elif event.is_action_pressed("ui_up") and event.is_action_pressed("ui_down"):
+			_navigation_to_adjacent_node(1)
+			is_in_cooldown = true
+			navigation_cooldown = 0.3
 		elif event.is_action_pressed("ui_accept") and focused_node:
 			_on_map_node_pressed(focused_node)
 
 func _navigation_to_adjacent_node(direction: int):
 	if available_map_nodes.size() <= 0:
 		return
-	var current_index = available_map_nodes.find(focused_node)
-	if current_index == -1:
-		current_index = 0
-	var new_index = wrapi(current_index + direction, 0, available_map_nodes.size())
-	focused_node = available_map_nodes[new_index]
-	if input_handler and input_handler.is_controller_active():
-		input_handler.set_current_focus(focused_node)
-	elif focused_node.focus_mode != Control.FOCUS_NONE:
-		focused_node.grab_focus()
-	_highlight_focused_node()
+	if not focused_node:
+		focused_node = available_map_nodes[0]
+		_highlight_focused_node()
+		return
+	var highest_node = focused_node
+	var lowest_node = focused_node
+	for node in available_map_nodes:
+		if node.position.y < highest_node.position.y:
+			highest_node = node
+		if node.position.y > lowest_node.position.y:
+			lowest_node = node
+	if direction < 0 and focused_node == highest_node:
+		return
+	if direction > 0 and focused_node == lowest_node:
+		return
+	var candidates = []
+	var current_pos = focused_node.position
+	for node in available_map_nodes:
+		if node == focused_node:
+			continue
+		if direction > 0 and node.position.y > current_pos.y:
+			candidates.append(node)
+		elif direction < 0 and node.position.y < current_pos.y:
+			candidates.append(node)
+	if candidates.is_empty():
+		for node in available_map_nodes:
+			if node != focused_node:
+				candidates.append(node)
+	if candidates.is_empty():
+		return
+	var closest_node = null
+	var min_distance = INF
+	for candidate in candidates:
+		var distance = abs(candidate.position.y - current_pos.y)
+		if distance < min_distance:
+			min_distance = distance
+			closest_node = candidate
+	if closest_node:
+		focused_node = closest_node
+		if input_handler and input_handler.is_controller_active():
+			input_handler.set_current_focus(focused_node)
+		elif focused_node.focus_mode != Control.FOCUS_NONE:
+			focused_node.grab_focus()
+		_highlight_focused_node()
 
 func _on_button_focus_entered(button: Control):
 	_highlight_focused_node()
