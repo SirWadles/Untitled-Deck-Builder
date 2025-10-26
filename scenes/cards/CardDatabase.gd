@@ -28,7 +28,7 @@ func create_cards():
 		"Blood Fire",
 		"7 DMG to All",
 		1,
-		7,
+		66,
 		0,
 		0,
 		blood_fire_texture

@@ -9,10 +9,15 @@ extends Control
 @onready var wizard_deck_display: Control = $WizardDeckDisplay
 
 var selected_character: String = ""
+var input_handler: Node
 
 func _ready():
+	if has_node("/root/GlobalInputHandler"):
+		input_handler = get_node("/root/GlobalInputHandler")
 	witch_button.pressed.connect(_on_witch_pressed)
 	wizard_button.pressed.connect(_on_wizard_pressed)
+	witch_button.focus_entered.connect(_on_button_focus_entered.bind(witch_button))
+	wizard_button.focus_entered.connect(_on_button_focus_entered.bind(wizard_button))
 	witch_button.texture_normal = preload("res://assets/Witch(Bigger).png")
 	wizard_button.texture_normal = preload("res://assets/Witch(Bigger) (1).png")
 	if witch_button:
@@ -32,6 +37,29 @@ func _ready():
 		print("Wizard button position: ", wizard_button.position)
 	_display_character_decks()
 	_update_description()
+	
+	_setup_focus_neighbors()
+	_setup_initial_focus()
+
+func _setup_focus_neighbors():
+	witch_button.focus_neighbor_right = wizard_button.get_path()
+	wizard_button.focus_neighbor_left = witch_button.get_path()
+
+func _setup_initial_focus():
+	await get_tree().process_frame
+	if input_handler and input_handler.is_controller_active():
+		input_handler.set_current_focus(witch_button)
+	elif witch_button.focus_mode != Control.FOCUS_NONE:
+		witch_button.grab_focus()
+
+func _on_button_focus_entered(button: Control):
+	print("Current character selected: ", button.name)
+	_reset_button_appearance()
+	button.modulate = Color.YELLOW
+
+func _reset_button_appearance():
+	witch_button.modulate = Color.WHITE
+	wizard_button.modulate = Color.WHITE
 
 func _on_witch_pressed():
 	selected_character = "witch"
@@ -67,3 +95,13 @@ func _display_character_decks():
 	var wizard_data = character_script.new()
 	wizard_data.selected_character = "wizard"
 	wizard_deck_display.display_deck(wizard_data.get_character_deck(), "Wizard's Starting Deck")
+
+func _input(event):
+	if input_handler and input_handler.navigation_enabled:
+		if event.is_action_pressed("ui_accept"):
+			if witch_button.has_focus():
+				_on_witch_pressed()
+			elif wizard_button.has_focus():
+				_on_wizard_pressed()
+		elif event.is_action("ui_cancel"):
+			get_tree().change_scene_to_file("res://scenes/main_menu.tscn")

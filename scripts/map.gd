@@ -14,6 +14,8 @@ class_name Map
 var current_node: MapNode = null
 var player_path: Array[String] = []
 var available_nodes: Array[String] = []
+var navigation_cooldown: float = 0.0
+var is_in_cooldown: bool = false
 
 var map_params = {
 	"rows": 4,
@@ -25,8 +27,13 @@ var map_params = {
 	"branching_factor": 0.8,
 }
 var node_spacing: Vector2
+var input_handler: Node
+var focused_node: MapNode = null
+var available_map_nodes: Array[MapNode] = []
 
 func _ready():
+	if has_node("/root/GlobalInputHandler"):
+		input_handler = get_node("/root/GlobalInputHandler")
 	add_to_group("map")
 	node_spacing = Vector2(100, 50)
 	var map_state = get_node("/root/MapState")
@@ -59,15 +66,88 @@ func _ready():
 				for connection_id in last_node.connections:
 					available_nodes.append(connection_id)
 	update_node_states()
-	if deck_view_button:
-		deck_view_button.pressed.connect(_on_deck_view_button_pressed)
+	#if deck_view_button:
+		#deck_view_button.pressed.connect(_on_deck_view_button_pressed)
 	audio_options.visible = false
 	music_player.bus = "Music"
 	music_player.play()
+	
+	focus_mode = Control.FOCUS_ALL
+	_setup_controller_navigation()
+
+func _process(delta):
+	if is_in_cooldown:
+		navigation_cooldown -= delta
+		if navigation_cooldown <= 0:
+			is_in_cooldown = false
+
+func _setup_controller_navigation():
+	await get_tree().process_frame
+	_update_available_map_nodes()
+	if input_handler and input_handler.is_controller_active() and available_map_nodes.size() > 0:
+		focused_node = available_map_nodes[0]
+		input_handler.set_current_focus(focused_node)
+		_highlight_focused_node()
+
+func _update_available_map_nodes():
+	available_map_nodes.clear()
+	for node in map_nodes.get_children():
+		if node.node_id in available_nodes and not node.visited:
+			available_map_nodes.append(node)
+			if not node.focus_entered.is_connected(_on_map_node_focus_entered):
+				node.focus_entered.connect(_on_map_node_focus_entered.bind(node))
+
+func _on_map_node_focus_entered(node: MapNode):
+	focused_node = node
+	_highlight_focused_node()
+
+func _highlight_focused_node():
+	for node in map_nodes.get_children():
+		if node.visited:
+			node.modulate = Color.GRAY
+		elif node.node_id in available_nodes:
+			node.modulate = Color.WHITE
+		else:
+			node.modulate = Color.DIM_GRAY
+	if focused_node and focused_node.node_id in available_nodes and not focused_node.visited:
+		focused_node.modulate = Color.YELLOW
+		focused_node.scale = Vector2(1.1, 1.1)
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
+		if input_handler:
+			input_handler.disable_navigation()
+	if is_in_cooldown:
+		return
+	if input_handler and input_handler.navigation_enabled and available_map_nodes.size() > 0:
+		if event.is_action_pressed("ui_down"):
+			_navigation_to_adjacent_node(1)
+			is_in_cooldown = true
+			navigation_cooldown = 0.3
+		elif event.is_action_pressed("ui_up"):
+			_navigation_to_adjacent_node(-1)
+			is_in_cooldown = true
+			navigation_cooldown = 0.3
+		elif event.is_action_pressed("ui_accept") and focused_node:
+			_on_map_node_pressed(focused_node)
+
+func _navigation_to_adjacent_node(direction: int):
+	if available_map_nodes.size() <= 0:
+		return
+	var current_index = available_map_nodes.find(focused_node)
+	if current_index == -1:
+		current_index = 0
+	var new_index = wrapi(current_index + direction, 0, available_map_nodes.size())
+	focused_node = available_map_nodes[new_index]
+	if input_handler and input_handler.is_controller_active():
+		input_handler.set_current_focus(focused_node)
+	elif focused_node.focus_mode != Control.FOCUS_NONE:
+		focused_node.grab_focus()
+	_highlight_focused_node()
+
+func _on_button_focus_entered(button: Control):
+	_highlight_focused_node()
 
 func create_procedural_map():
 	clear_existing_map()
@@ -204,6 +284,7 @@ func create_map_node(node_data: Dictionary):
 		connections_array.append(connection)
 	node.setup_node(node_data["id"], node_data["type"], node_data["pos"], connections_array, node_spacing)
 	node.pressed.connect(_on_map_node_pressed.bind(node))
+	node.focus_mode = Control.FOCUS_ALL
 
 func clear_existing_map():
 	for node in map_nodes.get_children():
@@ -265,6 +346,7 @@ func update_available_nodes(selected_node: MapNode):
 	available_nodes.clear()
 	for connection_id in selected_node.connections:
 		available_nodes.append(connection_id)
+	_update_available_map_nodes()
 
 func update_node_states():
 	for node in map_nodes.get_children():
@@ -274,6 +356,7 @@ func update_node_states():
 			node.set_available()
 		else:
 			node.set_unavailable()
+	_update_available_map_nodes()
 
 func disable_all_nodes():
 	for node in map_nodes.get_children():
@@ -303,6 +386,8 @@ func _on_return_to_map():
 		available_nodes = map_state.get_available_nodes()
 	update_node_states()
 	enable_available_nodes()
+	await get_tree().process_frame
+	_setup_controller_navigation()
 
 func show_rest_screen():
 	print("Rest")
@@ -344,9 +429,9 @@ func show_treasure_message(message: String):
 	await get_tree().create_timer(5.0).timeout
 	message_label.queue_free()
 
-func _on_deck_view_button_pressed():
-	if deck_viewer:
-		deck_viewer.show_viewer()
+#func _on_deck_view_button_pressed():
+	#if deck_viewer:
+		#deck_viewer.show_viewer()
 
 func recreate_saved_map(map_data: Array):
 	clear_existing_map()
@@ -355,3 +440,4 @@ func recreate_saved_map(map_data: Array):
 		map_nodes.add_child(node)
 		node.setup_node(node_data["id"], node_data["type"], node_data["pos"], node_data["connections"], node_spacing)
 		node.pressed.connect(_on_map_node_pressed.bind(node))
+		node.focus_mode = Control.FOCUS_ALL
