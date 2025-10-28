@@ -23,6 +23,7 @@ var is_hovering: bool = false
 
 func _ready():
 	base_scale = Vector2(1, 1)
+	base_scale = scale
 	button.pressed.connect(_on_card_clicked)
 	button.mouse_entered.connect(_on_mouse_entered)
 	button.mouse_exited.connect(_on_mouse_exited)
@@ -202,3 +203,11 @@ func _update_tooltip_position():
 	if tooltip_pos.y + card_tooltip.size.y > viewport_size.y:
 		tooltip_pos.y = viewport_size.y - card_tooltip.size.y
 	card_tooltip.global_position = tooltip_pos
+
+func show_controller_focus():
+	modulate = Color(1.2, 1.2, 0.8)
+	scale = base_scale * 1.1
+
+func hide_controller_focus():
+	modulate = Color.WHITE
+	scale = base_scale

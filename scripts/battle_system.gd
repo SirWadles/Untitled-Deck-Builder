@@ -72,7 +72,7 @@ func _ready():
 	_update_controller_focus()
 
 func _unhandled_input(event):
-	if not controller_focus_state:
+	if not controller_navigation_enabled:
 		return
 	if event.is_action_pressed("ui_left"):
 		_handle_controller_navigation(-1, 0)
@@ -107,11 +107,15 @@ func _handle_controller_navigation(x_dir: int, y_dir: int):
 func _navigate_cards(x_dir: int):
 	if hand.cards.is_empty():
 		return
-	if current_focused_card_index == 1:
+	if current_focused_card_index == -1:
 		current_focused_card_index = 0
 	else:
 		current_focused_card_index += x_dir
-		current_focused_card_index = clampi(current_focused_card_index, 0, hand.cards.size() - 1)
+	if current_focused_card_index < 0:
+		current_focused_card_index = hand.cards.size() - 1
+	elif current_focused_card_index >= hand.cards.size():
+		current_focused_card_index = 0
+	print("Card navigation - Index: ", current_focused_card_index, " Total cards: ", hand.cards.size())
 	_update_controller_focus()
 
 func _navigate_enemies(x_dir: int):
@@ -122,20 +126,23 @@ func _navigate_enemies(x_dir: int):
 		current_focused_enemy_index = 0
 	else:
 		current_focused_enemy_index += x_dir
-		current_focused_enemy_index = clampi(current_focused_enemy_index, 0, alive_enemies.size() - 1)
-	
+	if current_focused_enemy_index < 0:
+		current_focused_enemy_index = hand.cards.size() - 1
+	elif current_focused_enemy_index >= hand.cards.size():
+		current_focused_enemy_index = 0
+	print("Enemy navigation - Index: ", current_focused_enemy_index, " Total enemies: ", alive_enemies.size())
+	_update_controller_focus()
 
 func _navigate_ui(y_dir: int):
 	if y_dir < 0:
 		controller_focus_state = "CARDS"
 		current_focused_card_index = 0
 	elif y_dir > 0:
-		if end_turn_button_focused:
-			end_turn_button_focused = false
-			deck_view_button_focused = true
-		else:
-			end_turn_button_focused = true
-			deck_view_button_focused = false
+		end_turn_button_focused = false
+		deck_view_button_focused = true
+		#else:
+			#end_turn_button_focused = true
+			#deck_view_button_focused = false
 	_update_controller_focus()
 
 func _handle_controller_accept():
@@ -168,7 +175,7 @@ func _handle_controller_cancel():
 			current_focused_card_index = 0
 			_update_controller_focus()
 			if ui and ui.has_method("update_status"):
-				ui.update_status("Your Turn - Selected a Card")
+				ui.update_status("Your Turn - Select a Card")
 		"UI":
 			controller_focus_state = "CARDS"
 			current_focused_card_index = 0
@@ -181,7 +188,7 @@ func _update_controller_focus():
 			if current_focused_card_index >= 0 and current_focused_card_index < hand.cards.size():
 				var card = hand.cards[current_focused_card_index]
 				card.show_controller_focus()
-		"ENEMEIS":
+		"ENEMIES":
 			var alive_enemies = _get_alive_enemies()
 			if current_focused_enemy_index >= 0 and current_focused_enemy_index < alive_enemies.size():
 				var enemy = alive_enemies[current_focused_enemy_index]
@@ -344,7 +351,14 @@ func set_player_targetable(targetable: bool):
 
 func _input(event):
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
-		if not
+		if not controller_navigation_enabled and current_state == BattleState.PLAYER_TURN:
+			controller_navigation_enabled = true
+			controller_focus_state = "CARDS"
+			current_focused_card_index = 0 if not hand.cards.is_empty() else -1
+			_update_controller_focus()
+	if event is InputEventMouseMotion and controller_navigation_enabled:
+		controller_navigation_enabled = false
+		_clear_controller_focus()
 	if (event is InputEventMouseButton and event.pressed and current_state == BattleState.TARGETING and is_player_targetable):
 		var mouse_pos = get_global_mouse_position()
 		var player_rect = Rect2(player.global_position - Vector2(50, 50), Vector2(100, 100))

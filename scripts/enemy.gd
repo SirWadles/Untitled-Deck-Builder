@@ -17,10 +17,12 @@ var damage: int
 var next_attack: Dictionary = {}
 var attack_patterns: Array[Dictionary] = []
 var current_pattern_index: int = 0
+var base_scale: Vector2 = Vector2(1.0, 1.0)
 
 signal enemy_clicked(enemy: Enemy)
 
 func _ready():
+	base_scale = scale
 	button.pressed.connect(_on_enemy_clicked)
 	setup_intent_animation()
 	if intent_icon:
@@ -264,3 +266,14 @@ func update_intent_position():
 	var intent_offset = sprite_height / 2 + 20
 	intent_icon.position = Vector2(-20, intent_offset)
 	intent_value.position = Vector2(-5, (intent_offset - 10))
+
+func show_controller_focus():
+	modulate = Color(1.2, 1.2, 0.8)
+	scale = base_scale * 1.1
+
+func hide_controller_focus():
+	if is_targetable:
+		modulate = Color.YELLOW
+	else:
+		modulate = Color.WHITE
+	scale = base_scale

@@ -26,3 +26,19 @@ func _on_end_turn_pressed():
 
 func update_status(text: String):
 	status_label.text = text
+
+func show_end_turn_focus():
+	if end_turn_button:
+		end_turn_button.modulate = Color(1.2, 1.2, 0.8)
+
+func show_deck_view_focus():
+	if has_node("DeckViewButton"):
+		var deck_button = get_node("DeckViewButton")
+		deck_button.modulate = Color(1.2, 1.2, 0.8)
+
+func hide_focus_indicators():
+	if end_turn_button:
+		end_turn_button.modulate = Color.WHITE
+	if has_node("DeckViewButton"):
+		var deck_button  = get_node("DeckViewButton")
+		deck_button.modulate = Color.WHITE

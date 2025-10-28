@@ -18,9 +18,11 @@ var is_attacking: bool = false
 var is_healing: bool = false
 var active_debuffs: Dictionary = {}
 var debuff_indicators: Array[Node] = []
+var base_scale: Vector2 = Vector2(1.0, 1.0)
 
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
+	base_scale = scale
 	setup_animations()
 	health_label.position = Vector2(5, -63)
 	energy_label.position = Vector2(5, -50)
@@ -348,3 +350,14 @@ func calculate_outgoing_damage(base_damage: int) -> int:
 		actual_damage = max(0, actual_damage - weak_value)
 		print("Weak debuff reduces damage: ", base_damage, " -> ", actual_damage)
 	return actual_damage
+
+func show_controller_focus():
+	modulate = Color(1.2, 1.2, 0.8)
+	scale = base_scale * 1.1
+
+func hide_controller_focus():
+	if battle_system and battle_system.is_player_targetable:
+		modulate = Color.YELLOW
+	else:
+		modulate = Color.WHITE
+	scale = base_scale
