@@ -197,17 +197,56 @@ func _update_tooltip_position():
 		return
 	var card_global_pos = global_position
 	var viewport_size = get_viewport().get_visible_rect().size
-	var tooltip_pos = Vector2(card_global_pos.x + size.x + 10, card_global_pos.y)
-	if tooltip_pos.x + card_tooltip.size.x > viewport_size.x:
-		tooltip_pos.x = card_global_pos.x - card_tooltip.size.x - 10
-	if tooltip_pos.y + card_tooltip.size.y > viewport_size.y:
-		tooltip_pos.y = viewport_size.y - card_tooltip.size.y
-	card_tooltip.global_position = tooltip_pos
+	if not card_tooltip.follow_mouse:
+		var tooltip_pos = Vector2(card_global_pos.x + size.x + 70, \
+		card_global_pos.y - card_tooltip.size.y - 20)
+		if tooltip_pos.x + card_tooltip.size.x > viewport_size.x:
+			tooltip_pos.x = card_global_pos.x - card_tooltip.size.x - 10
+		if tooltip_pos.x < 0:
+			tooltip_pos.x = 10
+		if tooltip_pos.y < 0:
+			tooltip_pos.y = card_global_pos.y + size.y + 10
+		if tooltip_pos.y + card_tooltip.size.y > viewport_size.y:
+			tooltip_pos.y = viewport_size.y - card_tooltip.size.y - 10
+		card_tooltip.global_position = tooltip_pos
+	else:
+		var mouse_pos = get_global_mouse_position()
+		var tooltip_pos = mouse_pos + Vector2(20, 20)
+		if tooltip_pos.x + card_tooltip.size.x > viewport_size.x:
+			tooltip_pos.x = mouse_pos.x - card_tooltip.size.x - 20
+		if tooltip_pos.y + card_tooltip.size.y > viewport_size.y:
+			tooltip_pos.y = mouse_pos.y - card_tooltip.size.y - 20
+		tooltip_pos.x = max(0, tooltip_pos.x)
+		tooltip_pos.y = max(0, tooltip_pos.y)
+		card_tooltip.global_position = tooltip_pos
 
 func show_controller_focus():
 	modulate = Color(1.2, 1.2, 0.8)
 	scale = base_scale * 1.1
+	show_tooltip()
+	if card_tooltip and card_data:
+		card_tooltip.follow_mouse = false
+		card_tooltip.setup_card_tooltip(card_data)
+		card_tooltip.visible = true
+		await get_tree().process_frame
+		await get_tree().process_frame
+		var card_global_pos = global_position
+		var viewport_size = get_viewport().get_visible_rect().size
+		var tooltip_pos = Vector2(card_global_pos.x + size.x + 70, \
+		card_global_pos.y - card_tooltip.size.y - 20)
+		if tooltip_pos.x + card_tooltip.size.x > viewport_size.x:
+			tooltip_pos.x = card_global_pos.x - card_tooltip.size.x - 10
+		if tooltip_pos.x < 0:
+			tooltip_pos.x = 10
+		if tooltip_pos.y < 0:
+			tooltip_pos.y = card_global_pos.y + size.y + 10
+		if tooltip_pos.y + card_tooltip.size.y > viewport_size.y:
+			tooltip_pos.y = viewport_size.y - card_tooltip.size.y - 10
+		card_tooltip.global_position = tooltip_pos
 
 func hide_controller_focus():
 	modulate = Color.WHITE
 	scale = base_scale
+	if card_tooltip:
+		card_tooltip.visible = false
+		card_tooltip.follow_mouse = true
