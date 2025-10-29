@@ -43,6 +43,9 @@ var current_focused_enemy_index: int = -1
 var controller_focus_state: String = "CARDS"
 var end_turn_button_focused: bool = false
 var deck_view_button_focused: bool = false
+var joystick_deadzone: float = 0.5
+@export_range(0.1, 1.0, 0.1) var joystick_cooldown_time: float = 0.2
+var last_joystick_navigation: float = 0.0
 
 func _ready():
 	color_rect.visible = false
@@ -71,18 +74,29 @@ func _ready():
 	set_process_unhandled_input(true)
 	_update_controller_focus()
 
+func _process(delta):
+	if not controller_navigation_enabled:
+		return
+	_handle_joystick_navigation()
+
+func _handle_joystick_navigation():
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
+		return
+	var horizontal = Input.get_axis("ui_left", "ui_right")
+	var vertical  = Input.get_axis("ui_up", "ui_down")
+	if abs(horizontal) < joystick_deadzone:
+		horizontal = 0
+	if abs(vertical) < joystick_deadzone:
+		vertical = 0
+	if horizontal != 0 or vertical != 0:
+		_handle_controller_navigation(int(horizontal), int(vertical))
+		last_joystick_navigation = current_time
+
 func _unhandled_input(event):
 	if not controller_navigation_enabled:
 		return
-	if event.is_action_pressed("ui_left"):
-		_handle_controller_navigation(-1, 0)
-	elif event.is_action_pressed("ui_right"):
-		_handle_controller_navigation(1, 0)
-	elif event.is_action_pressed("ui_up"):
-		_handle_controller_navigation(0, -1)
-	elif event.is_action_pressed("ui_down"):
-		_handle_controller_navigation(0, 1)
-	elif event.is_action_pressed("ui_accept"):
+	if event.is_action_pressed("ui_accept"):
 		_handle_controller_accept()
 	elif event.is_action_pressed("ui_cancel"):
 		_handle_controller_cancel()
@@ -90,19 +104,48 @@ func _unhandled_input(event):
 		end_turn()
 	elif event.is_action_pressed("ui_view_deck"):
 		_on_deck_view_button_pressed()
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
+		return
+	if event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or \
+	event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
+		var x_dir = 0
+		var y_dir = 0
+		if event.is_action_pressed("ui_left"):
+			x_dir = -1
+		elif event.is_action_pressed("ui_right"):
+			x_dir = 1
+		elif event.is_action_pressed("ui_up"):
+			y_dir = -1
+		elif event.is_action_pressed("ui_down"):
+			y_dir = 1
+		_handle_controller_navigation(x_dir, y_dir)
+		last_joystick_navigation = current_time
 
 func _handle_controller_navigation(x_dir: int, y_dir: int):
 	match controller_focus_state:
 		"CARDS":
-			_navigate_cards(x_dir)
+			if y_dir < 0:
+				controller_focus_state = "UI"
+				end_turn_button_focused = true
+				deck_view_button_focused = false
+			else:
+				_navigate_cards(x_dir)
 		"ENEMIES":
-			_navigate_enemies(x_dir)
+			if y_dir > 0:
+				controller_focus_state = "UI"
+				end_turn_button_focused = true
+				deck_view_button_focused = false
+			else:
+				_navigate_enemies(x_dir)
 		"UI":
-			_navigate_ui(y_dir)
+			_navigate_ui(x_dir, y_dir)
 		"PLAYER":
 			if y_dir > 0:
 				controller_focus_state = "UI"
-				_update_controller_focus()
+				end_turn_button_focused = true
+				deck_view_button_focused = false
+	_update_controller_focus()
 
 func _navigate_cards(x_dir: int):
 	if hand.cards.is_empty():
@@ -122,27 +165,33 @@ func _navigate_enemies(x_dir: int):
 	var alive_enemies = _get_alive_enemies()
 	if alive_enemies.is_empty():
 		return
-	if current_focused_enemy_index == 1:
+	if current_focused_enemy_index == -1:
 		current_focused_enemy_index = 0
 	else:
 		current_focused_enemy_index += x_dir
 	if current_focused_enemy_index < 0:
-		current_focused_enemy_index = hand.cards.size() - 1
-	elif current_focused_enemy_index >= hand.cards.size():
+		current_focused_enemy_index = alive_enemies.size() - 1
+	elif current_focused_enemy_index >= alive_enemies.size():
 		current_focused_enemy_index = 0
 	print("Enemy navigation - Index: ", current_focused_enemy_index, " Total enemies: ", alive_enemies.size())
 	_update_controller_focus()
 
-func _navigate_ui(y_dir: int):
-	if y_dir < 0:
+func _navigate_ui(x_dir: int, y_dir: int):
+	if y_dir > 0:
 		controller_focus_state = "CARDS"
-		current_focused_card_index = 0
-	elif y_dir > 0:
+		current_focused_card_index = 0 if not hand.cards.is_empty() else -1
 		end_turn_button_focused = false
-		deck_view_button_focused = true
-		#else:
-			#end_turn_button_focused = true
-			#deck_view_button_focused = false
+		deck_view_button_focused = false
+	elif x_dir != 0:
+		if end_turn_button_focused:
+			end_turn_button_focused = false
+			deck_view_button_focused = true
+		elif deck_view_button_focused:
+			end_turn_button_focused = true
+			deck_view_button_focused = false
+		else:
+			end_turn_button_focused = true
+			deck_view_button_focused = false
 	_update_controller_focus()
 
 func _handle_controller_accept():
