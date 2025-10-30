@@ -47,6 +47,14 @@ func _ready():
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		if not controller_navigation_enabled:
+			controller_navigation_enabled = true
+			current_focused_item_index = 0
+			_update_controller_focus()
+	if event is InputEventMouseMotion and controller_navigation_enabled:
+		controller_navigation_enabled = false
+		_clear_controller_focus()
 
 func _process(delta):
 	if not controller_navigation_enabled:
@@ -63,6 +71,126 @@ func _handle_joystick_navigation():
 		horizontal = 0
 	if abs(vertical) < joystick_deadzone:
 		vertical = 0
+	if horizontal != 0 or vertical != 0:
+		_handle_controller_navigation((horizontal), int(vertical))
+
+func _unhandled_input(event):
+	if not controller_navigation_enabled:
+		return
+	if event.is_action_pressed("ui_accept"):
+		_handle_controller_accept()
+	elif event.is_action_pressed("ui_cancel"):
+		_handle_controller_cancel()
+	elif event.is_action_pressed("ui_view_deck"):
+		_switch_tab()
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
+		return
+	if event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or \
+	event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
+		var x_dir = 0
+		var y_dir = 0
+		if event.is_action_pressed("ui_left"):
+			x_dir = 1
+		elif event.is_action_pressed("ui_right"):
+			x_dir = 1
+		elif event.is_action_pressed("ui_up"):
+			y_dir = -1
+		elif event.is_action_pressed("ui_down"):
+			y_dir = 1
+		_handle_controller_navigation(x_dir, y_dir)
+		last_joystick_navigation = current_time
+
+func _handle_controller_navigation(x_dir: int, y_dir: int):
+	if return_button_focused:
+		if y_dir < 0:
+			return_button_focused = false
+			current_focused_item_index = 0
+		else:
+			return_button.modulate = Color(1.2, 1.2, 0.8)
+	else:
+		if y_dir > 0:
+			return_button_focused = true
+			current_focused_item_index = -1
+		else:
+			_navigate_items(x_dir, y_dir)
+	_update_controller_focus()
+
+func _navigate_items(x_dir:int, y_dir: int):
+	var current_items = _get_current_items()
+	if current_items.is_empty():
+		return
+	if current_focused_item_index == 1:
+		current_focused_item_index = 0
+	else:
+		var columns = cards_grid.columns if current_tab == "CARDS" else relic_grid.columns
+		current_focused_item_index += x_dir + (y_dir * columns)
+	var item_count = current_items.size()
+	if current_focused_item_index < 0:
+		current_focused_item_index = item_count - 1
+	elif current_focused_item_index >= item_count:
+		current_focused_item_index = 0
+	_update_controller_focus()
+
+func _switch_tab():
+	if current_tab == "CARDS":
+		current_tab = "RELICS"
+		tab_container.current_tab = 1
+	else:
+		current_tab = "CARDS"
+		tab_container .current_tab = 0
+	current_focused_item_index = 0
+	return_button_focused = false
+	_update_controller_focus()
+
+func _handle_controller_accept():
+	if return_button_focused:
+		_on_return_button_pressed()
+	else:
+		var current_items = _get_current_items()
+		if current_focused_item_index >= 0 and current_focused_item_index < current_items.size():
+			var item = current_items[current_focused_item_index]
+			if current_tab == "CARDS":
+				_on_card_purchased(item["data"], item["price"])
+			else:
+				_on_relic_purchased(item, item["price"])
+
+func _handle_controller_cancel():
+	_on_return_button_pressed()
+
+func _update_controller_focus():
+	_clear_controller_focus()
+	if return_button_focused:
+		return_button.modulate = Color(1.2, 1.2, 0.8)
+	else:
+		var current_items = _get_current_items()
+		if current_focused_item_index >= 0 and current_focused_item_index < current_items.size():
+			var container = cards_grid if current_tab == "CARDS" else relic_grid
+			var children = container.get_children()
+			if current_focused_item_index < children.size():
+				var focused_item = children[current_focused_item_index]
+				focused_item.modulate = Color(1.2, 1.2, 0.8)
+				if card_tooltip:
+					if current_tab == "CARDS":
+						card_tooltip.setup_card_tooltip(current_items[current_focused_item_index]["data"])
+					else:
+						card_tooltip.setup_relic_tooltip(current_items[current_focused_item_index])
+					card_tooltip.visible = true
+
+func _clear_controller_focus():
+	return_button.modulate = Color.WHITE
+	for child in cards_grid.get_children():
+		child.modulate = Color.WHITE
+	for child in relic_grid.get_children():
+		child.modulate = Color.WHITE
+	if card_tooltip:
+		card_tooltip.visible = false
+
+func _get_current_items() -> Array:
+	if current_tab == "CARDS":
+		return available_cards
+	else:
+		return available_relics
 
 func  setup_ui_theme():
 	return_button.text = "Return to Map"
