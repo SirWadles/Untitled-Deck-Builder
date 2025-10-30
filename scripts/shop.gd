@@ -17,6 +17,14 @@ var available_cards: Array = []
 var available_relics: Array = []
 var player_data: PlayerData
 
+var controller_navigation_enabled: bool = false
+var current_focused_item_index: int = -1
+var current_tab: String = "CARDS"
+var return_button_focused: bool = false
+var joystick_deadzone: float = 0.5
+var joystick_cooldown_time: float = 0.3
+var last_joystick_navigation: float = 0.0
+
 func _ready():
 	player_data = get_node("/root/PlayerDatabase")
 	print("Gold label exists: ", gold_label != null)
@@ -33,10 +41,28 @@ func _ready():
 	music_player.play()
 	if card_tooltip:
 		card_tooltip.visible = false
+	controller_navigation_enabled = true
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
+
+func _process(delta):
+	if not controller_navigation_enabled:
+		return
+	_handle_joystick_navigation()
+
+func _handle_joystick_navigation():
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
+		return
+	var horizontal = Input.get_axis("ui_left", "ui_right")
+	var vertical = Input.get_axis("ui_up", "ui_down")
+	if abs(horizontal) < joystick_deadzone:
+		horizontal = 0
+	if abs(vertical) < joystick_deadzone:
+		vertical = 0
 
 func  setup_ui_theme():
 	return_button.text = "Return to Map"

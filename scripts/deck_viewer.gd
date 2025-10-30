@@ -20,7 +20,13 @@ func _ready():
 			battle_system.turn_ended.connect(_on_turn_ended)
 		if battle_system.has_signal("player_turn_started"):
 			battle_system.player_turn_started.connect(_on_player_turn_started)
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
+func _unhandled_input(event):
+	if is_visible:
+		if event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_view_deck") or event.is_action_pressed("ui_accept"):
+			hide_viewer()
+			get_viewport().set_input_as_handled()
 
 func _on_close_button_pressed():
 	hide_viewer()
