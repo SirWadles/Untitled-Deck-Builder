@@ -26,9 +26,9 @@ func _ready():
 	
 	purchase_button.focus_mode = Control.FOCUS_NONE
 
-func _input(event):
-	if event.is_action_pressed("ui_accept") and self.modulate == Color(1.2, 1.2, 0.8):
-		_on_purchase_button_pressed()
+#func _input(event):
+	#if event.is_action_pressed("ui_accept") and self.modulate == Color(1.2, 1.2, 0.8):
+		#_on_purchase_button_pressed()
 
 func setup(data: CardData, card_price: int):
 	card_data = data

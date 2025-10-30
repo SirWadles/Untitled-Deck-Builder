@@ -72,7 +72,8 @@ func _handle_joystick_navigation():
 	if abs(vertical) < joystick_deadzone:
 		vertical = 0
 	if horizontal != 0 or vertical != 0:
-		_handle_controller_navigation((horizontal), int(vertical))
+		_handle_controller_navigation(int(horizontal), int(vertical))
+		last_joystick_navigation = current_time
 
 func _unhandled_input(event):
 	if not controller_navigation_enabled:
@@ -91,7 +92,7 @@ func _unhandled_input(event):
 		var x_dir = 0
 		var y_dir = 0
 		if event.is_action_pressed("ui_left"):
-			x_dir = 1
+			x_dir = -1
 		elif event.is_action_pressed("ui_right"):
 			x_dir = 1
 		elif event.is_action_pressed("ui_up"):
@@ -105,32 +106,59 @@ func _handle_controller_navigation(x_dir: int, y_dir: int):
 	if return_button_focused:
 		if y_dir < 0:
 			return_button_focused = false
-			current_focused_item_index = 0
-		else:
-			return_button.modulate = Color(1.2, 1.2, 0.8)
+			var current_items = _get_current_items()
+			if not current_items.is_empty():
+				current_focused_item_index = current_items.size() - 1
+			else:
+				return_button.modulate = Color(1.2, 1.2, 0.8)
 	else:
-		if y_dir > 0:
+		var current_items = _get_current_items()
+		if not current_items.is_empty():
+			if y_dir > 0 and current_focused_item_index >= current_items.size() - 1:
+				return_button_focused = true
+				current_focused_item_index = -1
+			else:
+				_navigate_items(x_dir, y_dir)
+		else:
 			return_button_focused = true
 			current_focused_item_index = -1
-		else:
-			_navigate_items(x_dir, y_dir)
 	_update_controller_focus()
 
 func _navigate_items(x_dir:int, y_dir: int):
 	var current_items = _get_current_items()
 	if current_items.is_empty():
 		return
-	if current_focused_item_index == 1:
+	if current_focused_item_index == -1:
 		current_focused_item_index = 0
 	else:
 		var columns = cards_grid.columns if current_tab == "CARDS" else relic_grid.columns
-		current_focused_item_index += x_dir + (y_dir * columns)
+		current_focused_item_index += x_dir
+		current_focused_item_index += y_dir * columns
 	var item_count = current_items.size()
 	if current_focused_item_index < 0:
 		current_focused_item_index = item_count - 1
 	elif current_focused_item_index >= item_count:
 		current_focused_item_index = 0
+	_ensure_item_visible()
 	_update_controller_focus()
+
+func _ensure_item_visible():
+	var container = cards_grid if current_tab == "CARDS" else relic_grid
+	var scroll_container = container.get_parent() as ScrollContainer
+	if scroll_container:
+		var children = container.get_children()
+		if current_focused_item_index < children.size():
+			var focused_child = children[current_focused_item_index]
+			var child_global_pos = focused_child.global_position
+			var scroll_global_pos = scroll_container.global_position
+			var relative_y = child_global_pos.y - scroll_global_pos.y
+			var scroll_height = scroll_container.size.y
+			var child_height = focused_child.size.y
+			if relative_y < 0:
+				scroll_container.scroll_vertical += relative_y - 10
+			elif relative_y + child_height > scroll_height:
+				scroll_container.scroll_vertical += (relative_y + child_height - scroll_height) + 10
+			scroll_container.scroll_vertical = clamp(scroll_container.scroll_vertical, 0, scroll_container.get_v_scroll_bar().max_value)
 
 func _switch_tab():
 	if current_tab == "CARDS":
@@ -170,6 +198,7 @@ func _update_controller_focus():
 			if current_focused_item_index < children.size():
 				var focused_item = children[current_focused_item_index]
 				focused_item.modulate = Color(1.2, 1.2, 0.8)
+				_ensure_item_visible()
 				if card_tooltip:
 					if current_tab == "CARDS":
 						card_tooltip.setup_card_tooltip(current_items[current_focused_item_index]["data"])
