@@ -124,6 +124,28 @@ func _handle_controller_navigation(x_dir: int, y_dir: int):
 			current_focused_item_index = -1
 	_update_controller_focus()
 
+func _position_tooltip_for_controller():
+	if not card_tooltip or not card_tooltip.visible:
+		return
+	var container = cards_grid if current_tab == "CARDS" else relic_grid
+	var children = container.get_children()
+	if current_focused_item_index >= children.size():
+		return
+	var focused_item = children[current_focused_item_index]
+	var viewport_rect = get_viewport().get_visible_rect()
+	var viewport_size = viewport_rect.size
+	var tooltip_pos = Vector2(
+		focused_item.global_position.x + focused_item.size.x + 10,
+		focused_item.global_position.y - 20
+	)
+	if tooltip_pos.x + card_tooltip.size.x > viewport_size.x:
+		tooltip_pos.x = focused_item.global_position.x - card_tooltip.size.x - 10
+	if tooltip_pos.y < 0:
+		tooltip_pos.y = focused_item.global_position.y + focused_item.size.y + 10
+	if tooltip_pos.y + card_tooltip.size.y > viewport_size.y:
+		tooltip_pos.y = viewport_size.y - card_tooltip.size.y - 10
+	card_tooltip.global_position = tooltip_pos
+
 func _navigate_items(x_dir:int, y_dir: int):
 	var current_items = _get_current_items()
 	if current_items.is_empty():
@@ -205,6 +227,9 @@ func _update_controller_focus():
 					else:
 						card_tooltip.setup_relic_tooltip(current_items[current_focused_item_index])
 					card_tooltip.visible = true
+					card_tooltip.follow_mouse = false
+					await get_tree().process_frame
+					_position_tooltip_for_controller()
 
 func _clear_controller_focus():
 	return_button.modulate = Color.WHITE
@@ -214,6 +239,7 @@ func _clear_controller_focus():
 		child.modulate = Color.WHITE
 	if card_tooltip:
 		card_tooltip.visible = false
+		card_tooltip.follow_mouse = true
 
 func _get_current_items() -> Array:
 	if current_tab == "CARDS":
@@ -376,11 +402,13 @@ func _on_return_button_pressed():
 
 func _on_shop_item_mouse_entered(card_data: CardData):
 	if card_tooltip:
+		card_tooltip.follow_mouse = true
 		card_tooltip.setup_card_tooltip(card_data)
 		card_tooltip.visible = true
 
 func _on_shop_relic_mouse_entered(relic_data: Dictionary):
 	if card_tooltip:
+		card_tooltip.follow_mouse = true
 		card_tooltip.setup_relic_tooltip(relic_data)
 		card_tooltip.visible = true
 

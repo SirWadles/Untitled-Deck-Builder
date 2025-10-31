@@ -21,6 +21,13 @@ var current_relic_reward: Dictionary
 var displayed_card_instance: Card = null
 var displayed_relic_instance: TextureRect = null
 
+var controller_navigation_enabled: bool = false
+var chest_button_focused: bool = true
+var return_button_focused: bool = false
+var joystick_deadzone: float = 0.5
+var joystick_cooldown_time: float = 0.3
+var last_joystick_navigation: float
+
 var reward_probabilities = {
 	"gold": 0.35,
 	"card": 0.35,
@@ -45,13 +52,96 @@ func _ready():
 	if relic_display:
 		relic_display.visible = false
 		relic_display.position = Vector2(400, 250)
+	controller_navigation_enabled = true
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+func _process(delta):
+	if not controller_navigation_enabled:
+		return
+	_handle_joystick_navigation()
+
+func _handle_joystick_navigation():
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
+		return
+	var horizontal = Input.get_axis("ui_left", "ui_right")
+	var vertical = Input.get_axis("ui_up", "ui_down")
+	if abs(horizontal) < joystick_deadzone:
+		horizontal = 0
+	if abs(vertical) < joystick_deadzone:
+		vertical = 0
+	if horizontal != 0 or vertical != 0:
+		_handle_controller_navigation(int(horizontal), int(vertical))
+		last_joystick_navigation =current_time
+
+func _unhandled_input(event):
+	if not controller_navigation_enabled:
+		return
+	if event.is_action_pressed("ui_accept"):
+		_handle_controller_accept()
+	elif event.is_action_pressed("ui_cancel"):
+		_handle_controller_cancel()
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
+		return
+	if event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or \
+	event.is_action_pressed("ui_down") or event.is_action_pressed("ui_up"):
+		var x_dir = 0
+		var y_dir = 0
+		if event.is_action_pressed("ui_left"):
+			x_dir = -1
+		elif event.is_action_pressed("ui_right"):
+			x_dir = 1
+		elif event.is_action_pressed("ui_up"):
+			y_dir = -1
+		elif event.is_action_pressed("ui_down"):
+			y_dir = 1
+		_handle_controller_navigation(x_dir, y_dir)
+		last_joystick_navigation = current_time
+
+func _handle_controller_navigation(x_dir: int, y_dir: int):
+	if return_button_focused:
+		if y_dir < 0:
+			return_button_focused = false
+			chest_button_focused = true
+	else:
+		if y_dir > 0:
+			return_button_focused = true
+			chest_button_focused = false
+	_update_controller_focus()
+
+func _handle_controller_accept():
+	if chest_button_focused and not reward_given:
+		_on_chest_pressed()
+	elif return_button_focused:
+		_on_return_button_pressed()
+
+func _handle_controller_cancel():
+	_on_return_button_pressed()
+
+func _update_controller_focus():
+	_clear_controller_focus()
+	if chest_button_focused:
+		chest_sprite.modulate = Color(1.2, 1.2, 0.8)
+	elif return_button_focused:
+		return_button.modulate = Color(1.2, 1.2, 0.8)
+
+func _clear_controller_focus():
+	chest_sprite.modulate = Color.WHITE
+	return_button.modulate = Color.WHITE
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		audio_options.show_options()
-	#if event is InputEventMouseButton and event.pressed:
-		#if card_tooltip and card_tooltip.visible:
-			#card_tooltip.visible = false
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		if not controller_navigation_enabled:
+			controller_navigation_enabled = true
+			chest_button_focused = true
+			return_button_focused = false
+			_update_controller_focus()
+	if event is InputEventMouseMotion and controller_navigation_enabled:
+		controller_navigation_enabled = false
+		_clear_controller_focus()
 
 func setup_ui():
 	return_button.text = "Return to Map"
@@ -109,6 +199,9 @@ func _on_chest_pressed():
 		return
 	reward_given = true
 	chest_button.disabled = true
+	chest_button_focused = false
+	return_button_focused = true
+	_update_controller_focus()
 	await animate_chest_open()
 	var reward_type = get_random_reward_type()
 	grant_reward(reward_type)
