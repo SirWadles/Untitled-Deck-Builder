@@ -44,7 +44,7 @@ var end_turn_button_focused: bool = false
 var deck_view_button_focused: bool = false
 var joystick_deadzone: float = 0.5
 @export_range(0.1, 1.0, 0.1) var joystick_cooldown_time: float = 0.2
-var last_joystick_navigiation: float = 0.0
+var last_joystick_navigation: float = 0.0
 
 func _ready():
 	mistouch_prevent.visible = false
@@ -70,6 +70,8 @@ func _ready():
 		animation_container = Node2D.new()
 		animation_container.name = "AnimationContainer"
 		add_child(animation_container)
+	set_process_unhandled_input(true)
+	_update_controller_focus()
 
 func _process(delta):
 	if not controller_navigation_enabled:
@@ -78,7 +80,7 @@ func _process(delta):
 
 func _handle_joystick_navigation():
 	var current_time = Time.get_ticks_msec() / 1000.0
-	if current_time - last_joystick_navigiation < joystick_cooldown_time:
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
 		return
 	var horizontal = Input.get_axis("ui_left", "ui_right")
 	var vertical = Input.get_axis("ui_up", "ui_down")
@@ -88,13 +90,13 @@ func _handle_joystick_navigation():
 		vertical = 0
 	if horizontal != 0 or vertical != 0:
 		_handle_controller_navigation(int(horizontal), int(vertical))
-		last_joystick_navigiation = current_time
+		last_joystick_navigation = current_time
 
 func _unhandled_input(event):
 	if not controller_navigation_enabled:
 		return
 	if event.is_action_pressed("ui_accept"):
-		_handle_controller_navigation()
+		_handle_controller_accept()
 	elif event.is_action_pressed("ui_cancel"):
 		_handle_controller_cancel()
 	elif event.is_action_pressed("ui_end_turn"):
@@ -102,7 +104,7 @@ func _unhandled_input(event):
 	elif event.is_action_pressed("ui_view_deck"):
 		_on_deck_view_button_pressed()
 	var current_time = Time.get_ticks_msec() / 1000.0
-	if current_time - last_joystick_navigiation < joystick_cooldown_time:
+	if current_time - last_joystick_navigation < joystick_cooldown_time:
 		return
 	if event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or \
 	event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down"):
@@ -117,7 +119,7 @@ func _unhandled_input(event):
 		elif event.is_action_pressed("ui_down"):
 			y_dir = 1
 		_handle_controller_navigation(x_dir, y_dir)
-		last_joystick_navigiation = current_time
+		last_joystick_navigation = current_time
 
 func _handle_controller_navigation(x_dir: int, y_dir: int):
 	match controller_focus_state:
@@ -197,6 +199,71 @@ func _handle_controller_accept():
 			if current_focused_card_index >= 0 and current_focused_card_index < hand.cards.size():
 				var card = hand.cards[current_focused_card_index]
 				on_card_selected(card)
+		"ENEMIES":
+			var alive_enemies = _get_alive_enemies()
+			if current_focused_enemy_index >= 0 and current_focused_enemy_index < alive_enemies.size():
+				var enemy = alive_enemies[current_focused_enemy_index]
+				play_card_on_target(enemy)
+		"UI":
+			if end_turn_button_focused:
+				end_turn()
+			elif deck_view_button_focused:
+				_on_deck_view_button_pressed()
+		"PLAYER":
+			play_card_on_player()
+
+func _handle_controller_cancel():
+	match controller_focus_state:
+		"ENEMIES", "PLAYER":
+			reset_targeting()
+			current_selected_card = null
+			current_state = BattleState.PLAYER_TURN
+			hand.set_cards_selectable(true)
+			controller_focus_state = "CARDS"
+			current_focused_card_index = 0
+			_update_controller_focus()
+			if ui and ui.has_method("update_status"):
+				ui.update_status("BOSS BATTLE - Select a Card!")
+		"UI":
+			controller_focus_state = "CARDS"
+			current_focused_card_index = 0
+			_update_controller_focus()
+
+func _update_controller_focus():
+	_clear_controller_focus()
+	match controller_focus_state:
+		"CARDS":
+			if current_focused_card_index >= 0 and current_focused_card_index < hand.cards.size():
+				var card = hand.cards[current_focused_card_index]
+				card.show_controller_focus()
+		"ENEMIES":
+			var alive_enemies = _get_alive_enemies()
+			if current_focused_enemy_index >= 0 and current_focused_enemy_index < alive_enemies.size():
+				var enemy = alive_enemies[current_focused_enemy_index]
+				enemy.show_controller_focus()
+		"UI":
+			if end_turn_button_focused:
+				ui.show_end_turn_focus()
+			elif deck_view_button_focused:
+				ui.show_deck_view_focus()
+		"PLAYER":
+			player.show_controller_focus()
+
+func _clear_controller_focus():
+	for card in hand.cards:
+		card.hide_controller_focus()
+	for enemy in enemies:
+		enemy.hide_controller_focus()
+	player.hide_controller_focus()
+	if ui and ui.has_method("hide_focus_indicators"):
+		ui.hide_focus_indicators()
+
+func _get_alive_enemies() -> Array[Enemy]:
+	var alive_enemies: Array[Enemy] = []
+	for enemy in enemies:
+		if enemy.current_health > 0:
+			alive_enemies.append(enemy)
+	return alive_enemies
 
 func create_boss_enemies():
 	var enemy_scene = preload("res://scenes/battle/enemy.tscn")
@@ -224,6 +291,10 @@ func start_player_turn():
 		await get_tree().process_frame
 	draw_cards(3)
 	hand.set_cards_selectable(true)
+	controller_navigation_enabled = true
+	controller_focus_state = "CARDS"
+	current_focused_card_index = 0 if not hand.cards.is_empty() else -1
+	_update_controller_focus()
 	for enemy in enemies:
 		if enemy.current_health > 0:
 			enemy.update_intent_display()
@@ -276,6 +347,8 @@ func start_targeting(card: Card):
 	hand.set_cards_selectable(false)
 	var card_id = card.card_data.card_id
 	if card_id in ["attack"]:
+		controller_focus_state = "ENEMIES"
+		current_focused_enemy_index = 0
 		for enemy in enemies:
 			if enemy.current_health > 0:
 				enemy.set_targetable(true)
@@ -283,15 +356,19 @@ func start_targeting(card: Card):
 		if ui and ui.has_method("update_status"):
 			ui.update_status("Select enemy to attack")
 	elif card_id in ["blood_fire", "self_harm"]:
+		controller_focus_state = "ENEMIES"
+		current_focused_enemy_index = 0
 		for enemy in enemies:
 			if enemy.current_health > 0:
 				enemy.set_targetable(true)
 		is_player_targetable = false
 	elif card_id in ["abundance", "heal"]:
+		controller_focus_state = "PLAYER"
 		set_player_targetable(true)
 		is_player_targetable = true
 		if ui and ui.has_method("update_status"):
 			ui.update_status("select yourself to heal")
+	_update_controller_focus()
 
 func set_player_targetable(targetable: bool):
 	if targetable:
@@ -300,6 +377,15 @@ func set_player_targetable(targetable: bool):
 		player.modulate = Color.WHITE
 
 func _input(event):
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		if not controller_navigation_enabled and current_state == BattleState.PLAYER_TURN:
+			controller_navigation_enabled = true
+			controller_focus_state = "CARDS"
+			current_focused_card_index = 0 if not hand.cards.is_empty() else -1
+			_update_controller_focus()
+	if event is InputEventMouseMotion and controller_navigation_enabled:
+		controller_navigation_enabled = false
+		_clear_controller_focus()
 	if (event is InputEventMouseButton and event.pressed and current_state == BattleState.TARGETING and is_player_targetable):
 		var mouse_pos = get_global_mouse_position()
 		var player_rect = Rect2(player.global_position - Vector2(50, 50), Vector2(100, 100))
@@ -431,6 +517,9 @@ func reset_targeting():
 		enemy.set_targetable(false)
 	set_player_targetable(false)
 	is_player_targetable = false
+	controller_focus_state = "CARDS"
+	current_focused_enemy_index = -1
+	_update_controller_focus()
 
 func _on_card_played(card: Card, target: Enemy):
 	print("Played " + card.card_data.card_name + " on " + target.enemy_name)
@@ -493,6 +582,8 @@ func end_turn():
 	if current_state == BattleState.PLAYER_TURN:
 		current_state = BattleState.ENEMY_TURN
 		hand.set_cards_selectable(false)
+		controller_navigation_enabled = false
+		_clear_controller_focus()
 		var player_data = get_node("/root/PlayerDatabase")
 		player_data.discard_hand()
 		mistouch_prevent.visible = true
