@@ -36,6 +36,16 @@ enum BattleState {
 	TARGETING
 }
 
+var controller_navigation_enabled: bool = false
+var current_focused_card_index: int = -1
+var current_focused_enemy_index: int = -1
+var controller_focus_state: String = "CARDS"
+var end_turn_button_focused: bool = false
+var deck_view_button_focused: bool = false
+var joystick_deadzoe: float = 0.5
+@export_range(0.1, 1.0, 0.1) var joystick_cooldown_time: float = 0.2
+var last_joystick_navigiation: float = 0.0
+
 func _ready():
 	mistouch_prevent.visible = false
 	win_song.bus = "Music"
