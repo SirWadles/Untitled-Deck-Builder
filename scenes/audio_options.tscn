@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://l73bycey0pa7"]
+[gd_scene load_steps=8 format=3 uid="uid://l73bycey0pa7"]
 
 [ext_resource type="Script" uid="uid://bvbasvhq7rhy2" path="res://scripts/audio_options.gd" id="1_luej2"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="2_vddeu"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="3_h8f1n"]
+[ext_resource type="Script" uid="uid://qaniim62l1le" path="res://scripts/TranslatableLabel.gd" id="3_xxsh8"]
+[ext_resource type="Script" uid="uid://bvep4qhdip6ig" path="res://scripts/TranslatableButton.gd" id="4_s1vuv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h8f1n"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -45,6 +47,8 @@ grow_horizontal = 2
 theme_override_fonts/font = ExtResource("2_vddeu")
 theme_override_font_sizes/font_size = 24
 text = "Audio options"
+script = ExtResource("3_xxsh8")
+translation_key = "options"
 
 [node name="Master" type="Control" parent="."]
 layout_mode = 3
@@ -63,6 +67,8 @@ offset_bottom = 323.0
 theme_override_fonts/font = ExtResource("2_vddeu")
 theme_override_font_sizes/font_size = 24
 text = "Master"
+script = ExtResource("3_xxsh8")
+translation_key = "master"
 
 [node name="MasterSlider" type="HSlider" parent="Master"]
 layout_mode = 0
@@ -90,6 +96,8 @@ offset_bottom = 373.0
 theme_override_fonts/font = ExtResource("2_vddeu")
 theme_override_font_sizes/font_size = 24
 text = "Music"
+script = ExtResource("3_xxsh8")
+translation_key = "music"
 
 [node name="MusicSlider" type="HSlider" parent="Music"]
 layout_mode = 0
@@ -117,6 +125,8 @@ offset_bottom = 423.0
 theme_override_fonts/font = ExtResource("2_vddeu")
 theme_override_font_sizes/font_size = 24
 text = "SFX"
+script = ExtResource("3_xxsh8")
+translation_key = "sfx"
 
 [node name="SFXSlider" type="HSlider" parent="SFX"]
 layout_mode = 0
@@ -154,6 +164,8 @@ grow_vertical = 2
 theme_override_fonts/font = ExtResource("2_vddeu")
 theme_override_font_sizes/font_size = 24
 text = "Apply"
+script = ExtResource("4_s1vuv")
+translation_key = "apply"
 
 [node name="BackButton" type="Button" parent="Buttons"]
 layout_mode = 1
@@ -171,6 +183,8 @@ grow_vertical = 2
 theme_override_fonts/font = ExtResource("2_vddeu")
 theme_override_font_sizes/font_size = 24
 text = "Back"
+script = ExtResource("4_s1vuv")
+translation_key = "back"
 
 [node name="ButtonSound" type="AudioStreamPlayer2D" parent="Buttons"]
 stream = ExtResource("3_h8f1n")

@@ -14,8 +14,8 @@ func create_cards():
 	
 	cards["attack"] = CardData.new(
 		"attack",
-		"Death Grip",
-		"5 DMG to One",
+		"card_death_grip",
+		"card_death_grip_desc",
 		1, #cost
 		5, #damage
 		0, #defense
@@ -25,8 +25,8 @@ func create_cards():
 	
 	cards["blood_fire"] = CardData.new(
 		"blood_fire",
-		"Blood Fire",
-		"7 DMG to All",
+		"card_blood_fire",
+		"card_blood_fire_desc",
 		1,
 		7,
 		0,
@@ -36,8 +36,8 @@ func create_cards():
 	
 	cards["abundance"] = CardData.new(
 		"abundance",
-		"Abundance",
-		"Heal for 7 HP",
+		"card_abundance",
+		"card_abundance_desc",
 		2,
 		0,
 		0,
@@ -47,8 +47,8 @@ func create_cards():
 	
 	cards["self_harm"] = CardData.new(
 		"self_harm",
-		"Self Harm",
-		"DMG self for 3, 12 DMG to Enemies",
+		"card_self_harm",
+		"card_self_harm_desc",
 		2,
 		12,
 		0,

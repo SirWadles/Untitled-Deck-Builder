@@ -11,6 +11,14 @@ func _ready():
 	back_button.focus_neighbor_bottom = back_button.get_path()
 	back_button.focus_neighbor_left = back_button.get_path()
 	back_button.focus_neighbor_right = back_button.get_path()
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	update_credits_text()
+
+func update_credits_text():
+	pass
 
 func _on_back_button_pressed():
 	get_parent().hide_credits()

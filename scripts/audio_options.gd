@@ -38,6 +38,14 @@ func _ready():
 	
 	focusable_items = [master_slider, music_slider, sfx_slider, apply_button, back_button]
 	setup_focus_neighbors()
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	update_ui_text()
+
+func update_ui_text():
+	pass
 
 func _process(delta):
 	if visible and is_in_cooldown:

@@ -1,14 +1,16 @@
-[gd_scene load_steps=11 format=3 uid="uid://dy2q8wpvfd8kp"]
+[gd_scene load_steps=13 format=3 uid="uid://dy2q8wpvfd8kp"]
 
 [ext_resource type="Script" uid="uid://c62waq2rtpr5n" path="res://scripts/tutorial_scene.gd" id="1_tr4y6"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="2_jelwi"]
 [ext_resource type="Texture2D" uid="uid://bcaluqy2k5me0" path="res://assets/tutorial/CardTut1.PNG" id="3_k7w8g"]
+[ext_resource type="Script" uid="uid://qaniim62l1le" path="res://scripts/TranslatableLabel.gd" id="3_u6jee"]
 [ext_resource type="FontFile" uid="uid://j3u6vwrixpc0" path="res://fonts/boldpixels/BoldPixels.otf" id="3_urufc"]
 [ext_resource type="Texture2D" uid="uid://q2msjtglxne" path="res://assets/tutorial/CardTut2.PNG" id="4_ki3mu"]
 [ext_resource type="Texture2D" uid="uid://cvta87mbjl24d" path="res://assets/tutorial/EndTurnTut.PNG" id="5_0vn6l"]
 [ext_resource type="Texture2D" uid="uid://r023377wf3py" path="res://assets/tutorial/EnemyTurnTut.PNG" id="6_ki3mu"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="8_4yomp"]
 [ext_resource type="AudioStream" uid="uid://crybf20vh4vmv" path="res://sounds/ui/ui_main_button_select.wav" id="9_8ox5i"]
+[ext_resource type="Script" uid="uid://bvep4qhdip6ig" path="res://scripts/TranslatableButton.gd" id="9_gvpdk"]
 [ext_resource type="AudioStream" uid="uid://hribpwcyk1y4" path="res://sounds/ui/ui_main_button_climb.wav" id="10_u6jee"]
 
 [node name="TutorialScene" type="CanvasLayer"]
@@ -48,6 +50,8 @@ offset_bottom = 34.0
 theme_override_fonts/font = ExtResource("2_jelwi")
 theme_override_font_sizes/font_size = 32
 text = "Using Cards"
+script = ExtResource("3_u6jee")
+translation_key = "using_cards_title"
 
 [node name="Image" type="TextureRect" parent="TutorialContainer/CardTip"]
 layout_mode = 0
@@ -76,6 +80,8 @@ offset_bottom = 73.0
 theme_override_fonts/font = ExtResource("2_jelwi")
 theme_override_font_sizes/font_size = 17
 text = "Click on a card in your hand, then click on an enemy to use it against them "
+script = ExtResource("3_u6jee")
+translation_key = "using_cards_desc"
 
 [node name="EndTurnTip" type="Control" parent="TutorialContainer"]
 layout_mode = 3
@@ -97,6 +103,8 @@ offset_bottom = 34.0
 theme_override_fonts/font = ExtResource("2_jelwi")
 theme_override_font_sizes/font_size = 32
 text = "Ending Your Turn"
+script = ExtResource("3_u6jee")
+translation_key = "ending_turn_title"
 
 [node name="Image" type="TextureRect" parent="TutorialContainer/EndTurnTip"]
 layout_mode = 0
@@ -116,6 +124,8 @@ theme_override_fonts/font = ExtResource("2_jelwi")
 theme_override_font_sizes/font_size = 17
 text = "Press the End Turn button when you finish playing your cards. 
 This allows the enemy take their turn."
+script = ExtResource("3_u6jee")
+translation_key = "ending_turn_desc"
 
 [node name="EnemyAttackTip" type="Control" parent="TutorialContainer"]
 layout_mode = 3
@@ -137,6 +147,8 @@ offset_bottom = 34.0
 theme_override_fonts/font = ExtResource("2_jelwi")
 theme_override_font_sizes/font_size = 32
 text = "Enemy Attacks"
+script = ExtResource("3_u6jee")
+translation_key = "enemy_attacks_title"
 
 [node name="Image" type="TextureRect" parent="TutorialContainer/EnemyAttackTip"]
 layout_mode = 0
@@ -157,18 +169,23 @@ theme_override_fonts/font = ExtResource("2_jelwi")
 theme_override_font_sizes/font_size = 17
 text = "After your turn ends, the enemies will attack you. Check your health and heal
 when needed."
+script = ExtResource("3_u6jee")
+translation_key = "enemy_attacks_desc"
 
 [node name="ControllerTip" type="Control" parent="TutorialContainer"]
+visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ColorRect" type="ColorRect" parent="TutorialContainer/ControllerTip"]
+layout_mode = 0
 offset_right = 620.0
 offset_bottom = 400.0
 color = Color(0.96812, 0.383266, 0.456924, 1)
 
 [node name="Title" type="Label" parent="TutorialContainer/ControllerTip"]
+layout_mode = 0
 offset_left = 180.0
 offset_right = 428.0
 offset_bottom = 32.0
@@ -177,6 +194,7 @@ theme_override_font_sizes/font_size = 32
 text = "Controller Inputs"
 
 [node name="Image" type="TextureRect" parent="TutorialContainer/ControllerTip"]
+layout_mode = 0
 offset_left = 200.0
 offset_top = 125.0
 offset_right = 598.0
@@ -191,6 +209,8 @@ offset_right = 100.0
 offset_bottom = 381.0
 theme_override_fonts/font = ExtResource("3_urufc")
 text = "Previous Tip"
+script = ExtResource("9_gvpdk")
+translation_key = "previous_tip"
 
 [node name="NextButton" type="Button" parent="TutorialContainer"]
 layout_mode = 0
@@ -200,6 +220,8 @@ offset_right = 573.0
 offset_bottom = 381.0
 theme_override_fonts/font = ExtResource("3_urufc")
 text = "Next Tip"
+script = ExtResource("9_gvpdk")
+translation_key = "next_tip"
 
 [node name="StartGameButton" type="Button" parent="TutorialContainer"]
 layout_mode = 0
@@ -209,6 +231,8 @@ offset_right = 585.0
 offset_bottom = 381.0
 theme_override_fonts/font = ExtResource("3_urufc")
 text = "Start Game!"
+script = ExtResource("9_gvpdk")
+translation_key = "start_game_button"
 
 [node name="Audio" type="Node2D" parent="."]
 

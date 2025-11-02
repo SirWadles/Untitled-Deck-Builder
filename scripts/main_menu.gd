@@ -39,6 +39,15 @@ func _ready():
 	
 	TranslationManager.language_changed.connect(_on_language_changed)
 
+func _input(event):
+	if is_submenu_open:
+		return
+	if event.is_action_pressed("ui_language"):
+		if TranslationManager.current_language == "ja":
+			TranslationManager.set_language("en")
+		else:
+			TranslationManager.set_language("ja")
+
 func _on_language_changed():
 	pass
 
@@ -116,20 +125,6 @@ func _on_button_focus_entered(button: Control):
 	for btn in [start_button, options_button, credit_button]:
 		btn.modulate = Color.WHITE
 	button.modulate = Color.ROYAL_BLUE
-
-func _input(event):
-	if is_submenu_open:
-		return
-	#if input_handler and input_handler.navigation_enabled and not audio_options.visible and not credits_menu.visible:
-		#if event.is_action_pressed("ui_accept"):
-			#if start_button.has_focus():
-				#_on_start_button_pressed()
-			#elif options_button.has_focus():
-				#_on_options_button_pressed()
-			#elif credit_button.has_focus():
-				#_on_credit_button_pressed()
-		#elif event.is_action_pressed("ui_cancel"):
-			#pass
 
 func _notification(what):
 	if what == NOTIFICATION_VISIBILITY_CHANGED:
