@@ -36,6 +36,11 @@ func _ready():
 	
 	_setup_focus_neighbors()
 	_setup_initial_focus()
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	pass
 
 func _setup_initial_focus():
 	await get_tree().process_frame

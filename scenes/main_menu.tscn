@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://ddgtnbpobb7o5"]
+[gd_scene load_steps=11 format=3 uid="uid://ddgtnbpobb7o5"]
 
 [ext_resource type="Script" uid="uid://wjiyap1g6tox" path="res://scripts/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="1_l6cm7"]
 [ext_resource type="AudioStream" uid="uid://hribpwcyk1y4" path="res://sounds/ui/ui_main_button_climb.wav" id="3_8ln24"]
+[ext_resource type="Script" uid="uid://bvep4qhdip6ig" path="res://scripts/TranslatableButton.gd" id="3_jk1qb"]
 [ext_resource type="AudioStream" uid="uid://omssi1qfuq8h" path="res://sounds/ui/ui_main_button_invalid.wav" id="4_rtw2f"]
 [ext_resource type="AudioStream" uid="uid://bfaxysfie3laa" path="res://sounds/ui/ui_main_button_back.wav" id="5_oa1go"]
 [ext_resource type="AudioStream" uid="uid://csu04si0bluyt" path="res://sounds/songs/Ossatura - OPENER DRAFT 2(1).mp3" id="6_oa1go"]
@@ -64,18 +65,24 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 24
 text = "Start"
+script = ExtResource("3_jk1qb")
+translation_key = "start_game"
 
 [node name="OptionsButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 24
 text = "Options"
+script = ExtResource("3_jk1qb")
+translation_key = "options"
 
 [node name="CreditButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 24
 text = "Credits"
+script = ExtResource("3_jk1qb")
+translation_key = "credits"
 
 [node name="Audio" type="Node2D" parent="."]
 

@@ -27,6 +27,7 @@ MapState="*res://scripts/map_state.gd"
 RelicManager="*res://scripts/relic_manager.gd"
 CharacterData="*res://scripts/character_data.gd"
 GlobalInputHandler="*res://scripts/global_input_handler.gd"
+TranslationManager="*res://translation_manager.gd"
 
 [display]
 
