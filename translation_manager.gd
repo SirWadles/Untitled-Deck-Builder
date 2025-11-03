@@ -73,7 +73,17 @@ func load_translations():
 			"you_won": "You Won!",
 			"you_lost": "You Lost! :(",
 			"play_again": "Play Again?",
-			"quit": "Quit"
+			"quit": "Quit",
+			"deck_view": "Deck View",
+			"players_turn": "Player's Turn",
+			"enemy_turn": "Enemy's Turn",
+			"thinking": "Thinking...",
+			
+			"hand_label": "Hand: ",
+			"deck_label": "Deck: ",
+			"discard_label": "Discard: ",
+			"exhaust_label": "Exhaust: ",
+			"close": "Close"
 		},
 		"ja": {
 			"game_title": "名無しデッキビルダー",
@@ -137,7 +147,17 @@ func load_translations():
 			"you_won": "勝利！",
 			"you_lost": "敗北！",
 			"play_again": "再プレイ？",
-			"quit": "終了"
+			"quit": "終了",
+			"deck_view": "デッキ表示",
+			"players_turn": "プレイヤーのターン",
+			"enemy_turn": "敵のターン",
+			"thinking": "考え中...",
+			
+			"hand_label": "手札: ",
+			"deck_label": "デッキ: ",
+			"discard_label": "捨て札: ",
+			"exhaust_label": "消耗札: ",
+			"close": "閉じる"
 		}
 	}
 

@@ -32,6 +32,13 @@ func _ready():
 		button.disabled = !is_selectable
 	if card_tooltip:
 		card_tooltip.visible = false
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	if card_data and name_label and description_label:
+		name_label.text = TranslationManager.translate(card_data.card_name)
+		description_label.text = TranslationManager.translate(card_data.description)
 
 func setup(data: CardData, hand_reference: Node = null):
 	card_data = data
@@ -40,13 +47,13 @@ func setup(data: CardData, hand_reference: Node = null):
 
 func _deferred_setup(data: CardData):
 	if name_label:
-		name_label.text = data.card_name
+		name_label.text = TranslationManager.translate(data.card_name)
 		name_label.add_theme_font_size_override("font_size", 10)
 	if cost_label:
 		cost_label.text = str(data.cost)
 		cost_label.add_theme_font_size_override("font_size", 10)
 	if description_label:
-		description_label.text = data.description
+		description_label.text = TranslationManager.translate(data.description)
 		description_label.add_theme_font_size_override("font_size", 9)
 	if card_data:
 		if data.texture:

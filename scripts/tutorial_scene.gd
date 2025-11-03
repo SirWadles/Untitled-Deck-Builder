@@ -20,7 +20,7 @@ var input_handler: Node
 func _ready():
 	if has_node("/root/GlobalInputHandler"):
 		input_handler = get_node("/root/GlobalInputHandler")
-	tips = [card_tip, end_turn_tip, enemy_attack_tip, controller_tip]
+	tips = [card_tip, end_turn_tip, enemy_attack_tip]
 	show_tip(0)
 	next_button.pressed.connect(_on_next_button_pressed)
 	prev_button.pressed.connect(_on_prev_button_pressed)

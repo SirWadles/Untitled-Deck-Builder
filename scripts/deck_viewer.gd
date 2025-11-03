@@ -21,6 +21,16 @@ func _ready():
 		if battle_system.has_signal("player_turn_started"):
 			battle_system.player_turn_started.connect(_on_player_turn_started)
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	_update_texts()
+	if is_visible:
+		update_display()
+
+func _update_texts():
+	if close_button:
+		close_button.text = TranslationManager.translate("close")
 
 func _unhandled_input(event):
 	if is_visible:
@@ -48,10 +58,10 @@ func update_display():
 	var player_data = get_node("/root/PlayerDatabase")
 	var card_database = get_node("/root/CardStuff")
 	
-	display_card_list(hand_container, "Hand: ", player_data.hand, card_database)
-	display_card_list(deck_container, "Deck: ", player_data.deck, card_database)
-	display_card_list(discard_container, "Discard: ", player_data.discard_pile, card_database)
-	display_card_list(exhaust_container, "Exhaust: ", player_data.exhaust_pile, card_database)
+	display_card_list(hand_container, TranslationManager.translate("hand_label"), player_data.hand, card_database)
+	display_card_list(deck_container, TranslationManager.translate("deck_label"), player_data.deck, card_database)
+	display_card_list(discard_container, TranslationManager.translate("discard_label"), player_data.discard_pile, card_database)
+	display_card_list(exhaust_container, TranslationManager.translate("exhaust_label"), player_data.exhaust_pile, card_database)
 
 func display_card_list(container: VBoxContainer, title: String, card_list: Array[String], card_database: CardDatabase):
 	var title_label = Label.new()
@@ -71,9 +81,16 @@ func display_card_list(container: VBoxContainer, title: String, card_list: Array
 func create_card_display(card_data: CardData, count: int) -> HBoxContainer:
 	var container = HBoxContainer.new()
 	container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
+
+	var translated_name = card_data.card_name
+	# If card_name looks like a translation key, try translating it
+	if TranslationManager.translations.has(TranslationManager.current_language):
+		var lang_dict = TranslationManager.translations[TranslationManager.current_language]
+		if lang_dict.has(card_data.card_name):
+			translated_name = TranslationManager.translate(card_data.card_name)
+
 	var text_label = Label.new()
-	text_label.text = card_data.card_name + " x" + str(count)
+	text_label.text = translated_name + " x" + str(count)
 	text_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	text_label.add_theme_font_size_override("font_size", 12)
 	container.add_child(text_label)
