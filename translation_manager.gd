@@ -42,20 +42,38 @@ func load_translations():
 			"start_game_button": "Start Game!",
 			
 			"card_death_grip": "Death Grip",
-		"card_blood_fire": "Blood Fire", 
-		"card_abundance": "Abundance",
-		"card_self_harm": "Self Harm",
-		
-		"card_death_grip_desc": "5 DMG to One",
-		"card_blood_fire_desc": "7 DMG to All",
-		"card_abundance_desc": "Heal for 7 HP",
-		"card_self_harm_desc": "DMG self for 3, 12 DMG to Enemies",
-		
-		"cost": "Cost",
-		"price": "Price", 
-		"free": "Free!",
-		"damage": "Damage",
-		"heal": "Heal"
+			"card_blood_fire": "Blood Fire", 
+			"card_abundance": "Abundance",
+			"card_self_harm": "Self Harm",
+			
+			"card_death_grip_desc": "5 DMG to One",
+			"card_blood_fire_desc": "7 DMG to All",
+			"card_abundance_desc": "Heal for 7 HP",
+			"card_self_harm_desc": "DMG self for 3, 12 DMG to Enemies",
+			
+			"cost": "Cost",
+			"price": "Price", 
+			"free": "Free!",
+			"damage": "Damage",
+			"heal": "Heal",
+			
+			"character_selection": "Character Selection",
+			"witch": "Witch",
+			"wizard": "Wizard",
+			"witch_deck": "Witch's Starting Deck",
+			"wizard_deck": "Wizard's Starting Deck",
+			"select_character": "Select your character",
+			
+			"witch_description": "A powerful spellcaster with area damage",
+			"wizard_description": "A versatile mage with healing abilities",
+			
+			"info": "Select a button to proceed",
+			
+			 "end_turn": "End Turn",
+			"you_won": "You Won!",
+			"you_lost": "You Lost! :(",
+			"play_again": "Play Again?",
+			"quit": "Quit"
 		},
 		"ja": {
 			"game_title": "名無しデッキビルダー",
@@ -101,7 +119,25 @@ func load_translations():
 			"price": "価格",
 			"free": "無料！",
 			"damage": "ダメージ", 
-			"heal": "回復"
+			"heal": "回復",
+			
+			"character_selection": "キャラクター選択",
+			"witch": "ウィッチ",
+			"wizard": "ウィザード",
+			"witch_deck": "ウィッチの初期デッキ",
+			"wizard_deck": "ウィザードの初期デッキ",
+			"select_character": "キャラクターを選択",
+			
+			"witch_description": "範囲攻撃を持つ強力な魔法使い",
+			"wizard_description": "回復能力を持つ万能な魔術師",
+			
+			"info": "ボタンを選択して進んでください",
+			
+			"end_turn": "ターン終了",
+			"you_won": "勝利！",
+			"you_lost": "敗北！",
+			"play_again": "再プレイ？",
+			"quit": "終了"
 		}
 	}
 

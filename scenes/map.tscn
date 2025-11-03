@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://qqbcfoq0xxy3"]
+[gd_scene load_steps=9 format=3 uid="uid://qqbcfoq0xxy3"]
 
 [ext_resource type="Script" uid="uid://cvk2q8d532wa6" path="res://scripts/map.gd" id="1_4xfga"]
 [ext_resource type="Texture2D" uid="uid://dwyhlpg2jx2ln" path="res://assets/oldpaperertyhuji.png" id="2_paxxb"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://cpt52mjkiefbe" path="res://sounds/songs/machine love arr. orchestra, op. 17 no. 3 - estreller.mp3" id="5_2lpho"]
 [ext_resource type="PackedScene" uid="uid://l73bycey0pa7" path="res://scenes/audio_options.tscn" id="6_nakos"]
 [ext_resource type="FontFile" uid="uid://ck0hm2v3474rj" path="res://fonts/boldpixels/BoldPixels.ttf" id="7_nakos"]
+[ext_resource type="Script" uid="uid://qaniim62l1le" path="res://scripts/TranslatableLabel.gd" id="8_jh32y"]
 
 [node name="Map" type="Control"]
 layout_mode = 3
@@ -65,3 +66,5 @@ theme_override_fonts/font = ExtResource("7_nakos")
 theme_override_font_sizes/font_size = 32
 text = "Select a button to proceed"
 horizontal_alignment = 1
+script = ExtResource("8_jh32y")
+translation_key = "info"

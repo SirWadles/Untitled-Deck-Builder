@@ -4,6 +4,9 @@ extends Control
 @onready var wizard_button = $WizardButton
 @onready var description_label = $DescriptionLabel
 @onready var select_sound = $SelectSound
+@onready var witch_label = $WitchButton/Label
+@onready var wizard_label = $WizardButton/Label
+@onready var title_label = $TitleLabel
 
 @onready var witch_deck_display: Control = $WitchDeckDisplay
 @onready var wizard_deck_display: Control = $WizardDeckDisplay
@@ -40,6 +43,25 @@ func _ready():
 	
 	_setup_focus_neighbors()
 	_setup_initial_focus()
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+	
+	_update_ui_text()
+
+func _update_ui_text():
+	if title_label:
+		title_label.text = TranslationManager.translate("character_selection")
+	if witch_label:
+		witch_label.text = TranslationManager.translate("witch")
+	if wizard_label:
+		wizard_label.text = TranslationManager.translate("wizard")
+	if description_label:
+		description_label.text = TranslationManager.translate("selected_character")
+
+func _on_language_changed():
+	_update_ui_text()
+	_display_character_decks()
+	_update_description()
 
 func _setup_focus_neighbors():
 	witch_button.focus_neighbor_right = wizard_button.get_path()
@@ -56,6 +78,14 @@ func _on_button_focus_entered(button: Control):
 	print("Current character selected: ", button.name)
 	_reset_button_appearance()
 	button.modulate = Color.YELLOW
+	_update_description_for_button(button)
+
+func _update_description_for_button(button: Control):
+	if description_label:
+		if button == witch_button:
+			description_label.text = TranslationManager.translate("witch_description")
+		elif button == wizard_button:
+			description_label.text = TranslationManager.translate("wizard_description")
 
 func _reset_button_appearance():
 	witch_button.modulate = Color.WHITE
@@ -84,17 +114,18 @@ func _save_character_choice():
 	character_data.name = "CharacterData"
 
 func _update_description():
-	pass
+	if description_label:
+		description_label.text = TranslationManager.translate("select_character")
 
 func _display_character_decks():
 	var character_script = load("res://scripts/character_data.gd")
 	var witch_data = character_script.new()
 	witch_data.selected_character = "witch"
-	witch_deck_display.display_deck(witch_data.get_character_deck(), "Witch's Starting Deck")
+	witch_deck_display.display_deck(witch_data.get_character_deck(), "witch_deck")
 	
 	var wizard_data = character_script.new()
 	wizard_data.selected_character = "wizard"
-	wizard_deck_display.display_deck(wizard_data.get_character_deck(), "Wizard's Starting Deck")
+	wizard_deck_display.display_deck(wizard_data.get_character_deck(), "wizard_deck")
 
 func _input(event):
 	if input_handler and input_handler.navigation_enabled:

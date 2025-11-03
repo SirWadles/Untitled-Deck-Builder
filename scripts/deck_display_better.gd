@@ -9,10 +9,15 @@ var card_database = CardDatabase
 func _ready():
 	card_database = get_node("/root/CardStuff")
 	tool_tip.visible = false
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
 
-func display_deck(deck: Array[String], title: String = ""):
-	if title_label and title != "":
-		title_label.text = title
+func _on_language_changed():
+	pass
+
+func display_deck(deck: Array[String], title_key: String = ""):
+	if title_label and title_key != "":
+		title_label.text = TranslationManager.translate(title_key)
 	for child in grid_container.get_children():
 		child.queue_free()
 	for card_id in deck:

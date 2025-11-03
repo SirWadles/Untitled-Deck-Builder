@@ -41,20 +41,28 @@ func _ready():
 	size = Vector2.ZERO
 	
 	z_index = 100
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	if visible:
+		pass
 
 func _process(_delta):
 	if visible and follow_mouse:
 		_update_tooltip_position()
 
 func setup_card_tooltip(card_data: CardData):
-	name_label.text = card_data.card_name
-	cost_label.text = "Cost: " + str(card_data.cost)
-	desc_label.text = card_data.description
+	name_label.text = TranslationManager.translate(card_data.card_name)
+	cost_label.text = TranslationManager.translate("cost") + ": " + str(card_data.cost)
+	desc_label.text = TranslationManager.translate(card_data.description)
 	var stats_text = ""
 	if card_data.damage > 0:
-		stats_text += "Damage: " + str(card_data.damage) + "\n"
+		stats_text += TranslationManager.translate("damage") + ": " + str(card_data.damage) + "\n"
 	if card_data.heal > 0:
-		stats_text += "Heal: " + str(card_data.heal) + "\n"
+		stats_text += TranslationManager.translate("heal") + ": " + str(card_data.heal) + "\n"
+	if card_data.heal < 0:
+		stats_text += TranslationManager.translate("heal") + ": " + str(card_data.heal) + "\n"
 	stats_label.text = stats_text
 	stats_label.visible = !stats_text.is_empty()
 	cost_label.visible = true
@@ -64,19 +72,22 @@ func setup_card_tooltip(card_data: CardData):
 		_update_tooltip_position()
 
 func setup_relic_tooltip(relic_data: Dictionary):
-	name_label.text = relic_data["name"]
-	cost_label.text = "Price: " + str(relic_data["price"]) + " Gold"
-	desc_label.text = relic_data["description"]
+	name_label.text = TranslationManager.translate(relic_data["name"])
+	if relic_data["price"] == 0:
+		cost_label.text = TranslationManager.translate("price") + ": " + TranslationManager.translate("free")
+	else:
+		cost_label.text = TranslationManager.translate("price") + ": " + str(relic_data["price"]) + " Gold"
+	desc_label.text = TranslationManager.translate(relic_data["description"])
 	if relic_data["price"] == 0:
 		cost_label.text = "Price: Free!"
 	var stats_text = ""
 	match relic_data["id"]:
 		"health_band":
-			stats_text += "Heals 5 HP after combat\n"
+			stats_text += TranslationManager.translate("heals_after_combat") + "\n"
 		"energy_crystal":
-			stats_text += "+1 Max Energy\n"
+			stats_text += TranslationManager.translate("plus_max_energy") + "\n"
 		"crystal_shard":
-			stats_text += "+5 Damage to all attacks\n"
+			stats_text += TranslationManager.translate("plus_damage_all_attacks") + "\n" 
 	stats_label.text = stats_text
 	stats_label.visible = !stats_text.is_empty()
 	cost_label.visible = true
