@@ -1,7 +1,7 @@
 extends Button
 class_name MapNode
 
-enum NodeType {BATTLE, SHOP, REST, TREASURE, BOSS}
+enum NodeType {BATTLE, REST, SHOP ,TREASURE, BOSS}
 
 var node_type: NodeType = NodeType.BATTLE
 var node_id: String = ""

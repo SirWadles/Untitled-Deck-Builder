@@ -65,6 +65,7 @@ func _on_language_changed():
 
 func _setup_focus_neighbors():
 	witch_button.focus_neighbor_right = wizard_button.get_path()
+	witch_button.focus_neighbor_left = wizard_button.get_path()
 	wizard_button.focus_neighbor_left = witch_button.get_path()
 
 func _setup_initial_focus():

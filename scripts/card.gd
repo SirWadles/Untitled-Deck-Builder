@@ -174,7 +174,7 @@ func play_entrance_animation():
 	await highlight_tween.finished
 	base_position = position
 
-func play_play_animation():
+func play_animation():
 	if highlight_tween:
 		highlight_tween.kill()
 	highlight_tween = create_tween()

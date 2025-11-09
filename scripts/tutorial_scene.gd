@@ -34,6 +34,7 @@ func _ready():
 	next_sound.bus = "SFX"
 	start_sound.bus = "SFX"
 	
+	_setup_focus_neighbors()
 	_setup_initial_focus()
 
 func _setup_initial_focus():
@@ -78,10 +79,14 @@ func _on_button_focus_entered(button: Control):
 func _on_next_button_pressed():
 	next_sound.play()
 	show_tip(current_tip + 1)
+	if enemy_attack_tip.visible:
+		prev_button.focus_neighbor_left = start_game_button.get_path()
 
 func _on_prev_button_pressed():
 	prev_sound.play()
 	show_tip(current_tip - 1)
+	if not enemy_attack_tip.visible:
+		prev_button.focus_neighbor_left = next_button.get_path()
 
 func show_tutorial():
 	get_tree().root.add_child(self)
@@ -91,23 +96,28 @@ func _on_start_game_button_pressed():
 	await get_tree().create_timer(1.4).timeout
 	get_tree().change_scene_to_file("res://scenes/character_selection.tscn")
 
-func _input(event):
-	if input_handler and input_handler.navigation_enabled:
-		if event.is_action_pressed("ui_left") and not prev_button.disabled:
-			if input_handler and input_handler.is_controller_active():
-				input_handler.set_current_focus(prev_button)
-			elif prev_button.focus_mode != Control.FOCUS_NONE:
-				prev_button.grab_focus()
-		elif event.is_action_pressed("ui_right"):
-			if next_button.visible:
-				if input_handler and input_handler.is_controller_active():
-					input_handler.set_current_focus(next_button)
-				elif next_button.focus_mode != Control.FOCUS_NONE:
-					next_button.grab_focus()
-			elif start_game_button.visible:
-				if input_handler and input_handler.is_controller_active():
-					input_handler.set_current_focus(start_game_button)
-				elif start_game_button.focus_mode != Control.FOCUS_NONE:
-					start_game_button.grab_focus()
-		elif event.is_action_pressed("ui_cancel"):
-			pass
+#func _input(event):
+	#if input_handler and input_handler.navigation_enabled:
+		#if event.is_action_pressed("ui_left") and not prev_button.disabled:
+			#if input_handler and input_handler.is_controller_active():
+				#input_handler.set_current_focus(prev_button)
+			#elif prev_button.focus_mode != Control.FOCUS_NONE:
+				#prev_button.grab_focus()
+		#elif event.is_action_pressed("ui_right"):
+			#if next_button.visible:
+				#if input_handler and input_handler.is_controller_active():
+					#input_handler.set_current_focus(next_button)
+				#elif next_button.focus_mode != Control.FOCUS_NONE:
+					#next_button.grab_focus()
+			#elif start_game_button.visible:
+				#if input_handler and input_handler.is_controller_active():
+					#input_handler.set_current_focus(start_game_button)
+				#elif start_game_button.focus_mode != Control.FOCUS_NONE:
+					#start_game_button.grab_focus()
+		#elif event.is_action_pressed("ui_cancel"):
+			#pass
+
+func _setup_focus_neighbors():
+	next_button.focus_neighbor_left = prev_button.get_path()
+	start_game_button.focus_neighbor_left = prev_button.get_path()
+	prev_button.focus_neighbor_left = next_button.get_path()

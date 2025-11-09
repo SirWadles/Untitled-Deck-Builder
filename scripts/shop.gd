@@ -43,6 +43,11 @@ func _ready():
 		card_tooltip.visible = false
 	controller_navigation_enabled = true
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	pass
 
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
@@ -55,6 +60,11 @@ func _input(event):
 	if event is InputEventMouseMotion and controller_navigation_enabled:
 		controller_navigation_enabled = false
 		_clear_controller_focus()
+	if event.is_action_pressed("ui_language"):
+		if TranslationManager.current_language == "ja":
+			TranslationManager.set_language("en")
+		else:
+			TranslationManager.set_language("ja")
 
 func _process(delta):
 	if not controller_navigation_enabled:
@@ -284,7 +294,7 @@ func load_shop_items():
 	available_cards.clear()
 	available_relics.clear()
 	print("Loading shop items...")
-	var num_cards = randi_range(6, 12)
+	var num_cards = randi_range(6, 8)
 	print(num_cards)
 	for i in range(num_cards):
 		var random_card_id = all_cards[randi() % all_cards.size()]

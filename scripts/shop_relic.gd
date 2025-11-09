@@ -34,6 +34,11 @@ func _ready():
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	
 	purchase_button.focus_mode = Control.FOCUS_NONE
+	
+	TranslationManager.language_changed.connect(_on_language_changed)
+
+func _on_language_changed():
+	pass
 
 #func _input(event):
 	#if event.is_action_pressed("ui_accept") and self.modulate == Color(1.2, 1.2, 0.8):

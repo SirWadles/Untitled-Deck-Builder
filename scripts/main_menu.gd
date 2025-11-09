@@ -3,6 +3,8 @@ extends Control
 @onready var start_button = $VBoxContainer/StartButton
 @onready var options_button = $VBoxContainer/OptionsButton
 @onready var credit_button = $VBoxContainer/CreditButton
+@onready var quit_button = $VBoxContainer/QuitButton
+@onready var language_button = $VBoxContainer/LanguageButton
 
 @onready var start_sound = $Audio/StartSound
 @onready var options_sound = $Audio/OptionsSound
@@ -28,6 +30,8 @@ func _ready():
 	start_button.focus_entered.connect(_on_button_focus_entered.bind(start_button))
 	options_button.focus_entered.connect(_on_button_focus_entered.bind(options_button))
 	credit_button.focus_entered.connect(_on_button_focus_entered.bind(credit_button))
+	quit_button.focus_entered.connect(_on_button_focus_entered.bind(quit_button))
+	language_button.focus_entered.connect(_on_button_focus_entered.bind(language_button))
 	
 	music_player.bus = "Music"
 	music_player.play()
@@ -37,19 +41,33 @@ func _ready():
 	_setup_focus_neighbors()
 	_setup_initial_focus()
 	
+	if quit_button:
+		quit_button.pressed.connect(_on_quit_button)
+	if language_button:
+		language_button.pressed.connect(_on_language_pressed)
+	
 	TranslationManager.language_changed.connect(_on_language_changed)
 
 func _input(event):
 	if is_submenu_open:
 		return
-	if event.is_action_pressed("ui_language"):
-		if TranslationManager.current_language == "ja":
-			TranslationManager.set_language("en")
-		else:
+	if event.is_action_pressed("ui_end_turn"):
+		if TranslationManager.current_language == "en":
 			TranslationManager.set_language("ja")
+		else:
+			TranslationManager.set_language("en")
+
+func _on_language_pressed():
+	if TranslationManager.current_language == "en":
+		TranslationManager.set_language("ja")
+	else:
+		TranslationManager.set_language("en")
 
 func _on_language_changed():
 	pass
+
+func _on_quit_button():
+	get_tree().quit()
 
 func _setup_initial_focus():
 	await get_tree().process_frame
@@ -61,12 +79,16 @@ func _setup_initial_focus():
 		start_button.grab_focus()
 
 func _setup_focus_neighbors():
-	start_button.focus_neighbor_bottom = options_button.get_path()
-	options_button.focus_neighbor_top = start_button.get_path()
-	options_button.focus_neighbor_bottom = credit_button.get_path()
-	credit_button.focus_neighbor_top = options_button.get_path()
-	credit_button.focus_neighbor_bottom = start_button.get_path()
-	start_button.focus_neighbor_top = credit_button.get_path()
+	start_button.focus_neighbor_bottom = credit_button.get_path()
+	#options_button.focus_neighbor_top = start_button.get_path()
+	#options_button.focus_neighbor_bottom = credit_button.get_path()
+	credit_button.focus_neighbor_top = start_button.get_path()
+	credit_button.focus_neighbor_bottom = language_button.get_path()
+	quit_button.focus_neighbor_top = language_button.get_path()
+	quit_button.focus_neighbor_bottom = start_button.get_path()
+	language_button.focus_neighbor_top = credit_button.get_path()
+	language_button.focus_neighbor_bottom = quit_button.get_path()
+	start_button.focus_neighbor_top = quit_button.get_path()
 
 func _on_start_button_pressed():
 	print("Start Pressed")
@@ -122,7 +144,7 @@ func hide_credits():
 
 func _on_button_focus_entered(button: Control):
 	print("Focus: ", button.name)
-	for btn in [start_button, options_button, credit_button]:
+	for btn in [start_button, options_button, credit_button, quit_button, language_button]:
 		btn.modulate = Color.WHITE
 	button.modulate = Color.ROYAL_BLUE
 

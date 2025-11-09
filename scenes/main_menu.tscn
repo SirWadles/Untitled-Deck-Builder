@@ -72,6 +72,7 @@ script = ExtResource("3_jk1qb")
 translation_key = "start_game"
 
 [node name="OptionsButton" type="Button" parent="VBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("1_l6cm7")
 theme_override_font_sizes/font_size = 24
@@ -86,6 +87,16 @@ theme_override_font_sizes/font_size = 24
 text = "Credits"
 script = ExtResource("3_jk1qb")
 translation_key = "credits"
+
+[node name="LanguageButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+text = "CHANGE"
+
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+text = "QUIT"
 
 [node name="Audio" type="Node2D" parent="."]
 

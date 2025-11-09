@@ -83,7 +83,11 @@ func load_translations():
 			"deck_label": "Deck: ",
 			"discard_label": "Discard: ",
 			"exhaust_label": "Exhaust: ",
-			"close": "Close"
+			"close": "Close",
+			
+			"Energy Crystal": "Energy Crystal",
+			"+1 Max Energy": "+1 Max Energy",
+			"plus_max_energy": "+1 Max Energy"
 		},
 		"ja": {
 			"game_title": "名無しデッキビルダー",
@@ -157,7 +161,11 @@ func load_translations():
 			"deck_label": "デッキ: ",
 			"discard_label": "捨て札: ",
 			"exhaust_label": "消耗札: ",
-			"close": "閉じる"
+			"close": "閉じる",
+			
+			"Energy Crystal": "エネルギークリスタル",
+			"+1 Max Energy": "最大エネルギー+1",
+			"plus_max_energy": "最大エネルギー+1"
 		}
 	}
 

@@ -63,7 +63,7 @@ func card_selected(card: Card):
 
 func play_card(card: Card, target: Enemy):
 	if card:
-		card.play_play_animation()
+		card.play_animation()
 		await get_tree().create_timer(0.2).timeout
 		card_played.emit(card, target)
 		cards.erase(card)
